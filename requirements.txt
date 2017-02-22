@@ -1,0 +1,12 @@
+blindal
+ipwhois
+python-whois
+redis
+suds
+validictory
+graphene>=1.0
+flask
+flask-graphql
+pymongo
+pyyaml
+uwsgi

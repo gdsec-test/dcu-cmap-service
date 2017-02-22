@@ -1,0 +1,44 @@
+{
+  "payload": {
+    "domain": "theaaronbean.com",
+    "type": "PHISHING"
+  },
+  "fields": [
+    { "data": "hosting" },
+    { "data": "shopper"},
+    { "data": "registrar"}
+
+  ],
+  "actions":[
+    {
+      "notify_fraud": {
+        "lt": {
+          "field": "created",
+          "value": "2017-01-01"
+        },
+        "like": {
+          "field": "host_network",
+          "value": "godaddy"
+        }
+      }
+    },
+    {
+      "get_sourcecode": {
+        "or": [
+          {
+            "eq": {
+              "field": "type",
+              "value": "PHISHING"
+            }
+          },
+          {
+            "eq": {
+              "field": "type",
+              "value": "MALWARE"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  domainQuery(domain: "yahoo.com") {
+    domain
+    registrar {
+      name
+    }
+    reseller {
+      parentChild
+    }
+  }
+  shopperQuery(id: "10374993") {
+    id
+    shopperid {
+      domaincount
+    }
+    profile {
+      FirstName
+      LastName
+      Email
+      PhoneExt
+      shopperId
+      InternalPhoneQueue
+      InternalImageURL
+      PortfolioTypeID
+      PortfolioType
+      Vip
+    }
+  }
+}
