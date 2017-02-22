@@ -1,6 +1,6 @@
-REPONAME=infosec-dcu/service_proto
+REPONAME=infosec-dcu/cmap_service
 BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
-DOCKERREPO=artifactory.secureserver.net:10014/docker-dcu-local/service_proto
+DOCKERREPO=artifactory.secureserver.net:10014/docker-dcu-local/cmap_service
 
 # libraries we need to stage for pip to install inside Docker build
 PRIVATE_PIPS=git@github.secureserver.net:ITSecurity/blindAl.git
