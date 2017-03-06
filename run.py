@@ -12,6 +12,7 @@ from service.redis_cache import RedisCache
 from service.vip_clients import VipClients
 from service.crm_client_api import CrmClientApi
 from service.shopper_api import ShopperAPI
+from service.whois_query import WhoisQuery, Host
 
 
 # setup logging
@@ -35,7 +36,10 @@ ctx = {'crm': CrmClientApi(),
        'regdb': RegDbAPI(),
        'vip': VipClients(),
        'redis': RedisCache(),
-       'shopper': ShopperAPI()}
+       'shopper': ShopperAPI(),
+       'whois': WhoisQuery(),
+       'host_whois': Host()}
+
 schema = graphene.Schema(query=Query)
 app.add_url_rule(
     '/graphql',
