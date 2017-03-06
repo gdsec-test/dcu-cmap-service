@@ -1,5 +1,6 @@
 import re
 import xml.etree.ElementTree as ET
+from suds.client import Client
 
 
 class CrmClientApi(object):
@@ -7,7 +8,6 @@ class CrmClientApi(object):
     _FACTORY = '{http://schemas.datacontract.org/2004/07/GoDaddy.CRM.ClientAPI.DataContracts}ShopperPortfolioInformationRequest'
 
     def __init__(self):
-        from suds.client import Client
         self._client = Client(self._WSDL)
         self._request = self._client.factory.create(self._FACTORY)
 

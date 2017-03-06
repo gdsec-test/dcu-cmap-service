@@ -11,6 +11,46 @@ from ipwhois import IPWhois
 from flask_graphql import GraphQLView
 
 
+class DomainService(graphene.AbstractType):
+    name = graphene.String()
+    email = graphene.List(graphene.String, description='Email contact(s) for registrar')
+
+
+class Registrar(graphene.ObjectType, DomainService):
+    """
+   Registration info for Shopper domain
+   """
+    pass
+
+
+class Host(graphene.ObjectType, DomainService):
+    """
+    Hosting infor for Shopper domain
+    """
+    pass
+
+
+class DomainData(graphene.ObjectType):
+    """
+    Data returned in a DomainSearch
+    """
+    domainid = graphene.String()
+    domain = graphene.String()
+
+
+class DomainSearch(graphene.ObjectType):
+    """
+    Holds the results of a domain search
+    """
+    results = graphene.List(DomainData)
+    domainlist = []
+    pattern = ''
+
+    def resolve_results(self, args, context, info):
+        regex = re.compile(self.pattern)
+        return [DomainData(domainid=item[0], domain=item[1]) for item in self.domainlist if regex.match(item[1])]
+
+
 class DomainName(graphene.Interface):
     name = graphene.String()
     message = graphene.String()
@@ -188,10 +228,52 @@ class ShopperQuery(graphene.ObjectType):
         return ShopperProfile(**query_dict)
 
 
+class Shopper(graphene.AbstractType):
+    """
+    Top level Shopper Info
+    """
+    shopper_id = graphene.String(description='The oldest shopper_id on record')
+    date_created = graphene.String(description='The create data of the shopper')
+    child = graphene.String(description='Child account owned by the shopper')
+    domain_count = graphene.Int(description='Number of domains owned by the shopper')
+    domainsearch = graphene.Field(DomainSearch, regex=graphene.String(required=True))
+    first_name = graphene.String()
+    email = graphene.String()
+
+    def resolve_domainsearch(self, args, context, info):
+        regex = args.get('regex')
+        client = context.get('regdb')
+        data = client.get_domain_list_by_shopper_id(self.shopper_id)
+        ds = DomainSearch()
+        ds.domainlist = data
+        ds.pattern = regex
+        return ds
+
+    def resolve_domain_count(self, args, context, info):
+        client = context.get('regdb')
+        return client.get_domain_count_by_shopper_id(self.shopper_id)
+
+
+class ShopperById(graphene.ObjectType, Shopper):
+    """
+    Holds Shopper data when only the shopper_id is known
+    """
+    pass
+
+
+class ShopperByDomain(graphene.ObjectType, Shopper):
+    """
+    Holds Shopper data when only the domain is known
+    """
+    domain = graphene.String()
+    othershopperlist = graphene.List(ShopperById, description='Other shopper_ids associated with this domain')
+
+
 class DomainQuery(graphene.ObjectType):
     host = graphene.Field(HostInfo)
     registrar = graphene.Field(RegistrarInfo)
     reseller = graphene.Field(ResellerInfo)
+    shopper_by_domain = graphene.Field(ShopperByDomain)
     domain = graphene.String()
     profile = graphene.Field(DomainProfile)
 
@@ -210,6 +292,15 @@ class DomainQuery(graphene.ObjectType):
         domain.domain = self.domain
         return domain
 
+    def resolve_shopper_by_domain(self, args, context, info):
+        client = context.get('regdb')
+        active_shopper = client.get_shopper_id_by_domain_name(self.domain)
+        shopper_client = context.get('shopper')
+        extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['date_created', 'first_name', 'email'])
+        othershoppers = shopper_client.get_shopper_by_domain_name(self.domain, ['shopper_id', 'date_created', 'first_name', 'email'])
+        lst = [ShopperById(**item) for item in othershoppers if item['shopper_id'] != active_shopper]
+        return ShopperByDomain(domain=self.domain, shopper_id=active_shopper, othershopperlist=lst, **extra_data)
+
     def resolve_profile(self, args, context, info):
         # Check redis cache for self.id key
         redis_key = self.domain
@@ -224,6 +315,7 @@ class DomainQuery(graphene.ObjectType):
         else:
             query_dict = json.loads(query_value).get("result")
         return DomainProfile(**query_dict)
+
 
 class Query(graphene.ObjectType):
     domain_query = graphene.Field(DomainQuery, domain=graphene.String(required=True))
