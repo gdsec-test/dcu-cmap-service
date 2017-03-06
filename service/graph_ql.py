@@ -16,6 +16,7 @@ class DomainName(graphene.Interface):
     message = graphene.String()
     parentChild = graphene.String()
     domain = ''
+    abuseContact = graphene.String()
 
 
 class ShopperPortfolio(graphene.Interface):
@@ -30,6 +31,10 @@ class ShopperPortfolio(graphene.Interface):
     Vip = graphene.String()
     shopper_id = graphene.String()
     accountRep = graphene.String()
+
+
+class DomainPortfolio(graphene.Interface):
+    Vip = graphene.String()
 
 
 class ShopperId(graphene.Interface):
@@ -60,6 +65,11 @@ class HostInfo(graphene.ObjectType):
                 context.get('redis').set_value(redis_key, query_value)
         return query_value.upper()
 
+    def resolve_abuseContact(self, args, context, info):
+        redis_key = '{}-host_abuse_contact'.format(self.domain)
+        query_value = context.get('redis').get_value(redis_key)
+        host_abuse = context.get('host_whois').get_abuse_email(self.domain)
+        return host_abuse
 
 class RegistrarInfo(graphene.ObjectType):
     class Meta:
@@ -75,6 +85,11 @@ class RegistrarInfo(graphene.ObjectType):
             context.get('redis').set_value(redis_key, query_value)
         return query_value
 
+    def resolve_abuseContact(self, args, context, info):
+        redis_key = '{}-registrar_abuse_contact'.format(self.domain)
+        query_value = context.get('redis').get_value(redis_key)
+        reg_abuse = context.get('whois').get_registrar_abuse(self.domain)
+        return reg_abuse
 
 class ResellerInfo(graphene.ObjectType):
     class Meta:
@@ -114,6 +129,22 @@ class ShopperProfile(graphene.ObjectType):
     def resolve_accountRep(self, args, context, info):
         return '{} {} ({})'.format(self.FirstName, self.LastName, self.Email)
 
+class DomainProfile(graphene.ObjectType):
+    class Meta:
+        interfaces = (DomainPortfolio,)
+
+    # The following is a dynamic 'catch-all' method to intercept calls
+    #  to any of the resolve_??? methods, instead of having to explicitly
+    #  write out however many of them there need to be.  The member variables
+    #  will still need to be defined in the DomainPortfolio class.
+    # http://stackoverflow.com/questions/42215848/specifically-named-dynamic-class-methods-in-python
+    def __getattribute__(self, attr):
+        if attr.startswith('resolve_'):
+            if hasattr(self, attr[8:]):
+                return lambda: getattr(self, attr[8:])
+            return lambda: 'There is no value for {}'.format(attr[8:])
+        return super(DomainProfile, self).__getattribute__(attr)
+
 
 class ShopperInfo(graphene.ObjectType):
     class Meta:
@@ -147,9 +178,9 @@ class ShopperQuery(graphene.ObjectType):
         if query_value is None:
             api = context.get('crm')
             query_dict = api.get_shopper_portfolio_information(self.id)
-            # Query the VIP USERS table, whose shoppers never get suspended
+            # Query the blacklist, whose entities never get suspended
             db = context.get('vip')
-            vip = db.query_shopper(self.id)
+            vip = db.query_entity(self.id)
             query_dict['Vip'] = vip
             context.get('redis').set_value(redis_key, json.dumps({"result": query_dict}))
         else:
@@ -162,6 +193,7 @@ class DomainQuery(graphene.ObjectType):
     registrar = graphene.Field(RegistrarInfo)
     reseller = graphene.Field(ResellerInfo)
     domain = graphene.String()
+    profile = graphene.Field(DomainProfile)
 
     def resolve_host(self, args, context, info):
         domain = HostInfo()
@@ -178,6 +210,20 @@ class DomainQuery(graphene.ObjectType):
         domain.domain = self.domain
         return domain
 
+    def resolve_profile(self, args, context, info):
+        # Check redis cache for self.id key
+        redis_key = self.domain
+        query_value = context.get('redis').get_value(redis_key)
+        if query_value is None:
+            # Query the blacklist, whose entities never get suspended
+            db = context.get('vip')
+            vip = db.query_entity(self.domain)
+            query_dict = {}
+            query_dict['Vip'] = vip
+            context.get('redis').set_value(redis_key, json.dumps({"result": query_dict}))
+        else:
+            query_dict = json.loads(query_value).get("result")
+        return DomainProfile(**query_dict)
 
 class Query(graphene.ObjectType):
     domain_query = graphene.Field(DomainQuery, domain=graphene.String(required=True))
