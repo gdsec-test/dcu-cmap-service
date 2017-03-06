@@ -1,4 +1,5 @@
 import re
+import xml.etree.ElementTree as ET
 
 
 class RegDbAPI(object):
@@ -21,3 +22,14 @@ class RegDbAPI(object):
         if match is None:
             return False, False
         return match.group(1), match.group(2)
+
+    def get_shopper_id_by_domain_name(self, domain_name):
+        doc = self._client.service.GetShopperIdByDomainName(domain_name)
+        active_shopper = re.search(r'SHOPPER_ID>(\d+)', doc).group(1)
+        return active_shopper
+
+    def get_domain_list_by_shopper_id(self, shopper_id):
+        data = []
+        domain_data = ET.fromstring(self._client.service.GetDomainListByShopperID(shopper_id, '', 0, 0, 10000))
+        data = [(node.findtext('DOMAIN_ID'), node.findtext('DOMAIN_NAME')) for node in domain_data.iter('RECORD')]
+        return data

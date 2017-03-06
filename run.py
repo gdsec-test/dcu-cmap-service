@@ -11,6 +11,7 @@ from service.reg_db_api import RegDbAPI
 from service.redis_cache import RedisCache
 from service.vip_clients import VipClients
 from service.crm_client_api import CrmClientApi
+from service.shopper_api import ShopperAPI
 
 
 # setup logging
@@ -33,7 +34,8 @@ app.debug = True
 ctx = {'crm': CrmClientApi(),
        'regdb': RegDbAPI(),
        'vip': VipClients(),
-       'redis': RedisCache()}
+       'redis': RedisCache(),
+       'shopper': ShopperAPI()}
 schema = graphene.Schema(query=Query)
 app.add_url_rule(
     '/graphql',
