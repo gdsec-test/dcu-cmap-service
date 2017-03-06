@@ -11,7 +11,7 @@ from service.reg_db_api import RegDbAPI
 from service.redis_cache import RedisCache
 from service.vip_clients import VipClients
 from service.crm_client_api import CrmClientApi
-
+from service.whois_query import WhoisQuery, Host
 
 # setup logging
 path = 'logging.yml'
@@ -33,7 +33,10 @@ app.debug = True
 ctx = {'crm': CrmClientApi(),
        'regdb': RegDbAPI(),
        'vip': VipClients(),
-       'redis': RedisCache()}
+       'redis': RedisCache(),
+       'whois': WhoisQuery(),
+       'host_whois': Host()}
+
 schema = graphene.Schema(query=Query)
 app.add_url_rule(
     '/graphql',
