@@ -16,7 +16,7 @@ class CrmClientApi(object):
         resp = self._client.service.GetShopperPortfolioInformation(self._request)
         match = re.search('<data count=.(\d+).>', resp.ResultXml)
         if match.group(1) == '0':
-            return "No Premium Services For This Shopper"
+            return {"PortfolioType": "No Premium Services For This Shopper"}
         doc = ET.fromstring(resp.ResultXml)
         self._elem = doc.find(".//*[@PortfolioType]").attrib
         return self._elem
