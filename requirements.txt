@@ -10,3 +10,4 @@ pymongo
 pyyaml
 uwsgi
 pythonwhois
+
