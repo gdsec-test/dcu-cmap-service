@@ -1,0 +1,15 @@
+{
+  domainQuery(domain: "lancehalvorson.com") {
+    domainCreate {
+      creationDate
+    }
+    domainStatus {
+      statusCode
+    }
+  }
+  shopperQuery(id: "4051350") {
+    shopperCreateDate {
+      creationDate
+    }
+  }
+}

@@ -59,6 +59,21 @@ class DomainName(graphene.Interface):
     abuseContact = graphene.String()
 
 
+class StatusInfo(graphene.Interface):
+    statusCode = graphene.String()
+    domain = ''
+
+
+class DomainCreateDate(graphene.Interface):
+    creationDate = graphene.String()
+    domain = ''
+
+
+class ShopperCreateDate(graphene.Interface):
+    creationDate = graphene.String()
+    id = ''
+
+
 class ShopperPortfolio(graphene.Interface):
     PhoneExt = graphene.String()
     FirstName = graphene.String()
@@ -111,6 +126,7 @@ class HostInfo(graphene.ObjectType):
         host_abuse = context.get('host_whois').get_abuse_email(self.domain)
         return host_abuse
 
+
 class RegistrarInfo(graphene.ObjectType):
     class Meta:
         interfaces = (DomainName,)
@@ -131,6 +147,7 @@ class RegistrarInfo(graphene.ObjectType):
         reg_abuse = context.get('whois').get_registrar_abuse(self.domain)
         return reg_abuse
 
+
 class ResellerInfo(graphene.ObjectType):
     class Meta:
         interfaces = (DomainName,)
@@ -147,6 +164,78 @@ class ResellerInfo(graphene.ObjectType):
             else:
                 query_value = 'Parent:{}, Child:{}'.format(retval[0], retval[1])
             context.get('redis').set_value(redis_key, query_value)
+        return query_value
+
+
+# DomainStatusInfo type is an implementation of the StatusInfo interface
+class DomainStatusInfo(graphene.ObjectType):
+    class Meta:
+        interfaces = (StatusInfo,)
+
+    def resolve_statusCode(self, args, context, info):
+        # Check redis cache for self.domain key
+        redis_key = '{}-domain_status'.format(self.domain)
+        query_value = context.get('redis').get_value(redis_key)
+        # if query_value is None:
+        #     try:
+        #         ip = socket.gethostbyname(self.domain)
+        #         ip_lookup = socket.gethostbyaddr(ip)
+        #         server_name = ip_lookup[0]
+        #         # split up server name and find domain before TLD
+        #         server_name_array = server_name.split(".")
+        #         query_value = server_name_array[len(server_name_array) - 2]
+        #         context.get('redis').set_value(redis_key, query_value)
+        #     except Exception as e:
+        #         logging.warning("Error in reverse DNS lookup %s : %s, attempting whois lookup..", ip, e.message)
+        #         regex = re.compile('[^a-zA-Z]')
+        #         query_value = regex.sub('', IPWhois(ip).lookup_rdap().get('network',[]).get('name', ''))
+        #         context.get('redis').set_value(redis_key, query_value)
+        return "domain"
+
+
+class DomainCreationInfo(graphene.ObjectType):
+    class Meta:
+        interfaces = (DomainCreateDate,)
+
+    def resolve_creationDate(self, args, context, info):
+        # Check redis cache for self.domain key
+        redis_key = '{}-domain_creation_date'.format(self.domain)
+        query_value = context.get('redis').get_value(redis_key)
+        # if query_value is None:
+        #     try:
+        #         ip = socket.gethostbyname(self.domain)
+        #         ip_lookup = socket.gethostbyaddr(ip)
+        #         server_name = ip_lookup[0]
+        #         # split up server name and find domain before TLD
+        #         server_name_array = server_name.split(".")
+        #         query_value = server_name_array[len(server_name_array) - 2]
+        #         context.get('redis').set_value(redis_key, query_value)
+        #     except Exception as e:
+        #         logging.warning("Error in reverse DNS lookup %s : %s, attempting whois lookup..", ip, e.message)
+        #         regex = re.compile('[^a-zA-Z]')
+        #         query_value = regex.sub('', IPWhois(ip).lookup_rdap().get('network',[]).get('name', ''))
+        #         context.get('redis').set_value(redis_key, query_value)
+        return "domain creation date"
+
+
+class ShopperCreateDateInfo(graphene.ObjectType):
+    class Meta:
+        interfaces = (ShopperCreateDate,)
+
+    def resolve_creationDate(self, args, context, info):
+        # Check redis cache for self.domain key
+        redis_key = '{}-shopper_creation_date'.format(self.id)
+        query_value = context.get('redis').get_value(redis_key)
+        if query_value is None:
+            shopper_client = context.get('shopper')
+            shopper_create_date = shopper_client.get_shopper_by_shopper_id(self.id, ['date_created'])
+            query_value = shopper_create_date
+            context.get('redis').set_value(redis_key, query_value)
+            # except Exception as e:
+            #     logging.warning("Error in getting the shopper creation date for %s : %s", self.domain, e.message)
+            #     regex = re.compile('[^a-zA-Z]')
+            #     query_value = regex.sub('', IPWhois(ip).lookup_rdap().get('network',[]).get('name', ''))
+            #     context.get('redis').set_value(redis_key, query_value)
         return query_value
 
 
@@ -168,6 +257,7 @@ class ShopperProfile(graphene.ObjectType):
 
     def resolve_accountRep(self, args, context, info):
         return '{} {} ({})'.format(self.FirstName, self.LastName, self.Email)
+
 
 class DomainProfile(graphene.ObjectType):
     class Meta:
@@ -205,6 +295,7 @@ class ShopperQuery(graphene.ObjectType):
     shopperid = graphene.Field(ShopperInfo)
     profile = graphene.Field(ShopperProfile)
     id = graphene.String()
+    shopper_create_date = graphene.Field(ShopperCreateDateInfo)
 
     def resolve_shopperid(self, args, context, info):
         shopper = ShopperInfo()
@@ -226,6 +317,11 @@ class ShopperQuery(graphene.ObjectType):
         else:
             query_dict = json.loads(query_value).get("result")
         return ShopperProfile(**query_dict)
+
+    def resolve_shopper_create_date(self, args, context, info):
+        shopper = ShopperCreateDateInfo()
+        shopper.id = self.id
+        return shopper
 
 
 class Shopper(graphene.AbstractType):
@@ -274,6 +370,8 @@ class DomainQuery(graphene.ObjectType):
     registrar = graphene.Field(RegistrarInfo)
     reseller = graphene.Field(ResellerInfo)
     shopper_by_domain = graphene.Field(ShopperByDomain)
+    domain_status = graphene.Field(DomainStatusInfo)
+    domain_create = graphene.Field(DomainCreationInfo)
     domain = graphene.String()
     profile = graphene.Field(DomainProfile)
 
@@ -291,6 +389,7 @@ class DomainQuery(graphene.ObjectType):
         domain = ResellerInfo()
         domain.domain = self.domain
         return domain
+
 
     def resolve_shopper_by_domain(self, args, context, info):
         client = context.get('regdb')
@@ -315,6 +414,16 @@ class DomainQuery(graphene.ObjectType):
         else:
             query_dict = json.loads(query_value).get("result")
         return DomainProfile(**query_dict)
+
+    def resolve_domain_status(self, args, context, info):
+        domain = DomainStatusInfo()
+        domain.domain = self.domain
+        return domain
+
+    def resolve_domain_create(self, args, context, info):
+        domain = DomainCreationInfo()
+        domain.domain = self.domain
+        return domain
 
 
 class Query(graphene.ObjectType):
