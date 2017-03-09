@@ -15,8 +15,6 @@ from service.shopper_api import ShopperAPI
 from service.whois_query import WhoisQuery, Host
 
 
-
-
 # setup logging
 path = 'logging.yml'
 value = os.getenv('LOG_CFG', None)
@@ -49,7 +47,7 @@ app.add_url_rule(
         'graphql',
         schema=schema,
         graphiql=True,  # for having the GraphiQL interface
-        context = ctx
+        context=ctx
     )
 )
 
