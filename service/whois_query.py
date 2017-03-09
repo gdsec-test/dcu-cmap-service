@@ -17,6 +17,20 @@ class WhoisQuery(object):
         abuse_string = ",".join(email_list)
         return abuse_string
 
+    def get_domain_create_date(self, domain_name):
+        """
+        Returns the date the domain name was created or None if not found
+        :param domain_name:
+        :return:
+        """
+        domain_name = domain_name[4:] if domain_name[:4] == 'www.' else domain_name
+        domain_query = pythonwhois.get_whois(domain_name)
+        if "No match" not in domain_query:
+            creation_date_query = domain_query.get('creation_date')
+            creation_date = creation_date_query[0].strftime('%Y/%m/%d')
+            return creation_date
+        return None
+
 
     #for host lookup, refer to dmv code
 class Host(object):

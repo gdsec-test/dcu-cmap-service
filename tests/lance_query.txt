@@ -13,3 +13,14 @@
     }
   }
 }
+
+
+domain creation date query
+
+{
+  domainQuery(domain: "lancehalvorson.com") {
+    domainCreate {
+      creationDate
+    }
+  }
+}

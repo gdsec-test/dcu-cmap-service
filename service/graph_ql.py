@@ -176,21 +176,12 @@ class DomainCreationInfo(graphene.ObjectType):
         # Check redis cache for self.domain key
         redis_key = '{}-domain_creation_date'.format(self.domain)
         query_value = context.get('redis').get_value(redis_key)
-        # if query_value is None:
-        #     try:
-        #         ip = socket.gethostbyname(self.domain)
-        #         ip_lookup = socket.gethostbyaddr(ip)
-        #         server_name = ip_lookup[0]
-        #         # split up server name and find domain before TLD
-        #         server_name_array = server_name.split(".")
-        #         query_value = server_name_array[len(server_name_array) - 2]
-        #         context.get('redis').set_value(redis_key, query_value)
-        #     except Exception as e:
-        #         logging.warning("Error in reverse DNS lookup %s : %s, attempting whois lookup..", ip, e.message)
-        #         regex = re.compile('[^a-zA-Z]')
-        #         query_value = regex.sub('', IPWhois(ip).lookup_rdap().get('network',[]).get('name', ''))
-        #         context.get('redis').set_value(redis_key, query_value)
-        return "domain creation date"
+        if query_value is None:
+            whois_client = context.get('whois')
+            domain_create_date = whois_client.get_domain_create_date(self.domain)
+            query_value = domain_create_date
+            context.get('redis').set_value(redis_key, query_value)
+        return query_value
 
 
 class ShopperCreateDateInfo(graphene.ObjectType):
@@ -198,19 +189,15 @@ class ShopperCreateDateInfo(graphene.ObjectType):
         interfaces = (ShopperCreateDate,)
 
     def resolve_creationDate(self, args, context, info):
-        # Check redis cache for self.domain key
+        # Check redis cache for self.id key
         redis_key = '{}-shopper_creation_date'.format(self.id)
         query_value = context.get('redis').get_value(redis_key)
         if query_value is None:
             shopper_client = context.get('shopper')
-            shopper_create_date = shopper_client.get_shopper_by_shopper_id(self.id, ['date_created'])
+            shopper_create_date_return = shopper_client.get_shopper_by_shopper_id(self.id, ['date_created'])
+            shopper_create_date = shopper_create_date_return['date_created']
             query_value = shopper_create_date
             context.get('redis').set_value(redis_key, query_value)
-            # except Exception as e:
-            #     logging.warning("Error in getting the shopper creation date for %s : %s", self.domain, e.message)
-            #     regex = re.compile('[^a-zA-Z]')
-            #     query_value = regex.sub('', IPWhois(ip).lookup_rdap().get('network',[]).get('name', ''))
-            #     context.get('redis').set_value(redis_key, query_value)
         return query_value
 
 
@@ -346,7 +333,7 @@ class DomainQuery(graphene.ObjectType):
     reseller = graphene.Field(ResellerInfo)
     shopper_by_domain = graphene.Field(ShopperByDomain)
     domain_status = graphene.Field(DomainStatusInfo)
-    domain_create = graphene.Field(DomainCreationInfo)
+    domain_create_date = graphene.Field(DomainCreationInfo)
     domain = graphene.String()
     profile = graphene.Field(DomainProfile)
 
@@ -404,7 +391,7 @@ class DomainQuery(graphene.ObjectType):
         domain.domain = self.domain
         return domain
 
-    def resolve_domain_create(self, args, context, info):
+    def resolve_domain_create_date(self, args, context, info):
         domain = DomainCreationInfo()
         domain.domain = self.domain
         return domain

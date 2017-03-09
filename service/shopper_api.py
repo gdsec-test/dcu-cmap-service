@@ -45,7 +45,6 @@ class ShopperAPI(object):
         # The following Fort Knox client will timeout on the dev side, unless a firewall rule is created
         #  allowing access from dev Rancher, which means no shopper id, account create date, etc when
         #  running from dev
-        # client = Client(self._WSDL, timeout=5)
         client = self._client
         return client.service.SearchShoppers(xmlstr)
 
@@ -64,17 +63,3 @@ class ShopperAPI(object):
         data = ET.fromstring(self._client.service.GetShopper(xmlstr))
         return {item.attrib['Name']: item.text for item in data.iter('Field')}
 
-    def get_shopper_info(self, domain):
-        """
-        Returns a tuple containing the shopper id, and the date created
-        :param domain:
-        :return:
-        """
-        # try:
-        # doc = ET.fromstring(self._lookup_shopper_info(domain))
-        doc = ET.fromstring(self.get_shopper_by_domain_name(self.domain, ['shopper_id', 'date_created']))
-        elem = doc.find(".//*[@shopper_id]")
-        return elem.get('shopper_id'), datetime.strptime(elem.get('date_created'), '%m/%d/%Y %I:%M:%S %p')
-        # except Exception as e:
-        #    #self._logger.error("Unable to lookup shopper info for {}:{}".format(domain, e))
-        #    return None, None
