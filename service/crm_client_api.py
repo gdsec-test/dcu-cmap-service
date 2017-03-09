@@ -18,5 +18,5 @@ class CrmClientApi(object):
         if match.group(1) == '0':
             return {"PortfolioType": "No Premium Services For This Shopper"}
         doc = ET.fromstring(resp.ResultXml)
-        self._elem = doc.find(".//*[@PortfolioType]").attrib
-        return self._elem
+        elem = doc.find(".//*[@PortfolioType]").attrib
+        return elem

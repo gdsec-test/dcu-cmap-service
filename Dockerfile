@@ -22,10 +22,10 @@ EXPOSE 5000
 ADD . /app
 
 # pip install private pips staged by Makefile
-RUN for entry in blindAl; \
-    do \
-    pip install --compile "/app/private_pips/$entry"; \
-    done
+#RUN for entry in blindAl; \
+#    do \
+#    pip install --compile "/app/private_pips/$entry"; \
+#    done
 
 # install other requirements
 RUN pip install --compile -r /app/requirements.txt
@@ -34,7 +34,7 @@ RUN pip install --compile -r /app/requirements.txt
 RUN apt-get remove --purge -y gcc \
     libssl-dev \
     python-dev && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /home/phishstory/phishnet/private_pips
+    rm -rf /var/lib/apt/lists/*
+    #rm -rf /home/phishstory/phishnet/private_pips
 
 ENTRYPOINT ["/app/runserver.sh"]

@@ -3,9 +3,6 @@ import json
 import socket
 import graphene
 
-import logging
-import logging.config
-
 from whois import whois
 from ipwhois import IPWhois
 from flask_graphql import GraphQLView
@@ -14,20 +11,6 @@ from flask_graphql import GraphQLView
 class DomainService(graphene.AbstractType):
     name = graphene.String()
     email = graphene.List(graphene.String, description='Email contact(s) for registrar')
-
-
-class Registrar(graphene.ObjectType, DomainService):
-    """
-   Registration info for Shopper domain
-   """
-    pass
-
-
-class Host(graphene.ObjectType, DomainService):
-    """
-    Hosting infor for Shopper domain
-    """
-    pass
 
 
 class DomainData(graphene.ObjectType):
@@ -52,10 +35,10 @@ class DomainSearch(graphene.ObjectType):
 
 
 class DomainName(graphene.Interface):
+    domain = ''
     name = graphene.String()
     message = graphene.String()
     parentChild = graphene.String()
-    domain = ''
     abuseContact = graphene.String()
 
 
@@ -72,6 +55,12 @@ class DomainCreateDate(graphene.Interface):
 class ShopperCreateDate(graphene.Interface):
     creationDate = graphene.String()
     id = ''
+
+
+class HostPortfolio(graphene.Interface):
+    domain = ''
+    host_network = graphene.String()
+    host_network_email = graphene.String()
 
 
 class ShopperPortfolio(graphene.Interface):
@@ -96,35 +85,21 @@ class ShopperId(graphene.Interface):
     domaincount = graphene.String()
 
 
-class HostInfo(graphene.ObjectType):
+class HostProfile(graphene.ObjectType):
     class Meta:
-        interfaces = (DomainName,)
+        interfaces = (HostPortfolio,)
 
-    def resolve_name(self, args, context, info):
-        # Check redis cache for self.domain key
-        redis_key = '{}-hosted'.format(self.domain)
-        query_value = context.get('redis').get_value(redis_key)
-        if query_value is None:
-            try:
-                ip = socket.gethostbyname(self.domain)
-                ip_lookup = socket.gethostbyaddr(ip)
-                server_name = ip_lookup[0]
-                # split up server name and find domain before TLD
-                server_name_array = server_name.split(".")
-                query_value = server_name_array[len(server_name_array) - 2]
-                context.get('redis').set_value(redis_key, query_value)
-            except Exception as e:
-                logging.warning("Error in reverse DNS lookup %s : %s, attempting whois lookup..", ip, e.message)
-                regex = re.compile('[^a-zA-Z]')
-                query_value = regex.sub('', IPWhois(ip).lookup_rdap().get('network',[]).get('name', ''))
-                context.get('redis').set_value(redis_key, query_value)
-        return query_value.upper()
-
-    def resolve_abuseContact(self, args, context, info):
-        redis_key = '{}-host_abuse_contact'.format(self.domain)
-        query_value = context.get('redis').get_value(redis_key)
-        host_abuse = context.get('host_whois').get_abuse_email(self.domain)
-        return host_abuse
+    # The following is a dynamic 'catch-all' method to intercept calls
+    #  to any of the resolve_??? methods, instead of having to explicitly
+    #  write out however many of them there need to be.  The member variables
+    #  will still need to be defined in the DomainPortfolio class.
+    # http://stackoverflow.com/questions/42215848/specifically-named-dynamic-class-methods-in-python
+    def __getattribute__(self, attr):
+        if attr.startswith('resolve_'):
+            if hasattr(self, attr[8:]):
+                return lambda: getattr(self, attr[8:])
+            return lambda: 'There is no value for {}'.format(attr[8:])
+        return super(HostProfile, self).__getattribute__(attr)
 
 
 class RegistrarInfo(graphene.ObjectType):
@@ -190,7 +165,7 @@ class DomainStatusInfo(graphene.ObjectType):
         #         regex = re.compile('[^a-zA-Z]')
         #         query_value = regex.sub('', IPWhois(ip).lookup_rdap().get('network',[]).get('name', ''))
         #         context.get('redis').set_value(redis_key, query_value)
-        return "domain"
+        return "domain status code"
 
 
 class DomainCreationInfo(graphene.ObjectType):
@@ -366,7 +341,7 @@ class ShopperByDomain(graphene.ObjectType, Shopper):
 
 
 class DomainQuery(graphene.ObjectType):
-    host = graphene.Field(HostInfo)
+    host = graphene.Field(HostProfile)
     registrar = graphene.Field(RegistrarInfo)
     reseller = graphene.Field(ResellerInfo)
     shopper_by_domain = graphene.Field(ShopperByDomain)
@@ -376,9 +351,19 @@ class DomainQuery(graphene.ObjectType):
     profile = graphene.Field(DomainProfile)
 
     def resolve_host(self, args, context, info):
-        domain = HostInfo()
-        domain.domain = self.domain
-        return domain
+        # Check redis cache for self.id key
+        redis_key = '{}-host_network'.format(self.domain)
+        query_value = context.get('redis').get_value(redis_key)
+        if query_value is None:
+            # Query the ip whois for domain
+            ip = socket.gethostbyname(self.domain)
+            info = IPWhois(ip).lookup_whois()
+            query_dict = {'host_network': info.get('nets')[0].get('name'),
+                          'host_network_email': info.get('nets')[0].get('emails')}
+            context.get('redis').set_value(redis_key, json.dumps({"result": query_dict}))
+        else:
+            query_dict = json.loads(query_value).get("result")
+        return HostProfile(**query_dict)
 
     def resolve_registrar(self, args, context, info):
         domain = RegistrarInfo()
@@ -389,7 +374,6 @@ class DomainQuery(graphene.ObjectType):
         domain = ResellerInfo()
         domain.domain = self.domain
         return domain
-
 
     def resolve_shopper_by_domain(self, args, context, info):
         client = context.get('regdb')
