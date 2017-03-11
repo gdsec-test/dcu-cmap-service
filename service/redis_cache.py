@@ -2,9 +2,9 @@ from redis import Redis
 
 
 class RedisCache(object):
-    def __init__(self, redis_host='redis', redis_ttl=86400):
-        self.redis = Redis(redis_host)
-        self.redis_ttl = redis_ttl
+    def __init__(self, settings):
+        self.redis = Redis(settings.REDIS_HOST)
+        self.redis_ttl = settings.REDIS_TTL
 
     def get_value(self, redis_key):
         try:
