@@ -6,12 +6,12 @@ from flask_graphql import GraphQLView
 
 
 class DomainService(graphene.AbstractType):
-    name = graphene.String()
+    name = graphene.String(description='Name of registrar or hosting provider')
     email = graphene.List(graphene.String, description='Email contact(s)')
 
 
 class RegistrarInfo(graphene.ObjectType, DomainService):
-    create_date = graphene.String()
+    create_date = graphene.String(description='Date domain was registered')
 
 
 class HostInfo(graphene.ObjectType, DomainService):
@@ -19,8 +19,8 @@ class HostInfo(graphene.ObjectType, DomainService):
 
 
 class ApiResellerService(graphene.AbstractType):
-    parent = graphene.String()
-    child = graphene.String()
+    parent = graphene.String(description='API Reseller Parent shopper id')
+    child = graphene.String(description='API Reseller Child shopper id')
 
 
 class ApiResellerInfo(graphene.ObjectType, ApiResellerService):
@@ -31,8 +31,8 @@ class DomainData(graphene.ObjectType):
     """
     Data returned in a DomainSearch
     """
-    domainid = graphene.String()
-    domain = graphene.String()
+    domainid = graphene.String(description='ID of domain name')
+    domain = graphene.String(description='Actual domain name')
 
 
 class DomainSearch(graphene.ObjectType):
@@ -40,7 +40,7 @@ class DomainSearch(graphene.ObjectType):
     Holds the results of a domain search
     """
     pattern = ''
-    results = graphene.List(DomainData)
+    results = graphene.List(DomainData, description='List of results matching domain search regex')
     domainlist = []
 
     def resolve_results(self, args, context, info):
@@ -48,37 +48,23 @@ class DomainSearch(graphene.ObjectType):
         return [DomainData(domainid=item[0], domain=item[1]) for item in self.domainlist if regex.match(item[1])]
 
 
-class DomainName(graphene.Interface):
-    domain = ''
-    name = graphene.String()
-    message = graphene.String()
-    parentChild = graphene.String()
-    abuseContact = graphene.String()
-
-
 class StatusInfo(graphene.Interface):
     domain = ''
-    statusCode = graphene.String()
-
-
-class HostPortfolio(graphene.Interface):
-    domain = ''
-    host_network = graphene.String()
-    host_network_email = graphene.String()
+    statusCode = graphene.String(description='The registrar status code for provided domain name')
 
 
 class ShopperPortfolio(graphene.AbstractType):
-    PhoneExt = graphene.String()
-    FirstName = graphene.String()
-    LastName = graphene.String()
-    Email = graphene.String()
-    PortfolioTypeID = graphene.String()
-    InternalPhoneQueue = graphene.String()
-    InternalImageURL = graphene.String()
-    PortfolioType = graphene.String()
-    blacklist = graphene.String()
-    shopper_id = graphene.String()
-    accountRep = graphene.String()
+    PhoneExt = graphene.String(description='Account Rep Phone Extension')
+    FirstName = graphene.String(description='Account Rep First Name')
+    LastName = graphene.String(description='Account Rep Last Name')
+    accountRep = graphene.String(description='Account Rep Full Name')
+    Email = graphene.String(description='Account Rep Email Address')
+    PortfolioTypeID = graphene.String(description='Account Rep Portfolio Type ID')
+    InternalPhoneQueue = graphene.String(description='Account Rep Internal Phone Queue')
+    InternalImageURL = graphene.String(description='Image URL for Shopper Portfolio Type')
+    PortfolioType = graphene.String(description='Shopper Portfolio Type')
+    blacklist = graphene.String(description='Shopper Blacklist Status - Do Not Suspend!')
+    shopper_id = graphene.String(description='Shopper ID')
 
 
 #TODO: Finish endpoint once client cert is white-listed
@@ -124,8 +110,8 @@ class Shopper(graphene.AbstractType):
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
     child = graphene.String(description='Child account owned by the shopper')
     domainsearch = graphene.Field(DomainSearch, regex=graphene.String(required=True))
-    first_name = graphene.String()
-    email = graphene.String()
+    first_name = graphene.String(description='First Name for Shopper')
+    email = graphene.String(description='Email Address for Shopper')
 
     def resolve_domain_count(self, args, context, info):
         client = context.get('regdb')
@@ -159,13 +145,13 @@ class ShopperByDomain(graphene.ObjectType, Shopper):
 
 
 class DomainQuery(graphene.ObjectType):
-    host = graphene.Field(HostInfo)
-    registrar = graphene.Field(RegistrarInfo)
-    api_reseller = graphene.Field(ApiResellerInfo)
-    shopper_info = graphene.Field(ShopperByDomain)
-    domain_status = graphene.Field(DomainStatusInfo)
-    domain = graphene.String()
-    blacklist = graphene.Boolean()
+    host = graphene.Field(HostInfo, description='Hosting Information for Provided Domain Name')
+    registrar = graphene.Field(RegistrarInfo, description='Registrar Information for Provided Domain Name')
+    api_reseller = graphene.Field(ApiResellerInfo, description='API Reseller Information for Provided Domain Name')
+    shopper_info = graphene.Field(ShopperByDomain, description='Shopper Information for Provided Domain Name')
+    domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
+    domain = graphene.String(description='Domain Name from DomainQuery')
+    blacklist = graphene.Boolean(description='Domain Name Blacklist Status - Do Not Suspend!')
 
     def resolve_host(self, args, context, info):
         whois = context.get('whois').get_hosting_info(self.domain)
@@ -190,8 +176,8 @@ class DomainQuery(graphene.ObjectType):
                                                                                 'date_created',
                                                                                 'first_name',
                                                                                 'email'])
-        lst = [ShopperQuery(**item) for item in othershoppers if item['shopper_id'] != active_shopper]
-        return ShopperByDomain(shopper_id=active_shopper, othershopperlist=lst, **extra_data)
+        oslist = [ShopperQuery(**item) for item in othershoppers if item['shopper_id'] != active_shopper]
+        return ShopperByDomain(shopper_id=active_shopper, othershopperlist=oslist, **extra_data)
 
     def resolve_blacklist(self, args, context, info):
         vip = context.get('vip').query_entity(self.domain)
@@ -204,15 +190,21 @@ class DomainQuery(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    domain_query = graphene.Field(DomainQuery, domain=graphene.String(required=True))
-    shopper_query = graphene.Field(ShopperQuery, id=graphene.String(required=True))
+    domain_query = graphene.Field(DomainQuery,
+                                  domain=graphene.String(required=True),
+                                  description='Top level query based on domain names')
+    shopper_query = graphene.Field(ShopperQuery,
+                                   id=graphene.String(required=True),
+                                   description='Top level query based on shopper id')
 
     def resolve_domain_query(self, args, context, info):
         return DomainQuery(domain=args.get('domain'))
 
     def resolve_shopper_query(self, args, context, info):
         shopper = args.get('id')
-        extra_data = context.get('shopper').get_shopper_by_shopper_id(shopper, ['date_created', 'first_name', 'email'])
+        extra_data = context.get('shopper').get_shopper_by_shopper_id(shopper, ['date_created',
+                                                                                'first_name',
+                                                                                'email'])
         return ShopperQuery(shopper_id=args.get('id'), **extra_data)
 
 

@@ -1,11 +1,11 @@
-import re
 import json
+import logging
 import xml.etree.ElementTree as ET
 
 
 class RegDbAPI(object):
     _WSDL = 'https://dsweb.prod.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll?Handler=GenRegDBWebSvcWSDL'
-    REDIS_KEY = 'result'
+    REDIS_DATA_KEY = 'result'
 
     def __init__(self, redis_obj):
         from suds.client import Client
@@ -13,34 +13,71 @@ class RegDbAPI(object):
         self._redis = redis_obj
 
     def get_domain_count_by_shopper_id(self, shopper_id):
-        xml_query = '<request><shopper shopperid="{}"/></request>'.format(shopper_id)
-        xml_response = self._client.service.GetDomainCountByShopperID(xml_query)
-        match = re.search('domaincount="(\d+)"', xml_response)
-        return match.group(1)
+        # Check redis cache for domain count
+        redis_record_key = '{}-domain_count'.format(shopper_id)
+        try:
+            query_value = self._redis.get_value(redis_record_key)
+            if query_value is None:
+                xml_query = '<request><shopper shopperid="{}"/></request>'.format(shopper_id)
+                doc = ET.fromstring(self._client.service.GetDomainCountByShopperID(xml_query))
+                if doc.find(".//*[@domaincount]") is not None:
+                    query_value = doc.find(".//*[@domaincount]").get('domaincount')
+                self._redis.set_value(redis_record_key, query_value)
+            return query_value
+        except Exception as e:
+            logging.warning("Error in getting the domain count for %s : %s", shopper_id, e.message)
 
     def get_parent_child_shopper_by_domain_name(self, domain_name):
-        # Check redis cache for self.domain key
-        redis_key = '{}-reseller_parent_child'.format(domain_name)
-        query_value = self._redis.get_value(redis_key)
-        if query_value is None:
-            xml_response = self._client.service.GetParentChildShopperByDomainName(domain_name)
-            match = re.search('<PARENT_SHOPPER_ID>(\d+)</PARENT_SHOPPER_ID><CHILD_SHOPPER_ID>(\d+)</CHILD_SHOPPER_ID>',
-                              xml_response)
-            if match is None:
-                query_value = dict(parent=None, child=None)
+        # Check redis cache for parent/child api reseller info
+        redis_record_key = '{}-reseller_parent_child'.format(domain_name)
+        try:
+            query_value = self._redis.get_value(redis_record_key)
+            if query_value is None:
+                doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name))
+                if doc.find('RECORDSET') is None or \
+                                doc.find('RECORDSET').find('RECORD') is None:
+                    query_value = dict(parent=None, child=None)
+                else:
+                    doc_record = doc.find('RECORDSET').find('RECORD')
+                    parent = doc_record.find('PARENT_SHOPPER_ID').text
+                    child = doc_record.find('CHILD_SHOPPER_ID').text
+                    query_value = dict(parent=parent, child=child)
+                self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
-                query_value = dict(parent=match.group(1), child=match.group(2))
-            self._redis.set_value(redis_key, json.dumps({self.REDIS_KEY: query_value}))
-        else:
-            query_value = json.loads(query_value).get(self.REDIS_KEY)
-        return query_value
+                query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
+            return query_value
+        except Exception as e:
+            logging.warning("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
 
     def get_shopper_id_by_domain_name(self, domain_name):
-        doc = self._client.service.GetShopperIdByDomainName(domain_name)
-        active_shopper = re.search(r'SHOPPER_ID>(\d+)', doc).group(1)
-        return active_shopper
+        # Check redis cache for shopper id
+        redis_record_key = '{}-shopper_id_by_domain'.format(domain_name)
+        try:
+            query_value = self._redis.get_value(redis_record_key)
+            if query_value is None:
+                doc = ET.fromstring(self._client.service.GetShopperIdByDomainName(domain_name))
+                if doc.find('RECORDSET') is None or \
+                                doc.find('RECORDSET').find('RECORD') is None or \
+                                doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID') is None:
+                    return None
+                query_value = doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID').text
+                self._redis.set_value(redis_record_key, query_value)
+            return query_value
+        except Exception as e:
+            logging.warning("Error in getting the shopper id for %s : %s", domain_name, e.message)
 
     def get_domain_list_by_shopper_id(self, shopper_id):
-        domain_data = ET.fromstring(self._client.service.GetDomainListByShopperID(shopper_id, '', 0, 0, 10000))
-        data = [(node.findtext('DOMAIN_ID'), node.findtext('DOMAIN_NAME')) for node in domain_data.iter('RECORD')]
-        return data
+        # Check redis cache for domain list by shopper id
+        redis_record_key = '{}-domain_list_by_shopper'.format(shopper_id)
+        try:
+            query_value = self._redis.get_value(redis_record_key)
+            if query_value is None:
+                domain_data = ET.fromstring(self._client.service.GetDomainListByShopperID(shopper_id, '', 0, 0, 10000))
+                query_value = [(node.findtext('DOMAIN_ID'), node.findtext('DOMAIN_NAME'))
+                               for node in domain_data.iter('RECORD')]
+                self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
+            else:
+                query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
+            return query_value
+        except Exception as e:
+            logging.warning("Error in getting the domain list for %s : %s", shopper_id, e.message)

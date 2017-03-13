@@ -13,7 +13,7 @@ class ShopperAPI(object):
     ENCODING = 'utf8'
     SOAP_METHOD = 'xml'
     REQUESTED_BY = 'DCU-ENG'
-    REDIS_KEY = 'result'
+    REDIS_DATA_KEY = 'result'
 
     def __init__(self, redis_obj):
         self._client = Client(self._WSDL, timeout=5)
@@ -27,8 +27,8 @@ class ShopperAPI(object):
         :return:
         """
         try:
-            redis_key = '{}-domain_shopper_info'.format(domain_name)
-            query_list = self._redis.get_value(redis_key)
+            redis_record_key = '{}-shopper_info_by_domain'.format(domain_name)
+            query_list = self._redis.get_value(redis_record_key)
             if query_list is None:
                 shopper_search = ET.Element("ShopperSearch", IPAddress='', RequestedBy=self.REQUESTED_BY)
                 search_fields = ET.SubElement(shopper_search, 'SearchFields')
@@ -45,9 +45,9 @@ class ShopperAPI(object):
                         # Change the format of the date string
                         query_list[query_index][self.DATE_STRING] = functions.convert_string_date_to_mongo_format(
                             query_list[query_index].get(self.DATE_STRING))
-                self._redis.set_value(redis_key, json.dumps({self.REDIS_KEY: query_list}))
+                self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_list}))
             else:
-                query_list = json.loads(query_list).get(self.REDIS_KEY)
+                query_list = json.loads(query_list).get(self.REDIS_DATA_KEY)
             return query_list
         except Exception as e:
             logging.warning("Error in getting the shopper info for %s : %s", domain_name, e.message)
@@ -60,8 +60,8 @@ class ShopperAPI(object):
         :return:
         """
         try:
-            redis_key = '{}-id_shopper_info'.format(shopper_id)
-            query_dict = self._redis.get_value(redis_key)
+            redis_record_key = '{}-shopper_info_by_id'.format(shopper_id)
+            query_dict = self._redis.get_value(redis_record_key)
             if query_dict is None:
                 shopper_search = ET.Element("ShopperGet", IPAddress='', RequestedBy=self.REQUESTED_BY, ID=shopper_id)
                 return_fields = ET.SubElement(shopper_search, "ReturnFields")
@@ -74,9 +74,9 @@ class ShopperAPI(object):
                     # Change the format of the date string
                     query_dict[self.DATE_STRING] = functions.convert_string_date_to_mongo_format(
                         query_dict.get(self.DATE_STRING))
-                self._redis.set_value(redis_key, json.dumps({self.REDIS_KEY: query_dict}))
+                self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_dict}))
             else:
-                query_dict = json.loads(query_dict).get(self.REDIS_KEY)
+                query_dict = json.loads(query_dict).get(self.REDIS_DATA_KEY)
             return query_dict
         except Exception as e:
             logging.warning("Error in getting the shopper info for %s : %s", shopper_id, e.message)

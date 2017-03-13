@@ -1,10 +1,14 @@
+import logging
 from redis import Redis
 
 
 class RedisCache(object):
     def __init__(self, settings):
-        self.redis = Redis(settings.REDIS_HOST)
-        self.redis_ttl = settings.REDIS_TTL
+        try:
+            self.redis = Redis(settings.REDIS_HOST)
+            self.redis_ttl = settings.REDIS_TTL
+        except Exception as e:
+            logging.fatal("Error in creating redis connection: %s", e.message)
 
     def get_value(self, redis_key):
         try:
@@ -14,5 +18,8 @@ class RedisCache(object):
         return redis_value
 
     def set_value(self, redis_key, redis_value):
-        self.redis.set(redis_key, redis_value)
-        self.redis.expire(redis_key, self.redis_ttl)
+        try:
+            self.redis.set(redis_key, redis_value)
+            self.redis.expire(redis_key, self.redis_ttl)
+        except Exception as e:
+            logging.error("Error in setting the redis value for %s : %s", redis_key, e.message)

@@ -1,6 +1,7 @@
 import re
 
 
+# Functions to convert random date strings into a mongo date format
 def zero_pad_date_slice(date_slice):
     if len(date_slice) == 1:
         date_slice = '0{}'.format(date_slice)
