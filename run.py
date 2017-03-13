@@ -12,7 +12,9 @@ from service.redis_cache import RedisCache
 from service.vip_clients import VipClients
 from service.crm_client_api import CrmClientApi
 from service.shopper_api import ShopperAPI
-from service.whois_query import WhoisQuery, Host
+from service.whois_query import WhoisQuery
+
+from settings import config_by_name
 
 
 # setup logging
@@ -27,18 +29,22 @@ if os.path.exists(path):
 else:
     logging.basicConfig(level=logging.INFO)
 
+# Import appropriate settings for running environment
+env = os.getenv('sysenv') or 'dev'
+config = config_by_name[env]()
+redis_obj = RedisCache(config)
 
 app = Flask(__name__)
 app.debug = True
+
 # Only instantiate the helper classes once, and attach it to the context, which is available
 #  to all the other classes which need to use them
-ctx = {'crm': CrmClientApi(),
-       'regdb': RegDbAPI(),
-       'vip': VipClients(),
-       'redis': RedisCache(),
-       'shopper': ShopperAPI(),
-       'whois': WhoisQuery(),
-       'host_whois': Host()}
+ctx = {'crm': CrmClientApi(redis_obj),
+       'regdb': RegDbAPI(redis_obj),
+       'vip': VipClients(config, redis_obj),
+       'redis': redis_obj,
+       'shopper': ShopperAPI(redis_obj),
+       'whois': WhoisQuery(config, redis_obj)}
 
 schema = graphene.Schema(query=Query)
 app.add_url_rule(

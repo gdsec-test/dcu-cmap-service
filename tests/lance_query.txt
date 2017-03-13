@@ -1,6 +1,6 @@
 {
   domainQuery(domain: "lancehalvorson.com") {
-    domainCreate {
+    domainCreateDate {
       creationDate
     }
     domainStatus {
@@ -19,7 +19,7 @@ domain creation date query
 
 {
   domainQuery(domain: "lancehalvorson.com") {
-    domainCreate {
+    domainCreateDate {
       creationDate
     }
   }

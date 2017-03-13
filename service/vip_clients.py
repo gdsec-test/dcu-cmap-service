@@ -1,18 +1,29 @@
+import logging
 from pymongo import MongoClient
 
 
 class VipClients(object):
 
-    def __init__(self, db_host='localhost', db_port=27017, db='local', table='blacklist'):
-        client = MongoClient(db_host, db_port)
-        db = client[db]
-        self.collection = db[table]
+    MONGO_INSTANCE_KEY = 'entity' # The key name used in the mongodb blacklist record
+
+    def __init__(self, settings, redis_obj):
+        client = MongoClient(settings.DBURL)
+        db = client[settings.DB]
+        self._collection = db[settings.COLLECTION]
+        self._redis = redis_obj
 
     def query_entity(self, entity_id):
-        db_key = 'entity'
-        result = self.collection.find_one({db_key: str(entity_id)})
-        # If the shopper id exists, they are VIP
-        vip_status = True
-        if result is None:
-            vip_status = False
-        return vip_status
+        try:
+            redis_record_key = '{}-blacklist_status'.format(entity_id)
+            blacklist_status = self._redis.get_value(redis_record_key)
+            if blacklist_status is None:
+                result = self._collection.find_one({self.MONGO_INSTANCE_KEY: str(entity_id)})
+                # If the shopper id exists, they are VIP
+                blacklist_status = True
+                if result is None:
+                    blacklist_status = False
+                self._redis.set_value(redis_record_key, blacklist_status)
+                # Works regardless if blacklist_status is a bool or a string
+            return blacklist_status if isinstance(blacklist_status, bool) else 'True' in blacklist_status
+        except Exception as e:
+            logging.warning("Error in getting the blacklist status for %s : %s", entity_id, e.message)
