@@ -8,6 +8,7 @@ MAINTAINER DCU <DCUEng@godaddy.com>
 RUN apk update && \
     apk --no-cache add build-base \
     ca-certificates \
+    openssl-dev \
     linux-headers \
     python-dev \
     py-pip

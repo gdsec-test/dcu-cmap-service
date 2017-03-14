@@ -7,6 +7,7 @@ def zero_pad_date_slice(date_slice):
         date_slice = '0{}'.format(date_slice)
     return date_slice
 
+
 def convert_string_date_to_mongo_format(old_date):
 
     good_date = old_date
@@ -34,10 +35,19 @@ def convert_string_date_to_mongo_format(old_date):
                 if len(match.group(1)) >= 8:
                     date_list = match.group(1).split(delimiter)
                     # zero pad date so the above date looks like 01/01/1111
-                    for slice in range(len(date_list)):
-                        date_list[slice] = zero_pad_date_slice(date_list[slice])
+                    for dl_slice in range(len(date_list)):
+                        date_list[dl_slice] = zero_pad_date_slice(date_list[dl_slice])
                     if len(date_list[0]) == 4:
                         good_date = mongo_date_format.format(date_list[0], date_list[1], date_list[2])
                     elif len(date_list[2]) == 4:
                         good_date = mongo_date_format.format(date_list[2], date_list[0], date_list[1])
     return good_date
+
+
+def have_exception_return_expected_dict(the_dict, the_keys):
+    # If exception occurred before query_value had completed assignment, set keys to None
+    if the_dict is None:
+        the_dict = {}
+    for key in the_keys:
+        the_dict[key] = the_dict.get(key)
+    return the_dict

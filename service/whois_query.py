@@ -5,6 +5,7 @@ import datetime
 from whois import whois
 
 from ipwhois import IPWhois
+from functions import have_exception_return_expected_dict
 
 
 class WhoisQuery(object):
@@ -41,6 +42,8 @@ class WhoisQuery(object):
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
             logging.warning("Error in getting the hosting whois info for %s : %s", domain_name, e.message)
+            # If exception occurred before query_value had completed assignment, set keys to None
+            query_value = have_exception_return_expected_dict(query_value, ['name', 'email'])
         return query_value
 
     def get_registrar_info(self, domain_name):
@@ -65,4 +68,6 @@ class WhoisQuery(object):
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
             logging.warning("Error in getting the registrar whois info for %s : %s", domain_name, e.message)
+            # If exception occurred before query_value had completed assignment, set keys to None
+            query_value = have_exception_return_expected_dict(query_value, ['name', 'email', 'create_date'])
         return query_value
