@@ -23,7 +23,7 @@ prep:
 prod: prep
 	@echo "----- building $(REPONAME) prod -----"
 	DOCKERTAG=prod
-	docker build -t $(DOCKERREPO):prod $(BUILDROOT)
+	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
 
 clean:
 	@echo "----- cleaning $(REPONAME) app -----"
