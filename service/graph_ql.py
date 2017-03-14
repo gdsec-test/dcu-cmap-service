@@ -108,6 +108,7 @@ class Shopper(graphene.AbstractType):
     date_created = graphene.String(description='The create data of the shopper')
     domain_count = graphene.Int(description='Number of domains owned by the shopper')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
+    # TODO: I dont think "child" does anything...
     child = graphene.String(description='Child account owned by the shopper')
     domainsearch = graphene.Field(DomainSearch, regex=graphene.String(required=True))
     first_name = graphene.String(description='First Name for Shopper')
