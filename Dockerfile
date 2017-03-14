@@ -1,18 +1,16 @@
-# PhishNet
+# CMAP Service
 #
-# V 5.0 Shared Volume Multi Docker
 
-FROM ubuntu:14.04
-MAINTAINER CSIRT-CSA <csa@godaddy.com>
+FROM alpine:3.5
+MAINTAINER DCU <DCUEng@godaddy.com>
 
-# apt-get installs
-RUN apt-get update && \
-    apt-get install -y build-essential \
-    gcc \
-    libssl-dev \
-    python \
+# apk installs
+RUN apk update && \
+    apk --no-cache add build-base \
+    ca-certificates \
+    linux-headers \
     python-dev \
-    python-pip
+    py-pip
 
 
 # Expose Flask port 5000
@@ -20,21 +18,19 @@ EXPOSE 5000
 
 # Move files to new dir
 ADD . /app
+WORKDIR /app
+COPY trusted_certs /usr/local/share/ca-certificates
 
 # pip install private pips staged by Makefile
-RUN for entry in blindAl; \
+RUN update-ca-certificates && for entry in blindAl; \
     do \
-    pip install --compile "/app/private_pips/$entry"; \
+    pip install --compile "private_pips/$entry"; \
     done
 
 # install other requirements
-RUN pip install --compile -r /app/requirements.txt
+RUN pip install --compile -r requirements.txt
 
 # cleanup
-RUN apt-get remove --purge -y gcc \
-    libssl-dev \
-    python-dev && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /home/phishstory/phishnet/private_pips
+RUN rm -rf private_pips
 
 ENTRYPOINT ["/app/runserver.sh"]
