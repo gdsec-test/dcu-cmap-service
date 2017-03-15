@@ -1,0 +1,60 @@
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "cmap-service"
+  namespace: "abuse-api-dev"
+  labels:
+    app: "cmap-service"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "cmap-service"
+    spec:
+      imagePullSecrets:
+        -
+          name: "k8s-artifactory-creds"
+      containers:
+        -
+          name: "cmap_service"
+          imagePullPolicy: "Always"
+          image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:dev"
+          env:
+          - name: sysenv
+            value: dev
+          - name: SSL_CERT
+            value: /certs/tls.crt
+          - name: SSL_KEY
+            value: /certs/tls.key
+          - name: REDIS
+            value: redis.abuse-api-dev.svc.cluster.local
+          - name: KEYFILE
+            value: /keyfiles/key.txt
+          - name: BROKER_PASS
+            valueFrom:
+              secretKeyRef:
+                name: amqp-cmap-service
+                key: password
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: db-cmap-service
+                key: password
+                
+          volumeMounts:
+          - name: encryption-keys
+            mountPath: /keyfiles
+            readOnly: true
+          - name: tls-files
+            mountPath: /certs
+            readOnly: true
+      
+      volumes:
+        - name: encryption-keys
+          secret:
+            secretName: encryption-key-files
+        - name: tls-files
+          secret:
+            secretName: tls-cmap-service
