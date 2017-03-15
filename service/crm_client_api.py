@@ -1,6 +1,6 @@
 import json
 import logging
-
+from request_transport import RequestsTransport
 import xml.etree.ElementTree as ET
 
 from suds.client import Client
@@ -8,12 +8,18 @@ from functions import return_expected_dict_due_to_exception
 
 
 class CrmClientApi(object):
-    _WSDL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc?singleWsdl'
+    _LOCATION = 'https://crmclient.cmap.int.godaddy.com:8443/Shopper.svc'
+    _WSDL = _LOCATION + '?singleWsdl'
     _FACTORY = '{http://schemas.datacontract.org/2004/07/GoDaddy.CRM.ClientAPI.DataContracts}ShopperPortfolioInformationRequest'
     REDIS_DATA_KEY = 'result'
 
-    def __init__(self, redis_obj):
-        self._client = Client(self._WSDL)
+    def __init__(self, settings, redis_obj):
+        self._client = Client(self._WSDL, location=self._LOCATION, 
+                              headers=RequestsTransport.get_soap_headers(),
+                              transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                                          password=settings.CMAP_PROXY_PASS,
+                                                          cert=settings.CMAP_PROXY_CERT,
+                                                          key=settings.CMAP_PROXY_KEY))
         self._request = self._client.factory.create(self._FACTORY)
         self._redis = redis_obj
 
