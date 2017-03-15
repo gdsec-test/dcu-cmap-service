@@ -20,6 +20,16 @@ prep:
 	# copy the app code to the build root
 	cp -rp ./* $(BUILDROOT)
 
+dev: prep
+	@echo "----- building $(REPONAME) prod -----"
+	DOCKERTAG=dev
+	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
+
+ote: prep
+	@echo "----- building $(REPONAME) prod -----"
+	DOCKERTAG=ote
+	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
+
 prod: prep
 	@echo "----- building $(REPONAME) prod -----"
 	DOCKERTAG=prod
