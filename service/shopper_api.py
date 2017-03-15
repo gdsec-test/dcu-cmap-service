@@ -5,6 +5,7 @@ import functions
 import xml.etree.ElementTree as ET
 
 from suds.client import Client
+from functions import return_expected_dict_due_to_exception
 
 
 class ShopperAPI(object):
@@ -26,7 +27,10 @@ class ShopperAPI(object):
         :param fields:
         :return:
         """
+        query_list = []
         try:
+            if domain_name is None or domain_name == '':
+                raise ValueError('Blank domain name was provided')
             redis_record_key = '{}-shopper_info_by_domain'.format(domain_name)
             query_list = self._redis.get_value(redis_record_key)
             if query_list is None:
@@ -48,9 +52,11 @@ class ShopperAPI(object):
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_list}))
             else:
                 query_list = json.loads(query_list).get(self.REDIS_DATA_KEY)
-            return query_list
         except Exception as e:
-            logging.warning("Error in getting the shopper info for %s : %s", domain_name, e.message)
+            logging.error("Error in getting the shopper info for %s : %s", domain_name, e.message)
+            # If exception occurred before query_value had completed assignment, set keys to None
+            query_list = list(return_expected_dict_due_to_exception(query_list, fields))
+        return query_list
 
     def get_shopper_by_shopper_id(self, shopper_id, fields):
         """
@@ -59,7 +65,10 @@ class ShopperAPI(object):
         :param fields:
         :return:
         """
+        query_dict = {}
         try:
+            if shopper_id is None or shopper_id == '':
+                raise ValueError('Blank shopper id was provided')
             redis_record_key = '{}-shopper_info_by_id'.format(shopper_id)
             query_dict = self._redis.get_value(redis_record_key)
             if query_dict is None:
@@ -77,6 +86,8 @@ class ShopperAPI(object):
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_dict}))
             else:
                 query_dict = json.loads(query_dict).get(self.REDIS_DATA_KEY)
-            return query_dict
         except Exception as e:
-            logging.warning("Error in getting the shopper info for %s : %s", shopper_id, e.message)
+            logging.error("Error in getting the shopper info for %s : %s", shopper_id, e.message)
+            # If exception occurred before query_value had completed assignment, set keys to None
+            query_dict = return_expected_dict_due_to_exception(query_dict, fields)
+        return query_dict

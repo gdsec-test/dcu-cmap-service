@@ -25,7 +25,7 @@ class RegDbAPI(object):
                 self._redis.set_value(redis_record_key, query_value)
             return query_value
         except Exception as e:
-            logging.warning("Error in getting the domain count for %s : %s", shopper_id, e.message)
+            logging.error("Error in getting the domain count for %s : %s", shopper_id, e.message)
 
     def get_parent_child_shopper_by_domain_name(self, domain_name):
         # Check redis cache for parent/child api reseller info
@@ -47,7 +47,7 @@ class RegDbAPI(object):
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
             return query_value
         except Exception as e:
-            logging.warning("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
+            logging.error("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
 
     def get_shopper_id_by_domain_name(self, domain_name):
         # Check redis cache for shopper id
@@ -64,7 +64,7 @@ class RegDbAPI(object):
                 self._redis.set_value(redis_record_key, query_value)
             return query_value
         except Exception as e:
-            logging.warning("Error in getting the shopper id for %s : %s", domain_name, e.message)
+            logging.error("Error in getting the shopper id for %s : %s", domain_name, e.message)
 
     def get_domain_list_by_shopper_id(self, shopper_id):
         # Check redis cache for domain list by shopper id
@@ -80,4 +80,4 @@ class RegDbAPI(object):
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
             return query_value
         except Exception as e:
-            logging.warning("Error in getting the domain list for %s : %s", shopper_id, e.message)
+            logging.error("Error in getting the domain list for %s : %s", shopper_id, e.message)

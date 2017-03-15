@@ -26,4 +26,4 @@ class VipClients(object):
                 # Works regardless if blacklist_status is a bool or a string
             return blacklist_status if isinstance(blacklist_status, bool) else 'True' in blacklist_status
         except Exception as e:
-            logging.warning("Error in getting the blacklist status for %s : %s", entity_id, e.message)
+            logging.error("Error in getting the blacklist status for %s : %s", entity_id, e.message)

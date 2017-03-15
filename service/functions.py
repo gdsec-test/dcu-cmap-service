@@ -44,10 +44,25 @@ def convert_string_date_to_mongo_format(old_date):
     return good_date
 
 
-def have_exception_return_expected_dict(the_dict, the_keys):
-    # If exception occurred before query_value had completed assignment, set keys to None
+def return_populated_dictionary(the_dict, the_keys):
     if the_dict is None:
         the_dict = {}
     for key in the_keys:
         the_dict[key] = the_dict.get(key)
     return the_dict
+
+
+def return_expected_dict_due_to_exception(the_container, the_keys):
+    # If exception occurred before query_value had completed assignment, set keys to None
+    if type(the_container) == list:
+        if len(the_container) == 0:
+            new_dict = return_populated_dictionary(None, the_keys)
+            return [new_dict]
+        for slice_element in range(len(the_container)):
+            if type(the_container[slice_element]) == dict:
+                the_container[slice_element] = return_populated_dictionary(the_container[slice_element])
+        return the_container
+    elif type(the_container) == dict:
+        return return_populated_dictionary(the_container, the_keys)
+    # We werent provided a list or dictionary, so just return what we were provided, as we dont know how to handle it
+    return the_container
