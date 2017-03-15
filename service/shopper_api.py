@@ -3,21 +3,27 @@ import logging
 import functions
 
 import xml.etree.ElementTree as ET
-
+from request_transport import RequestsTransport
 from suds.client import Client
 from functions import return_expected_dict_due_to_exception
 
 
 class ShopperAPI(object):
-    _WSDL = 'https://shopper.prod.phx3.gdg/WSCgdShopper/WSCgdShopper.dll?Handler=GenWSCgdShopperWSDL'
+    _LOCATION = 'https://shopper.cmap.proxy.int.godaddy.com:8443/WSCgdShopper/WSCgdShopper.dll'
+    _WSDL = _LOCATION + '?Handler=GenWSCgdShopperWSDL'
     DATE_STRING = 'date_created'
     ENCODING = 'utf8'
     SOAP_METHOD = 'xml'
     REQUESTED_BY = 'DCU-ENG'
     REDIS_DATA_KEY = 'result'
 
-    def __init__(self, redis_obj):
-        self._client = Client(self._WSDL, timeout=5)
+    def __init__(self, settings, redis_obj):
+        self._client = Client(self._WSDL, location=self._LOCATION, 
+                              headers=RequestsTransport.get_soap_headers(),
+                              transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                                          password=settings.CMAP_PROXY_PASS,
+                                                          cert=settings.CMAP_PROXY_CERT,
+                                                          key=settings.CMAP_PROXY_KEY))
         self._redis = redis_obj
 
     def get_shopper_by_domain_name(self, domain_name, fields):

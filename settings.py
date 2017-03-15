@@ -19,6 +19,10 @@ class AppConfig(object):
         self.DB_PASS = os.getenv('DB_PASS') or 'password'
         self.DB_PASS = urllib.quote(PasswordDecrypter.decrypt(self.DB_PASS))
         self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)
+        self.CMAP_PROXY_USER = os.getenv('CMAP_PROXY_USER') or 'user'
+        self.CMAP_PROXY_PASS = PasswordDecrypter.decrypt(os.getenv('CMAP_PROXY_PASS') or 'password')
+        self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT') or 'proxy.crt'
+        self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY') or 'proxy.key'
 
 
 class ProductionAppConfig(AppConfig):
