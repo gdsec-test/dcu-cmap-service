@@ -6,7 +6,7 @@ from whois import whois, NICClient
 from whois.parser import WhoisEntry, PywhoisError
 
 from ipwhois import IPWhois
-from functions import have_exception_return_expected_dict
+from functions import return_expected_dict_due_to_exception
 
 
 class WhoisQuery(object):
@@ -24,8 +24,10 @@ class WhoisQuery(object):
         :return:
         """
         email_list = []
-        query_value = None
+        query_value = {}
         try:
+            if domain_name is None or domain_name == '':
+                raise ValueError('Blank domain name was provided')
             redis_record_key = '{}-ip_whois_info'.format(domain_name)
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
@@ -42,9 +44,9 @@ class WhoisQuery(object):
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
-            logging.warning("Error in getting the hosting whois info for %s : %s", domain_name, e.message)
+            logging.error("Error in getting the hosting whois info for %s : %s", domain_name, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
-            query_value = have_exception_return_expected_dict(query_value, ['name', 'email'])
+            query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email'])
         return query_value
 
     def get_registrar_info(self, domain_name):
@@ -53,8 +55,10 @@ class WhoisQuery(object):
         :param domain_name:
         :return:
         """
-        query_value = None
+        query_value = {}
         try:
+            if domain_name is None or domain_name == '':
+                raise ValueError('Blank domain name was provided')
             redis_record_key = '{}-registrar_whois_info'.format(domain_name)
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
@@ -73,7 +77,7 @@ class WhoisQuery(object):
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
-            logging.warning("Error in getting the registrar whois info for %s : %s", domain_name, e.message)
+            logging.error("Error in getting the registrar whois info for %s : %s", domain_name, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
-            query_value = have_exception_return_expected_dict(query_value, ['name', 'email', 'create_date'])
+            query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email', 'create_date'])
         return query_value

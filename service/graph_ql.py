@@ -92,9 +92,9 @@ class ShopperProfile(graphene.ObjectType, ShopperPortfolio):
 
     def resolve_accountRep(self, args, context, info):
         # In case the 'self' class properties are not present, substitute with empty strings
-        first_name = self.__dict__.get('FirstName', '')
-        last_name = self.__dict__.get('LastName', '')
-        email = self.__dict__.get('Email', '')
+        first_name = self.__dict__.get('FirstName') if self.__dict__.get('FirstName') is not None else ''
+        last_name = self.__dict__.get('LastName') if self.__dict__.get('LastName') is not None else ''
+        email = self.__dict__.get('Email') if self.__dict__.get('Email') is not None else ''
         if '' == first_name + last_name + email:
             return None
         return '{} {} ({})'.format(first_name, last_name, email)

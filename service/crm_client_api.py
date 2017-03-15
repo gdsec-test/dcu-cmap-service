@@ -1,10 +1,10 @@
-import re
 import json
 import logging
 
 import xml.etree.ElementTree as ET
 
 from suds.client import Client
+from functions import return_expected_dict_due_to_exception
 
 
 class CrmClientApi(object):
@@ -18,7 +18,10 @@ class CrmClientApi(object):
         self._redis = redis_obj
 
     def get_shopper_portfolio_information(self, shopper_id):
+        query_dict = {}
         try:
+            if shopper_id is None or shopper_id == '':
+                raise ValueError('Blank shopper id was provided')
             redis_record_key = '{}-portfolio_info'.format(shopper_id)
             query_dict = self._redis.get_value(redis_record_key)
             if query_dict is None:
@@ -31,6 +34,18 @@ class CrmClientApi(object):
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_dict}))
             else:
                 query_dict = json.loads(query_dict).get(self.REDIS_DATA_KEY)
-            return query_dict
         except Exception as e:
-            logging.warning("Error in getting the CRM API portfolio info for %s : %s", shopper_id, e.message)
+            logging.error("Error in getting the CRM API portfolio info for %s : %s", shopper_id, e.message)
+            # If exception occurred before query_value had completed assignment, set keys to None
+            query_dict = return_expected_dict_due_to_exception(query_dict, ['shopper_id',
+                                                                            'accountRep',
+                                                                            'FirstName',
+                                                                            'LastName',
+                                                                            'Email',
+                                                                            'PhoneExt',
+                                                                            'InternalPhoneQueue',
+                                                                            'InternalImageURL',
+                                                                            'PortfolioTypeID',
+                                                                            'PortfolioType',
+                                                                            'blacklist'])
+        return query_dict
