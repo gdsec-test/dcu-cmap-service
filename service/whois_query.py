@@ -2,7 +2,8 @@ import json
 import socket
 import logging
 import datetime
-from whois import whois
+from whois import whois, NICClient 
+from whois.parser import WhoisEntry, PywhoisError
 
 from ipwhois import IPWhois
 from functions import have_exception_return_expected_dict
@@ -57,11 +58,16 @@ class WhoisQuery(object):
             redis_record_key = '{}-registrar_whois_info'.format(domain_name)
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
-                query = whois(domain_name)
-                if type(query.creation_date[0]) == datetime.datetime:
-                    create_date = query.creation_date[0].strftime(self.date_format)
-                else:
-                    create_date = 'A datetime object was not returned for creation_date'
+                # Try godaddy first
+                try:
+                    query = WhoisEntry.load(domain_name, NICClient().whois(domain_name, 'whois.godaddy.com', True))
+                    if query.registrar:
+                        query.registrar = 'GoDaddy.com, LLC'
+                except PywhoisError:
+                    query = whois(domain_name)
+                create_date = query.creation_date[0] if isinstance(query.creation_date, list) else query.creation_date
+                create_date = create_date.strftime(self.date_format) if create_date and  \
+                    isinstance(create_date, datetime.datetime) else None
                 query_value = dict(name=query.registrar, create_date=create_date, email=query.emails)
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
