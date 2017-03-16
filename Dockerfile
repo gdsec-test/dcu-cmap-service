@@ -5,8 +5,7 @@ FROM alpine:3.5
 MAINTAINER DCU <DCUEng@godaddy.com>
 
 # apk installs
-RUN apk update && \
-    apk --no-cache add build-base \
+RUN apk --no-cache add build-base \
     ca-certificates \
     openssl-dev \
     linux-headers \

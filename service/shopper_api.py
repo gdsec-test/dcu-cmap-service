@@ -9,7 +9,7 @@ from functions import return_expected_dict_due_to_exception
 
 
 class ShopperAPI(object):
-    _LOCATION = 'https://shopper.cmap.proxy.int.godaddy.com:8443/WSCgdShopper/WSCgdShopper.dll'
+    _LOCATION = 'https://shopper.cmap.proxy.int.godaddy.com/WSCgdShopper/WSCgdShopper.dll'
     _WSDL = _LOCATION + '?Handler=GenWSCgdShopperWSDL'
     DATE_STRING = 'date_created'
     ENCODING = 'utf8'

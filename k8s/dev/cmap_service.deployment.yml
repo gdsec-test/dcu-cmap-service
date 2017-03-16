@@ -18,7 +18,7 @@ spec:
           name: "k8s-artifactory-creds"
       containers:
         -
-          name: "cmap_service"
+          name: "cmap-service"
           imagePullPolicy: "Always"
           image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:dev"
           env:
@@ -28,6 +28,20 @@ spec:
             value: /certs/tls.crt
           - name: SSL_KEY
             value: /certs/tls.key
+          - name: CMAP_PROXY_USER
+            valueFrom:
+              secretKeyRef:
+                name: auth-cmap-proxy
+                key: username
+          - name: CMAP_PROXY_PASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-cmap-proxy
+                key: password
+          - name: CMAP_PROXY_CERT
+            value: /proxycerts/tls.crt
+          - name: CMAP_PROXY_KEY
+            value: /proxycerts/tls.key        
           - name: REDIS
             value: redis.abuse-api-dev.svc.cluster.local
           - name: KEYFILE
@@ -50,6 +64,9 @@ spec:
           - name: tls-files
             mountPath: /certs
             readOnly: true
+          - name: tls-files-proxy
+            mountPath: /proxycerts
+            readOnly: true
       
       volumes:
         - name: encryption-keys
@@ -58,3 +75,6 @@ spec:
         - name: tls-files
           secret:
             secretName: tls-cmap-service
+        - name: tls-files-proxy
+          secret:
+            secretName: tls-cmap-auth
