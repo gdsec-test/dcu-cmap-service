@@ -5,7 +5,7 @@ from request_transport import RequestsTransport
 
 
 class RegDbAPI(object):
-    _LOCATION = 'https://dsweb.cmap.proxy.int.godaddy.com:8443/RegDBWebSvc/RegDBWebSvc.dll'
+    _LOCATION = 'https://dsweb.cmap.proxy.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     _WSDL = _LOCATION + '?Handler=GenRegDBWebSvcWSDL'
     REDIS_DATA_KEY = 'result'
 

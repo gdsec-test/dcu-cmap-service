@@ -22,17 +22,14 @@ prep:
 
 dev: prep
 	@echo "----- building $(REPONAME) prod -----"
-	DOCKERTAG=dev
-	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
+	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
 
 ote: prep
 	@echo "----- building $(REPONAME) prod -----"
-	DOCKERTAG=ote
-	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
+	docker build --no-cache=true -t $(DOCKERREPO):ote $(BUILDROOT)
 
 prod: prep
 	@echo "----- building $(REPONAME) prod -----"
-	DOCKERTAG=prod
 	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
 
 ote: prep

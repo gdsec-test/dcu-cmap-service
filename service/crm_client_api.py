@@ -8,7 +8,7 @@ from functions import return_expected_dict_due_to_exception
 
 
 class CrmClientApi(object):
-    _LOCATION = 'https://crmclient.cmap.int.godaddy.com:8443/Shopper.svc'
+    _LOCATION = 'https://crm.cmap.proxy.int.godaddy.com/Shopper.svc'
     _WSDL = _LOCATION + '?singleWsdl'
     _FACTORY = '{http://schemas.datacontract.org/2004/07/GoDaddy.CRM.ClientAPI.DataContracts}ShopperPortfolioInformationRequest'
     REDIS_DATA_KEY = 'result'
