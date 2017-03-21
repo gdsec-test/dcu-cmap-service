@@ -25,6 +25,11 @@ prod: prep
 	DOCKERTAG=prod
 	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
 
+ote: prep
+	@echo "----- building $(REPONAME) ote -----"
+	DOCKERTAG=ote
+	docker build --no-cache=true -t $(DOCKERREPO):ote $(BUILDROOT)
+
 clean:
 	@echo "----- cleaning $(REPONAME) app -----"
 	rm -rf $(BUILDROOT)

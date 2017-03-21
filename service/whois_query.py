@@ -31,7 +31,11 @@ class WhoisQuery(object):
             redis_record_key = '{}-ip_whois_info'.format(domain_name)
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
-                ip = socket.gethostbyname(domain_name)
+                try:
+                    ip = socket.gethostbyname(domain_name)
+                except Exception as e:
+                    domain_name = 'www.' + domain_name if domain_name[:4] != 'www.' else domain_name[4:]
+                    ip = socket.gethostbyname(domain_name)
                 info = IPWhois(ip).lookup_rdap()
                 for k, v in info['objects'].iteritems():
                     email_address = v['contact']['email']
