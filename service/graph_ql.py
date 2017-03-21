@@ -142,7 +142,7 @@ class ShopperByDomain(graphene.ObjectType, Shopper):
     """
     Holds Shopper data when only the domain is known
     """
-    othershopperlist = graphene.List(ShopperQuery, description='Other shopper_ids associated with this domain')
+    pass
 
 
 class DomainQuery(graphene.ObjectType):
@@ -173,12 +173,7 @@ class DomainQuery(graphene.ObjectType):
         extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['date_created',
                                                                                'first_name',
                                                                                'email'])
-        othershoppers = shopper_client.get_shopper_by_domain_name(self.domain, ['shopper_id',
-                                                                                'date_created',
-                                                                                'first_name',
-                                                                                'email'])
-        oslist = [ShopperQuery(**item) for item in othershoppers if item['shopper_id'] != active_shopper]
-        return ShopperByDomain(shopper_id=active_shopper, othershopperlist=oslist, **extra_data)
+        return ShopperByDomain(shopper_id=active_shopper, **extra_data)
 
     def resolve_blacklist(self, args, context, info):
         vip = context.get('vip').query_entity(self.domain)
