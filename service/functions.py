@@ -62,7 +62,7 @@ def return_expected_dict_due_to_exception(the_container, the_keys):
             if type(the_container[slice_element]) == dict:
                 the_container[slice_element] = return_populated_dictionary(the_container[slice_element])
         return the_container
-    elif type(the_container) == dict:
+    elif type(the_container) == dict or the_container is None:
         return return_populated_dictionary(the_container, the_keys)
     # We werent provided a list or dictionary, so just return what we were provided, as we dont know how to handle it
     return the_container
