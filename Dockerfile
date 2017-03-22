@@ -4,6 +4,7 @@
 FROM alpine:3.5
 MAINTAINER DCU <DCUEng@godaddy.com>
 
+RUN addgroup -S dcu && adduser -H -S -G dcu dcu
 # apk installs
 RUN apk --no-cache add build-base \
     ca-certificates \
@@ -18,6 +19,7 @@ EXPOSE 5000
 
 # Move files to new dir
 ADD . /app
+RUN chown -R dcu:dcu /app
 WORKDIR /app
 COPY trusted_certs /usr/local/share/ca-certificates
 
