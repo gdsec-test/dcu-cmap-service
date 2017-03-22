@@ -63,7 +63,7 @@ class ShopperPortfolio(graphene.AbstractType):
     InternalPhoneQueue = graphene.String(description='Account Rep Internal Phone Queue')
     InternalImageURL = graphene.String(description='Image URL for Shopper Portfolio Type')
     PortfolioType = graphene.String(description='Shopper Portfolio Type')
-    blacklist = graphene.String(description='Shopper Blacklist Status - Do Not Suspend!')
+    blacklist = graphene.Boolean(description='Shopper Blacklist Status - Do Not Suspend!')
     shopper_id = graphene.String(description='Shopper ID')
 
 
