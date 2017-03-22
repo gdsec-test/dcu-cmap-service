@@ -27,3 +27,5 @@ class VipClients(object):
             return blacklist_status if isinstance(blacklist_status, bool) else 'True' in blacklist_status
         except Exception as e:
             logging.error("Error in getting the blacklist status for %s : %s", entity_id, e.message)
+            # Error on the safe side.  If we cant get a definitive answer from the db, assume they are blacklist
+            return True
