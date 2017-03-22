@@ -24,7 +24,7 @@ class ShopperAPI(object):
         :param fields:
         :return:
         """
-        query_dict = {}
+        shopper_data = {}
         try:
             if shopper_id is None or shopper_id == '':
                 raise ValueError('Blank shopper id was provided')
