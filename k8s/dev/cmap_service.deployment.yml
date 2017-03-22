@@ -43,7 +43,7 @@ spec:
           - name: CMAP_PROXY_KEY
             value: /proxycerts/tls.key        
           - name: REDIS
-            value: service-redis.abuse-api-dev.svc.cluster.local
+            value: cmap-service-redis.abuse-api-dev.svc.cluster.local
           - name: KEYFILE
             value: /keyfiles/key.txt
           - name: BROKER_PASS

@@ -5,7 +5,6 @@ from encryption_helper import PasswordDecrypter
 
 
 class AppConfig(object):
-    REDIS_HOST = 'redis'
     REDIS_TTL = 24 * 60 * 60  # Seconds in a day
     DB = ''
     DB_USER = ''
