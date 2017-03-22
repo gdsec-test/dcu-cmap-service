@@ -21,21 +21,28 @@ prep:
 	cp -rp ./* $(BUILDROOT)
 
 dev: prep
-	@echo "----- building $(REPONAME) prod -----"
+	@echo "----- building $(REPONAME) dev -----"
 	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
 
 ote: prep
-	@echo "----- building $(REPONAME) prod -----"
+	@echo "----- building $(REPONAME) ote -----"
 	docker build --no-cache=true -t $(DOCKERREPO):ote $(BUILDROOT)
 
 prod: prep
 	@echo "----- building $(REPONAME) prod -----"
 	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
 
-ote: prep
-	@echo "----- building $(REPONAME) ote -----"
-	DOCKERTAG=ote
-	docker build --no-cache=true -t $(DOCKERREPO):ote $(BUILDROOT)
+dev-k8s: prep
+	@echo "----- building $(REPONAME) dev-k8s -----"
+	docker build --no-cache=true -t $(DOCKERREPO):dev-k8s $(BUILDROOT)
+
+ote-k8s: prep
+	@echo "----- building $(REPONAME) ote-k8s -----"
+	docker build --no-cache=true -t $(DOCKERREPO):ote-k8s $(BUILDROOT)
+
+prod-k8s: prep
+	@echo "----- building $(REPONAME) prod-k8s -----"
+	docker build --no-cache=true -t $(DOCKERREPO):prod-k8s $(BUILDROOT)
 
 clean:
 	@echo "----- cleaning $(REPONAME) app -----"
