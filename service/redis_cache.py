@@ -5,7 +5,7 @@ from redis import Redis
 class RedisCache(object):
     def __init__(self, settings):
         try:
-            self.redis = Redis(settings.REDIS_HOST)
+            self.redis = Redis(settings.REDIS)
             self.redis_ttl = settings.REDIS_TTL
         except Exception as e:
             logging.fatal("Error in creating redis connection: %s", e.message)
