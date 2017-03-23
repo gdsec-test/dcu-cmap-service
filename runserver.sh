@@ -4,7 +4,7 @@ python -c "import re;f=open('/etc/resolv.conf','r');t=f.read();t=re.sub(r'ndots:
 
 if [ -z "$HTTP_ONLY" ]
 then
-    exec /usr/bin/uwsgi --ini /app/uwsgi_ssl.ini --need-app
+    exec /usr/bin/uwsgi --ini /app/uwsgi_ssl.ini --need-app --lazy-apps
 else
-    exec /usr/bin/uwsgi --ini /app/uwsgi.ini --need-app
+    exec /usr/bin/uwsgi --ini /app/uwsgi.ini --need-app --lazy-apps
 fi
