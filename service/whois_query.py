@@ -70,6 +70,9 @@ class WhoisQuery(object):
                     query = WhoisEntry.load(domain_name, NICClient().whois(domain_name, 'whois.godaddy.com', True))
                     if query.registrar:
                         query.registrar = 'GoDaddy.com, LLC'
+                    else:
+                        # If query.registrar is None, go for the alternate whois query
+                        raise PywhoisError
                 except PywhoisError:
                     query = whois(domain_name)
                 create_date = query.creation_date[0] if isinstance(query.creation_date, list) else query.creation_date
