@@ -15,7 +15,7 @@ class RegistrarInfo(graphene.ObjectType, DomainService):
 
 
 class HostInfo(graphene.ObjectType, DomainService):
-    pass
+    ip = graphene.String(description='IP address of the reported domain')
 
 
 class ApiResellerService(graphene.AbstractType):

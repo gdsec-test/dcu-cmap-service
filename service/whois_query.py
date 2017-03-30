@@ -42,7 +42,7 @@ class WhoisQuery(object):
                     if email_address:
                         for i in email_address:
                             email_list.append(i['value'])
-                query_value = dict(name=info.get('network').get('name'), email=email_list)
+                query_value = dict(name=info.get('network').get('name'), email=email_list, ip=ip)
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
