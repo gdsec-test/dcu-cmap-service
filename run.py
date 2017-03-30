@@ -1,10 +1,12 @@
 import os
+import tld
 import yaml
 import graphene
 
 import logging.config
 
 from flask import Flask
+from tld.conf import set_setting
 
 from service.graph_ql import GraphQLViewWithCaching, Query
 from service.reg_db_api import RegDbAPI
@@ -16,6 +18,10 @@ from service.whois_query import WhoisQuery
 
 from settings import config_by_name
 
+
+# Define a file we have write access to as the definitive tld names file
+set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), 'names.dat'))
+tld.utils.PROJECT_DIR = lambda x: x
 
 # setup logging
 path = 'logging.yml'

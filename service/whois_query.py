@@ -36,20 +36,22 @@ class WhoisQuery(object):
                 except Exception as e:
                     domain_name = 'www.' + domain_name if domain_name[:4] != 'www.' else domain_name[4:]
                     ip = socket.gethostbyname(domain_name)
+                query_value = dict(ip=ip)
                 info = IPWhois(ip).lookup_rdap()
+                query_value['name'] = info.get('network').get('name')
                 for k, v in info['objects'].iteritems():
                     email_address = v['contact']['email']
                     if email_address:
                         for i in email_address:
                             email_list.append(i['value'])
-                query_value = dict(name=info.get('network').get('name'), email=email_list, ip=ip)
+                query_value['email'] = email_list
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
             logging.error("Error in getting the hosting whois info for %s : %s", domain_name, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
-            query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email'])
+            query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email', 'ip'])
         return query_value
 
     def get_registrar_info(self, domain_name):
@@ -75,10 +77,11 @@ class WhoisQuery(object):
                         raise PywhoisError
                 except PywhoisError:
                     query = whois(domain_name)
+                query_value = dict(name=query.registrar, email=query.emails)
                 create_date = query.creation_date[0] if isinstance(query.creation_date, list) else query.creation_date
                 create_date = create_date.strftime(self.date_format) if create_date and  \
                     isinstance(create_date, datetime.datetime) else None
-                query_value = dict(name=query.registrar, create_date=create_date, email=query.emails)
+                query_value['create_date'] = create_date
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)

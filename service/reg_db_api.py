@@ -3,6 +3,8 @@ import logging
 import xml.etree.ElementTree as ET
 from request_transport import RequestsTransport
 
+from functions import get_tld_by_domain_name
+
 
 class RegDbAPI(object):
     _LOCATION = 'https://dsweb.cmap.proxy.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
@@ -34,15 +36,16 @@ class RegDbAPI(object):
         except Exception as e:
             logging.error("Error in getting the domain count for %s : %s", shopper_id, e.message)
 
-    def get_parent_child_shopper_by_domain_name(self, domain_name):
+    def get_parent_child_shopper_by_domain_name(self, domain_name_as_provided):
+        # In the event that we were provided a sub-domain name as opposed to a tld
+        domain_name = get_tld_by_domain_name(domain_name_as_provided)
         # Check redis cache for parent/child api reseller info
         redis_record_key = '{}-reseller_parent_child'.format(domain_name)
         try:
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
                 doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name))
-                if doc.find('RECORDSET') is None or \
-                                doc.find('RECORDSET').find('RECORD') is None:
+                if doc.find('RECORDSET') is None or doc.find('RECORDSET').find('RECORD') is None:
                     query_value = dict(parent=None, child=None)
                 else:
                     doc_record = doc.find('RECORDSET').find('RECORD')
@@ -56,7 +59,10 @@ class RegDbAPI(object):
         except Exception as e:
             logging.error("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
 
-    def get_shopper_id_by_domain_name(self, domain_name):
+    def get_shopper_id_by_domain_name(self, domain_name_as_provided):
+        # In the event that we were provided a sub-domain name as opposed to a tld
+        domain_name = get_tld_by_domain_name(domain_name_as_provided)
+
         # Check redis cache for shopper id
         redis_record_key = '{}-shopper_id_by_domain'.format(domain_name)
         try:
