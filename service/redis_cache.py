@@ -22,4 +22,4 @@ class RedisCache(object):
             self.redis.set(redis_key, redis_value)
             self.redis.expire(redis_key, self.redis_ttl)
         except Exception as e:
-            logging.error("Error in setting the redis value for %s : %s", redis_key, e.message)
+            logging.error("Error in setting the redis value for %s : %s", redis_key.decode('utf-8'), e.message)

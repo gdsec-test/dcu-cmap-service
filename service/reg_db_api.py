@@ -13,7 +13,7 @@ class RegDbAPI(object):
 
     def __init__(self, settings, redis_obj):
         from suds.client import Client
-        self._client = Client(self._WSDL, location=self._LOCATION, 
+        self._client = Client(self._WSDL, location=self._LOCATION,
                               headers=RequestsTransport.get_soap_headers(),
                               transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
                                                           password=settings.CMAP_PROXY_PASS,
@@ -40,12 +40,13 @@ class RegDbAPI(object):
         # In the event that we were provided a sub-domain name as opposed to a tld
         domain_name = get_tld_by_domain_name(domain_name_as_provided)
         # Check redis cache for parent/child api reseller info
-        redis_record_key = '{}-reseller_parent_child'.format(domain_name)
+        redis_record_key = u'{}-reseller_parent_child'.format(domain_name)
         try:
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
-                doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name))
-                if doc.find('RECORDSET') is None or doc.find('RECORDSET').find('RECORD') is None:
+                doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name.encode('idna')))
+                if doc.find('RECORDSET') is None or \
+                                doc.find('RECORDSET').find('RECORD') is None:
                     query_value = dict(parent=None, child=None)
                 else:
                     doc_record = doc.find('RECORDSET').find('RECORD')
@@ -64,11 +65,11 @@ class RegDbAPI(object):
         domain_name = get_tld_by_domain_name(domain_name_as_provided)
 
         # Check redis cache for shopper id
-        redis_record_key = '{}-shopper_id_by_domain'.format(domain_name)
+        redis_record_key = u'{}-shopper_id_by_domain'.format(domain_name)
         try:
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
-                doc = ET.fromstring(self._client.service.GetShopperIdByDomainName(domain_name))
+                doc = ET.fromstring(self._client.service.GetShopperIdByDomainName(domain_name.encode('idna')))
                 if doc.find('RECORDSET') is None or \
                                 doc.find('RECORDSET').find('RECORD') is None or \
                                 doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID') is None:

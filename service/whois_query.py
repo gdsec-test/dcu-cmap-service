@@ -2,7 +2,7 @@ import json
 import socket
 import logging
 import datetime
-from whois import whois, NICClient 
+from whois import whois, NICClient
 from whois.parser import WhoisEntry, PywhoisError
 
 from ipwhois import IPWhois
@@ -28,9 +28,11 @@ class WhoisQuery(object):
         try:
             if domain_name is None or domain_name == '':
                 raise ValueError('Blank domain name was provided')
-            redis_record_key = '{}-ip_whois_info'.format(domain_name)
+            redis_record_key = u'{}-ip_whois_info'.format(domain_name)
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
+                if domain_name is not str:
+                    domain_name = domain_name.encode('idna')
                 try:
                     ip = socket.gethostbyname(domain_name)
                 except Exception as e:
@@ -64,7 +66,7 @@ class WhoisQuery(object):
         try:
             if domain_name is None or domain_name == '':
                 raise ValueError('Blank domain name was provided')
-            redis_record_key = '{}-registrar_whois_info'.format(domain_name)
+            redis_record_key = u'{}-registrar_whois_info'.format(domain_name)
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
                 # Try godaddy first
