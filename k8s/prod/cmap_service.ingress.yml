@@ -1,0 +1,21 @@
+---
+apiVersion: "extensions/v1beta1"
+kind: "Ingress"
+metadata:
+  name: "cmap-service"
+  namespace: "abuse-api-prod"
+  annotations:
+    ingress.kubernetes.io/secure-backends: "true"
+spec:
+  tls:
+    - hosts:
+      - "cmapservice.int.godaddy.com"
+      secretName: tls-cmap-service
+  rules:
+  - host: "cmapservice.int.godaddy.com"
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: "cmap-service"
+          servicePort: 5000

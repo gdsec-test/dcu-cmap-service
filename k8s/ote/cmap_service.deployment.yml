@@ -46,11 +46,6 @@ spec:
             value: cmap-service-redis.abuse-api-ote.svc.cluster.local
           - name: KEYFILE
             value: /keyfiles/key.txt
-          - name: BROKER_PASS
-            valueFrom:
-              secretKeyRef:
-                name: amqp-cmap-service
-                key: password
           - name: DB_PASS
             valueFrom:
               secretKeyRef:

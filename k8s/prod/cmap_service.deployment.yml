@@ -3,7 +3,7 @@ apiVersion: "extensions/v1beta1"
 kind: "Deployment"
 metadata:
   name: "cmap-service"
-  namespace: "abuse-api-dev"
+  namespace: "abuse-api-prod"
   labels:
     app: "cmap-service"
 spec:
@@ -20,10 +20,10 @@ spec:
         -
           name: "cmap-service"
           imagePullPolicy: "Always"
-          image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:dev-k8s"
+          image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:prod-k8s"
           env:
           - name: sysenv
-            value: dev
+            value: prod
           - name: SSL_CERT
             value: /certs/tls.crt
           - name: SSL_KEY
@@ -43,7 +43,7 @@ spec:
           - name: CMAP_PROXY_KEY
             value: /proxycerts/tls.key        
           - name: REDIS
-            value: cmap-service-redis.abuse-api-dev.svc.cluster.local
+            value: cmap-service-redis.abuse-api-prod.svc.cluster.local
           - name: KEYFILE
             value: /keyfiles/key.txt
           - name: DB_PASS
