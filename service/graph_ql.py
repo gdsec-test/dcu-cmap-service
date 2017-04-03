@@ -194,7 +194,10 @@ class Query(graphene.ObjectType):
                                    description='Top level query based on shopper id')
 
     def resolve_domain_query(self, args, context, info):
-        return DomainQuery(domain=args.get('domain'))
+        domain = args.get('domain')
+        if context.get('whois').is_ip(domain):
+            domain = context.get('whois').get_domain_from_ip(domain)
+        return DomainQuery(domain=domain)
 
     def resolve_shopper_query(self, args, context, info):
         shopper = args.get('id')

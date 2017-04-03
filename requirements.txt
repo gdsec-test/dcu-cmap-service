@@ -12,3 +12,4 @@ uwsgi
 blindAl
 requests
 tld==0.7.6
+dnspython

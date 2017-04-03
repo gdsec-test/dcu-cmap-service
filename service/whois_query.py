@@ -2,9 +2,10 @@ import json
 import socket
 import logging
 import datetime
+import re
 from whois import whois, NICClient
 from whois.parser import WhoisEntry, PywhoisError
-
+from dns import resolver, reversename
 from ipwhois import IPWhois
 from functions import return_expected_dict_due_to_exception
 
@@ -16,6 +17,34 @@ class WhoisQuery(object):
     def __init__(self, config, redis_obj):
         self._redis = redis_obj
         self.date_format = config.DATE_FORMAT
+
+    def is_ip(self, sourceDomainOrIp):
+        """
+        Returns whether the given sourceDomainOrIp is an ip address
+        :param sourceDomainOrIp:
+        :return:
+        """
+        pattern = re.compile(r"((([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])[ (\[]?(\.|dot)[ )\]]?){3}[0-9]{1,3})")
+        return pattern.match(sourceDomainOrIp) is not None
+
+    def get_ip_from_domain(self, domain_name):
+        dnsresolver = resolver.Resolver()
+        dnsresolver.timeout = 1
+        dnsresolver.lifetime = 1
+        try:
+            return dnsresolver.query(domain_name, 'A')[0].address
+        except Exception as e:
+            logging.error("Unable to get ip for %s : %s", domain_name, e.message)
+
+    def get_domain_from_ip(self, ip):
+        dnsresolver = resolver.Resolver()
+        addr = reversename.from_address(ip)
+        dnsresolver.timeout = 1
+        dnsresolver.lifetime = 1
+        try:
+            return dnsresolver.query(addr, 'PTR')[0].to_text().rstrip('.').encode('idna')
+        except Exception as e:
+            logging.error("Unable to get ip for %s : %s", domain_name, e.message)
 
     def get_hosting_info(self, domain_name):
         """
@@ -33,11 +62,10 @@ class WhoisQuery(object):
             if query_value is None:
                 if domain_name is not str:
                     domain_name = domain_name.encode('idna')
-                try:
-                    ip = socket.gethostbyname(domain_name)
-                except Exception as e:
-                    domain_name = 'www.' + domain_name if domain_name[:4] != 'www.' else domain_name[4:]
-                    ip = socket.gethostbyname(domain_name)
+                if self.is_ip(domain_name):
+                    ip = domain_name
+                else:
+                    ip = self.get_ip_from_domain(domain_name)
                 query_value = dict(ip=ip)
                 info = IPWhois(ip).lookup_rdap()
                 query_value['name'] = info.get('network').get('name')
