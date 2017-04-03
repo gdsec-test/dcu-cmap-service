@@ -4,8 +4,6 @@ kind: "Ingress"
 metadata:
   name: "cmap-service"
   namespace: "abuse-api-ote"
-  annotations:
-    ingress.kubernetes.io/secure-backends: "true"
 spec:
   tls:
     - hosts:
