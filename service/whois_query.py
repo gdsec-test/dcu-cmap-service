@@ -18,14 +18,14 @@ class WhoisQuery(object):
         self._redis = redis_obj
         self.date_format = config.DATE_FORMAT
 
-    def is_ip(self, sourceDomainOrIp):
+    def is_ip(self, source_domain_or_ip):
         """
         Returns whether the given sourceDomainOrIp is an ip address
-        :param sourceDomainOrIp:
+        :param source_domain_or_ip:
         :return:
         """
         pattern = re.compile(r"((([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])[ (\[]?(\.|dot)[ )\]]?){3}[0-9]{1,3})")
-        return pattern.match(sourceDomainOrIp) is not None
+        return pattern.match(source_domain_or_ip) is not None
 
     def get_ip_from_domain(self, domain_name):
         dnsresolver = resolver.Resolver()
@@ -44,7 +44,7 @@ class WhoisQuery(object):
         try:
             return dnsresolver.query(addr, 'PTR')[0].to_text().rstrip('.').encode('idna')
         except Exception as e:
-            logging.error("Unable to get ip for %s : %s", domain_name, e.message)
+            logging.error("Unable to get domain for %s : %s", ip, e.message)
 
     def get_hosting_info(self, domain_name):
         """
