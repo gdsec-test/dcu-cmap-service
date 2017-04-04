@@ -15,7 +15,7 @@ class RegistrarInfo(graphene.ObjectType, DomainService):
 
 
 class HostInfo(graphene.ObjectType, DomainService):
-    pass
+    ip = graphene.String(description='IP address of the reported domain')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -45,7 +45,7 @@ class DomainSearch(graphene.ObjectType):
 
     def resolve_results(self, args, context, info):
         regex = re.compile(self.pattern)
-        return [DomainData(domainid=item[0], domain=item[1]) for item in self.domainlist if regex.match(item[1])]
+        return [DomainData(domainid=item[0], domain=item[1].decode('idna')) for item in self.domainlist if regex.match(item[1])]
 
 
 class StatusInfo(graphene.Interface):
@@ -142,7 +142,7 @@ class ShopperByDomain(graphene.ObjectType, Shopper):
     """
     Holds Shopper data when only the domain is known
     """
-    othershopperlist = graphene.List(ShopperQuery, description='Other shopper_ids associated with this domain')
+    pass
 
 
 class DomainQuery(graphene.ObjectType):
@@ -173,12 +173,7 @@ class DomainQuery(graphene.ObjectType):
         extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['date_created',
                                                                                'first_name',
                                                                                'email'])
-        othershoppers = shopper_client.get_shopper_by_domain_name(self.domain, ['shopper_id',
-                                                                                'date_created',
-                                                                                'first_name',
-                                                                                'email'])
-        oslist = [ShopperQuery(**item) for item in othershoppers if item['shopper_id'] != active_shopper]
-        return ShopperByDomain(shopper_id=active_shopper, othershopperlist=oslist, **extra_data)
+        return ShopperByDomain(shopper_id=active_shopper, **extra_data)
 
     def resolve_blacklist(self, args, context, info):
         vip = context.get('vip').query_entity(self.domain)
@@ -199,7 +194,10 @@ class Query(graphene.ObjectType):
                                    description='Top level query based on shopper id')
 
     def resolve_domain_query(self, args, context, info):
-        return DomainQuery(domain=args.get('domain'))
+        domain = args.get('domain')
+        if context.get('whois').is_ip(domain):
+            domain = context.get('whois').get_domain_from_ip(domain)
+        return DomainQuery(domain=domain)
 
     def resolve_shopper_query(self, args, context, info):
         shopper = args.get('id')

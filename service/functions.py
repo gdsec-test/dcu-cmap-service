@@ -1,4 +1,6 @@
 import re
+import tld
+import logging
 
 
 # Functions to convert random date strings into a mongo date format
@@ -66,3 +68,21 @@ def return_expected_dict_due_to_exception(the_container, the_keys):
         return return_populated_dictionary(the_container, the_keys)
     # We werent provided a list or dictionary, so just return what we were provided, as we dont know how to handle it
     return the_container
+
+
+def get_tld_by_domain_name(domain_name):
+    # In the event that we were provided a sub-domain name as opposed to a tld
+    try:
+        # TLD expects to work on a domain name starting with http://
+        domain_name = 'http://' + domain_name if domain_name[:7] != 'http://' else domain_name
+        domain_object = tld.get_tld(domain_name, as_object=True)
+        tld_domain = domain_object.tld
+    except:
+        logging.warning("{} not found in tld file...updating and retrying".format(domain_name))
+        tld.update_tld_names()
+
+        # Clearing out the global tld_names variable from tld to force it to update
+        tld.utils.tld_names = []
+        # Try again
+        tld_domain = tld.get_tld(domain_name)
+    return tld_domain

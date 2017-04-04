@@ -1,0 +1,19 @@
+---
+apiVersion: "extensions/v1beta1"
+kind: "Ingress"
+metadata:
+  name: "cmap-service"
+  namespace: "abuse-api-prod"
+spec:
+  tls:
+    - hosts:
+      - "cmapservice.int.godaddy.com"
+      secretName: tls-cmap-service
+  rules:
+  - host: "cmapservice.int.godaddy.com"
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: "cmap-service"
+          servicePort: 5000

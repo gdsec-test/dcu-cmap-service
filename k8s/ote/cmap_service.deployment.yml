@@ -1,0 +1,67 @@
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "cmap-service"
+  namespace: "abuse-api-ote"
+  labels:
+    app: "cmap-service"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "cmap-service"
+    spec:
+      imagePullSecrets:
+        -
+          name: "k8s-artifactory-creds"
+      containers:
+        -
+          name: "cmap-service"
+          imagePullPolicy: "Always"
+          image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:ote-k8s"
+          env:
+          - name: sysenv
+            value: ote
+          - name: HTTP_ONLY
+            value: 'true'
+          - name: CMAP_PROXY_USER
+            valueFrom:
+              secretKeyRef:
+                name: auth-cmap-proxy
+                key: username
+          - name: CMAP_PROXY_PASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-cmap-proxy
+                key: password
+          - name: CMAP_PROXY_CERT
+            value: /proxycerts/tls.crt
+          - name: CMAP_PROXY_KEY
+            value: /proxycerts/tls.key
+          - name: REDIS
+            value: cmap-service-redis.abuse-api-ote.svc.cluster.local
+          - name: KEYFILE
+            value: /keyfiles/key.txt
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: db-cmap-service
+                key: password
+
+          volumeMounts:
+          - name: encryption-keys
+            mountPath: /keyfiles
+            readOnly: true
+          - name: tls-files-proxy
+            mountPath: /proxycerts
+            readOnly: true
+
+      volumes:
+        - name: encryption-keys
+          secret:
+            secretName: encryption-key-files
+        - name: tls-files-proxy
+          secret:
+            secretName: tls-cmap-auth

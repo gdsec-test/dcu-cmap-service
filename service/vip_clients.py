@@ -14,10 +14,10 @@ class VipClients(object):
 
     def query_entity(self, entity_id):
         try:
-            redis_record_key = '{}-blacklist_status'.format(entity_id)
+            redis_record_key = u'{}-blacklist_status'.format(entity_id)
             blacklist_status = self._redis.get_value(redis_record_key)
             if blacklist_status is None:
-                result = self._collection.find_one({self.MONGO_INSTANCE_KEY: str(entity_id)})
+                result = self._collection.find_one({self.MONGO_INSTANCE_KEY: entity_id})
                 # If the shopper id exists, they are VIP
                 blacklist_status = True
                 if result is None:

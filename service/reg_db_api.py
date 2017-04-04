@@ -1,15 +1,24 @@
 import json
 import logging
 import xml.etree.ElementTree as ET
+from request_transport import RequestsTransport
+
+from functions import get_tld_by_domain_name
 
 
 class RegDbAPI(object):
-    _WSDL = 'https://dsweb.prod.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll?Handler=GenRegDBWebSvcWSDL'
+    _LOCATION = 'https://dsweb.cmap.proxy.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
+    _WSDL = _LOCATION + '?Handler=GenRegDBWebSvcWSDL'
     REDIS_DATA_KEY = 'result'
 
-    def __init__(self, redis_obj):
+    def __init__(self, settings, redis_obj):
         from suds.client import Client
-        self._client = Client(self._WSDL)
+        self._client = Client(self._WSDL, location=self._LOCATION,
+                              headers=RequestsTransport.get_soap_headers(),
+                              transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                                          password=settings.CMAP_PROXY_PASS,
+                                                          cert=settings.CMAP_PROXY_CERT,
+                                                          key=settings.CMAP_PROXY_KEY))
         self._redis = redis_obj
 
     def get_domain_count_by_shopper_id(self, shopper_id):
@@ -27,13 +36,15 @@ class RegDbAPI(object):
         except Exception as e:
             logging.error("Error in getting the domain count for %s : %s", shopper_id, e.message)
 
-    def get_parent_child_shopper_by_domain_name(self, domain_name):
+    def get_parent_child_shopper_by_domain_name(self, domain_name_as_provided):
+        # In the event that we were provided a sub-domain name as opposed to a tld
+        domain_name = get_tld_by_domain_name(domain_name_as_provided)
         # Check redis cache for parent/child api reseller info
-        redis_record_key = '{}-reseller_parent_child'.format(domain_name)
+        redis_record_key = u'{}-reseller_parent_child'.format(domain_name)
         try:
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
-                doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name))
+                doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name.encode('idna')))
                 if doc.find('RECORDSET') is None or \
                                 doc.find('RECORDSET').find('RECORD') is None:
                     query_value = dict(parent=None, child=None)
@@ -49,13 +60,16 @@ class RegDbAPI(object):
         except Exception as e:
             logging.error("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
 
-    def get_shopper_id_by_domain_name(self, domain_name):
+    def get_shopper_id_by_domain_name(self, domain_name_as_provided):
+        # In the event that we were provided a sub-domain name as opposed to a tld
+        domain_name = get_tld_by_domain_name(domain_name_as_provided)
+
         # Check redis cache for shopper id
-        redis_record_key = '{}-shopper_id_by_domain'.format(domain_name)
+        redis_record_key = u'{}-shopper_id_by_domain'.format(domain_name)
         try:
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
-                doc = ET.fromstring(self._client.service.GetShopperIdByDomainName(domain_name))
+                doc = ET.fromstring(self._client.service.GetShopperIdByDomainName(domain_name.encode('idna')))
                 if doc.find('RECORDSET') is None or \
                                 doc.find('RECORDSET').find('RECORD') is None or \
                                 doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID') is None:
