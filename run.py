@@ -52,6 +52,11 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
        'shopper': ShopperAPI(config, redis_obj),
        'whois': WhoisQuery(config, redis_obj)}
 
+
+@app.route('/health', methods=['GET'])
+def health():
+    return '', 200
+
 schema = graphene.Schema(query=Query)
 app.add_url_rule(
     '/graphql',

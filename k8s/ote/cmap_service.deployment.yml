@@ -21,6 +21,12 @@ spec:
           name: "cmap-service"
           imagePullPolicy: "Always"
           image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:ote-k8s"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
           env:
           - name: sysenv
             value: ote
