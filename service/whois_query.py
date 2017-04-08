@@ -67,6 +67,11 @@ class WhoisQuery(object):
                 else:
                     ip = self.get_ip_from_domain(domain_name)
                 query_value = dict(ip=ip)
+                if self._check_hosted_here(ip):
+                    query_value['name'] = 'GoDaddy.com LLC'
+                    query_value['email'] = ['abuse@goaddy.com']
+                    self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
+                    return query_value
                 info = IPWhois(ip).lookup_rdap()
                 query_value['name'] = info.get('network').get('name')
                 for k, v in info['objects'].iteritems():
@@ -83,6 +88,10 @@ class WhoisQuery(object):
             # If exception occurred before query_value had completed assignment, set keys to None
             query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email', 'ip'])
         return query_value
+
+    def _check_hosted_here(self, ip):
+        reverse_dns = self.get_domain_from_ip(ip)
+        return reverse_dns is not None and 'secureserver.net' in reverse_dns
 
     def get_registrar_info(self, domain_name):
         """
