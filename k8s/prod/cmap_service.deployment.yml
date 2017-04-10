@@ -7,7 +7,7 @@ metadata:
   labels:
     app: "cmap-service"
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -20,7 +20,7 @@ spec:
         -
           name: "cmap-service"
           imagePullPolicy: "Always"
-          image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:prod-k8s"
+          image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:prod"
           livenessProbe:
             httpGet:
               path: /health
@@ -28,6 +28,8 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
           env:
+          - name: BUILD_DATE
+            value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
           - name: sysenv
             value: prod
           - name: HTTP_ONLY
