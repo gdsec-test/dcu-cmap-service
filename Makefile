@@ -1,11 +1,12 @@
 REPONAME=infosec-dcu/cmap_service
 BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
 DOCKERREPO=artifactory.secureserver.net:10014/docker-dcu-local/cmap_service
+DATE=$(shell date)
 
 # libraries we need to stage for pip to install inside Docker build
 PRIVATE_PIPS=git@github.secureserver.net:ITSecurity/blindAl.git
 
-.PHONY: prep prod clean
+.PHONY: prep dev stage prod ote clean prod-deploy ote-deploy dev-deploy
 
 all: prep prod
 
@@ -22,27 +23,33 @@ prep:
 
 dev: prep
 	@echo "----- building $(REPONAME) dev -----"
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/dev/cmap_service.deployment.yml
 	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
 
 ote: prep
 	@echo "----- building $(REPONAME) ote -----"
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/ote/cmap_service.deployment.yml
 	docker build --no-cache=true -t $(DOCKERREPO):ote $(BUILDROOT)
 
 prod: prep
 	@echo "----- building $(REPONAME) prod -----"
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml
 	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
 
-dev-k8s: prep
-	@echo "----- building $(REPONAME) dev-k8s -----"
-	docker build --no-cache=true -t $(DOCKERREPO):dev-k8s $(BUILDROOT)
+dev-deploy: dev
+	@echo "----- deploying $(REPONAME) dev -----"
+	docker push $(DOCKERREPO):dev
+	kubectl --context dev apply -f $(BUILDROOT)/k8s/dev/cmap_service.deployment.yml --record
 
-ote-k8s: prep
-	@echo "----- building $(REPONAME) ote-k8s -----"
-	docker build --no-cache=true -t $(DOCKERREPO):ote-k8s $(BUILDROOT)
+ote-deploy: ote
+	@echo "----- deploying $(REPONAME) ote -----"
+	docker push $(DOCKERREPO):ote
+	kubectl --context ote apply -f $(BUILDROOT)/k8s/ote/cmap_service.deployment.yml --record
 
-prod-k8s: prep
-	@echo "----- building $(REPONAME) prod-k8s -----"
-	docker build --no-cache=true -t $(DOCKERREPO):prod-k8s $(BUILDROOT)
+prod-deploy: prod
+	@echo "----- deploying $(REPONAME) prod -----"
+	docker push $(DOCKERREPO):prod
+	kubectl --context prod apply -f $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml --record
 
 clean:
 	@echo "----- cleaning $(REPONAME) app -----"
