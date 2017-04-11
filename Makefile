@@ -2,6 +2,8 @@ REPONAME=infosec-dcu/cmap_service
 BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
 DOCKERREPO=artifactory.secureserver.net:10014/docker-dcu-local/cmap_service
 DATE=$(shell date)
+COMMIT=
+BUILD_BRANCH=origin/master
 
 # libraries we need to stage for pip to install inside Docker build
 PRIVATE_PIPS=git@github.secureserver.net:ITSecurity/blindAl.git
@@ -33,8 +35,15 @@ ote: prep
 
 prod: prep
 	@echo "----- building $(REPONAME) prod -----"
-	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml
-	docker build --no-cache=true -t $(DOCKERREPO):prod $(BUILDROOT)
+	read -p "About to build production image from main branch. Are you sure? (Y/N): " response ; \
+	if [[ $$response == 'N' || $$response == 'n' ]] ; then exit 1 ; fi
+	if [[ `git status --porcelain | wc -l` -gt 0 ]] ; then echo "You must stash your changes before proceeding" ; exit 1 ; fi
+	git fetch && git checkout $(BUILD_BRANCH)
+	$(eval COMMIT:=$(shell git rev-parse --short HEAD))
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/' $(BUILDROOT)/k8s/dev/cmap_service.deployment.yml
+	sed -ie 's/REPLACE_WITH_GIT_COMMIT/$(COMMIT)/' $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml
+	docker build -t $(DOCKERREPO):$(COMMIT) $(BUILDROOT)
+	git checkout -
 
 dev-deploy: dev
 	@echo "----- deploying $(REPONAME) dev -----"
@@ -48,7 +57,7 @@ ote-deploy: ote
 
 prod-deploy: prod
 	@echo "----- deploying $(REPONAME) prod -----"
-	docker push $(DOCKERREPO):prod
+	docker push $(DOCKERREPO):$(COMMIT)
 	kubectl --context prod apply -f $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml --record
 
 clean:
