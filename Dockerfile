@@ -18,21 +18,21 @@ RUN apk --no-cache add build-base \
 EXPOSE 5000
 
 # Move files to new dir
-ADD . /app
-RUN chown -R dcu:dcu /app
-WORKDIR /app
+COPY ./logging.yml ./run.py ./runserver.sh ./settings.py ./*.ini /app/
 COPY trusted_certs /usr/local/share/ca-certificates
+COPY . /tmp
 
 # pip install private pips staged by Makefile
 RUN update-ca-certificates && for entry in blindAl; \
     do \
-    pip install --compile "private_pips/$entry"; \
+    pip install --compile "/tmp/private_pips/$entry"; \
     done
 
 # install other requirements
-RUN pip install --compile -r requirements.txt
+RUN pip install --compile /tmp
 
 # cleanup
-RUN rm -rf private_pips
+RUN rm -rf /tmp/* && chown -R dcu:dcu /app
 
+WORKDIR /app
 ENTRYPOINT ["/app/runserver.sh"]
