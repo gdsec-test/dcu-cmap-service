@@ -20,7 +20,7 @@ from settings import config_by_name
 
 
 # Define a file we have write access to as the definitive tld names file
-set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), 'names.dat'))
+set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), '/tmp/names.dat'))
 tld.utils.PROJECT_DIR = lambda x: x
 
 # setup logging

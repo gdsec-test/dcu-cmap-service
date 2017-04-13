@@ -1,7 +1,21 @@
 import os
 import urllib
+from blindal.crypter import Crypter
 
-from encryption_helper import PasswordDecrypter
+
+class PasswordDecrypter:
+
+    @staticmethod
+    def decrypt(password):
+        keyfile = os.getenv('KEYFILE') or None
+        if keyfile:
+            f = open(keyfile, "r")
+            try:
+                key, iv = f.readline().split()
+                return Crypter.decrypt(password, key, iv)
+            finally:
+                f.close()
+        return password
 
 
 class AppConfig(object):
