@@ -39,11 +39,15 @@ class ASNPrefixes(object):
         to date list is being retrieved
         """
         with self._update_lock:
-            if self._last_query < datetime.utcnow() - timedelta(
-                    hours=self._update_hrs):
-                self._logger.info("Updating prefix list for ASN{}".format(self._asn))
-                self._ripe_get_prefixes_per_asn()
-            return all_matching_cidrs(ipaddr, self._prefixes)
+            try:
+                if self._last_query < datetime.utcnow() - timedelta(
+                        hours=self._update_hrs):
+                    self._logger.info("Updating prefix list for ASN{}".format(self._asn))
+                    self._ripe_get_prefixes_per_asn()
+                return all_matching_cidrs(ipaddr, self._prefixes)
+            except Exception as e:
+                self._logger.error('Exception in _update_lock(): {}'.format(e.message))
+                return []
 
     def _ripe_get_prefixes_per_asn(self):
         """
@@ -66,6 +70,9 @@ class ASNPrefixes(object):
 
                 for record in js_data['data']['prefixes']:
                     pref_list.append(record['prefix'])
+                # If prefix list is empty, don't overwrite _prefixes nor update _last_query time
+                if len(pref_list) == 0:
+                    raise ValueError('Currently obtained Prefix List is empty.')
                 self._prefixes = pref_list
                 self._last_query = query_time
             except Exception as e:
