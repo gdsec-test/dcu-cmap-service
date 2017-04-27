@@ -13,7 +13,7 @@ class TestWhois:
 
     def test_get_networks_for_ip(self):
         for domain in ['theaaronbean.com', 'comicsn.beer', 'impcat.com', 'mondoproibito.com']:
-            assert_true(self.whois._check_hosted_here(self.whois.get_ip_from_domain(domain)))
+            assert_true(self.whois._asn.get_network_for_ip(self.whois.get_ip_from_domain(domain)))
 
         for domain in ['google.com', 'www-xn--kuvveyttrk-heb-com.usrfiles.com', 'tdvalidate.com']:
-            assert_false(self.whois._check_hosted_here(self.whois.get_ip_from_domain(domain)))
+            assert_false(self.whois._asn.get_network_for_ip(self.whois.get_ip_from_domain(domain)))
