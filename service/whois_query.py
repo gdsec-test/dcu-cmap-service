@@ -28,7 +28,7 @@ class ASNPrefixes(object):
         self._url_base = 'https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS'
         self._update_hrs = update_hrs
         self._prefixes = []
-        self._lock = threading.RLock()
+        self._update_lock = threading.RLock()
         threading.Thread(target=self._ripe_get_prefixes_per_asn).start()
 
     def get_network_for_ip(self, ipaddr):
@@ -38,19 +38,12 @@ class ASNPrefixes(object):
         NOTE: Based on update_hrs, this call may block while an up
         to date list is being retrieved
         """
-        try:
-            self._lock.acquire()
+        with self._update_lock:
             if self._last_query < datetime.utcnow() - timedelta(
                     hours=self._update_hrs):
                 self._logger.info("Updating prefix list for ASN{}".format(self._asn))
                 self._ripe_get_prefixes_per_asn()
             return all_matching_cidrs(ipaddr, self._prefixes)
-        except Exception as e:
-            self._logger.error(
-                "Unable to determine network for {}:{}".format(ipaddr, e))
-            return []
-        finally:
-            self._lock.release()
 
     def _ripe_get_prefixes_per_asn(self):
         """
@@ -61,26 +54,24 @@ class ASNPrefixes(object):
 
         This API is documented on https://stat.ripe.net/docs/data_api
         """
-        try:
-            self._lock.acquire()
-            query_time = datetime.utcnow()
-            rep = urlopen(self._url_base + str(self._asn) + '&starttime=' +
-                          query_time.isoformat().split('.')[0])
-            data = str(rep.read().decode(encoding='UTF-8'))
-            rep.close()
-            js_data = json.loads(data)
-            pref_list = []
+        with self._update_lock:
+            try:
+                query_time = datetime.utcnow()
+                rep = urlopen(self._url_base + str(self._asn) + '&starttime=' +
+                              query_time.isoformat().split('.')[0])
+                data = str(rep.read().decode(encoding='UTF-8'))
+                rep.close()
+                js_data = json.loads(data)
+                pref_list = []
 
-            for record in js_data['data']['prefixes']:
-                pref_list.append(record['prefix'])
-            self._prefixes = pref_list
-            self._last_query = query_time
-        except Exception as e:
-            self._logger.error(
-                "Unable to update the prefix list. Last update at {}:{}".format(
-                    self._last_query, e))
-        finally:
-            self._lock.release()
+                for record in js_data['data']['prefixes']:
+                    pref_list.append(record['prefix'])
+                self._prefixes = pref_list
+                self._last_query = query_time
+            except Exception as e:
+                self._logger.error(
+                    "Unable to update the prefix list. Last update at {}:{}".format(
+                        self._last_query, e))
 
 
 class WhoisQuery(object):
