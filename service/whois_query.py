@@ -171,6 +171,7 @@ class WhoisQuery(object):
         if self._asn.get_network_for_ip(ip):
             return True
         else:
+            # Not sure if this will ever return true if the above is False
             reverse_dns = self.get_domain_from_ip(ip)
             return reverse_dns is not None and 'secureserver.net' in reverse_dns
 
@@ -200,7 +201,7 @@ class WhoisQuery(object):
                 query_value = dict(name=query.registrar, email=query.emails)
                 create_date = query.creation_date[0] if isinstance(query.creation_date, list) else query.creation_date
                 create_date = create_date.strftime(self.date_format) if create_date and  \
-                    isinstance(create_date, datetime.datetime) else None
+                    isinstance(create_date, datetime) else None
                 query_value['create_date'] = create_date
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
