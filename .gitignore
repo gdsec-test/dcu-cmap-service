@@ -9,6 +9,9 @@ k8s/*/staging
 # C extensions
 *.so
 
+# nosetests
+.noseids
+
 # Distribution / packaging
 .Python
 env/

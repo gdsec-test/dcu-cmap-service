@@ -1,13 +1,84 @@
-import json
-import socket
-import logging
 import datetime
+import json
+import logging
 import re
-from whois import whois, NICClient
-from whois.parser import WhoisEntry, PywhoisError
+import socket
+import threading
+from datetime import datetime, timedelta
+from urllib import urlopen
 from dns import resolver, reversename
 from ipwhois import IPWhois
+from netaddr.ip import all_matching_cidrs
+from whois import NICClient, whois
+from whois.parser import PywhoisError, WhoisEntry
 from functions import return_expected_dict_due_to_exception
+
+
+class ASNPrefixes(object):
+    """
+    Utility class for determining if a given ip address is part of an ASN's
+    announced prefixes. This class maintains an internal list of prefixes
+    for the given ASN that will be updated every update_hrs hours
+    """
+
+    def __init__(self, asn=26496, update_hrs=24):
+        self._logger = logging.getLogger(__name__)
+        self._asn = asn
+        self._last_query = datetime(1970, 1, 1)
+        self._url_base = 'https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS'
+        self._update_hrs = update_hrs
+        self._prefixes = []
+        self._update_lock = threading.RLock()
+        threading.Thread(target=self._ripe_get_prefixes_per_asn).start()
+
+    def get_network_for_ip(self, ipaddr):
+        """
+        Returns a list of networks that ipaddr exists in based on
+        the announced prefixes for the given ASN
+        NOTE: Based on update_hrs, this call may block while an up
+        to date list is being retrieved
+        """
+        with self._update_lock:
+            try:
+                if self._last_query < datetime.utcnow() - timedelta(
+                        hours=self._update_hrs):
+                    self._logger.info("Updating prefix list for ASN{}".format(self._asn))
+                    self._ripe_get_prefixes_per_asn()
+                return all_matching_cidrs(ipaddr, self._prefixes)
+            except Exception as e:
+                self._logger.error('Exception in _update_lock(): {}'.format(e.message))
+                return []
+
+    def _ripe_get_prefixes_per_asn(self):
+        """
+        Uses RIPE's API (https://stat.ripe.net/data/announced-prefixes/data.?)
+        to list the prefixes associated to a given Autonomous System Number (ASN)
+
+        e.g., e.g. https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS3333&starttime=2011-12-12T12:00
+
+        This API is documented on https://stat.ripe.net/docs/data_api
+        """
+        with self._update_lock:
+            try:
+                query_time = datetime.utcnow()
+                rep = urlopen(self._url_base + str(self._asn) + '&starttime=' +
+                              query_time.isoformat().split('.')[0])
+                data = str(rep.read().decode(encoding='UTF-8'))
+                rep.close()
+                js_data = json.loads(data)
+                pref_list = []
+
+                for record in js_data['data']['prefixes']:
+                    pref_list.append(record['prefix'])
+                # If prefix list is empty, don't overwrite _prefixes nor update _last_query time
+                if len(pref_list) == 0:
+                    raise ValueError('Currently obtained Prefix List is empty.')
+                self._prefixes = pref_list
+                self._last_query = query_time
+            except Exception as e:
+                self._logger.error(
+                    "Unable to update the prefix list. Last update at {}:{}".format(
+                        self._last_query, e))
 
 
 class WhoisQuery(object):
@@ -17,6 +88,7 @@ class WhoisQuery(object):
     def __init__(self, config, redis_obj):
         self._redis = redis_obj
         self.date_format = config.DATE_FORMAT
+        self._asn = ASNPrefixes()
 
     def is_ip(self, source_domain_or_ip):
         """
@@ -90,8 +162,16 @@ class WhoisQuery(object):
         return query_value
 
     def _check_hosted_here(self, ip):
-        reverse_dns = self.get_domain_from_ip(ip)
-        return reverse_dns is not None and 'secureserver.net' in reverse_dns
+        """
+        Check the ip address against the asn announced prefixes then check
+        the reverse dns for secureserver.net
+        """
+        if self._asn.get_network_for_ip(ip):
+            return True
+        else:
+            # Not sure if this will ever return true if the above is False
+            reverse_dns = self.get_domain_from_ip(ip)
+            return reverse_dns is not None and 'secureserver.net' in reverse_dns
 
     def get_registrar_info(self, domain_name):
         """
@@ -119,7 +199,7 @@ class WhoisQuery(object):
                 query_value = dict(name=query.registrar, email=query.emails)
                 create_date = query.creation_date[0] if isinstance(query.creation_date, list) else query.creation_date
                 create_date = create_date.strftime(self.date_format) if create_date and  \
-                    isinstance(create_date, datetime.datetime) else None
+                    isinstance(create_date, datetime) else None
                 query_value['create_date'] = create_date
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
