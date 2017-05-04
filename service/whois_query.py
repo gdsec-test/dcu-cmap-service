@@ -89,6 +89,7 @@ class WhoisQuery(object):
         self._redis = redis_obj
         self.date_format = config.DATE_FORMAT
         self._asn = ASNPrefixes()
+        self._logger = logging.getLogger(__name__)
 
     def is_ip(self, source_domain_or_ip):
         """
@@ -144,6 +145,7 @@ class WhoisQuery(object):
                     query_value['email'] = ['abuse@goaddy.com']
                     self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
                     return query_value
+                self._logger.info("Resorting to IPWhois lookup for {}".format(ip))
                 info = IPWhois(ip).lookup_rdap()
                 query_value['name'] = info.get('network').get('name')
                 for k, v in info['objects'].iteritems():
@@ -156,7 +158,7 @@ class WhoisQuery(object):
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
-            logging.error("Error in getting the hosting whois info for %s : %s", domain_name, e.message)
+            self._logger.error("Error in getting the hosting whois info for %s : %s", domain_name, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
             query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email', 'ip'])
         return query_value
@@ -167,11 +169,13 @@ class WhoisQuery(object):
         the reverse dns for secureserver.net
         """
         if self._asn.get_network_for_ip(ip):
+            self._logger.info("{} hosted info found in advertised prefixes".format(ip))
             return True
         else:
             # Not sure if this will ever return true if the above is False
             reverse_dns = self.get_domain_from_ip(ip)
-            return reverse_dns is not None and 'secureserver.net' in reverse_dns
+            if reverse_dns is not None and 'secureserver.net' in reverse_dns:
+                self._logger.info("{} hosted info found in reverse dns".format(ip))
 
     def get_registrar_info(self, domain_name):
         """
