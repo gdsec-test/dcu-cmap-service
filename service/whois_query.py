@@ -176,6 +176,8 @@ class WhoisQuery(object):
             reverse_dns = self.get_domain_from_ip(ip)
             if reverse_dns is not None and 'secureserver.net' in reverse_dns:
                 self._logger.info("{} hosted info found in reverse dns".format(ip))
+                return True
+            return False
 
     def get_registrar_info(self, domain_name):
         """
