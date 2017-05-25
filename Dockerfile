@@ -8,6 +8,8 @@ RUN addgroup -S dcu && adduser -H -S -G dcu dcu
 # apk installs
 RUN apk --no-cache add build-base \
     ca-certificates \
+    coreutils \
+    bc \
     openssl-dev \
     linux-headers \
     python-dev \
@@ -18,7 +20,7 @@ RUN apk --no-cache add build-base \
 EXPOSE 5000
 
 # Move files to new dir
-COPY ./logging.yml ./run.py ./runserver.sh ./settings.py ./*.ini /app/
+COPY ./logging.yml ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
 COPY trusted_certs /usr/local/share/ca-certificates
 COPY . /tmp
 
