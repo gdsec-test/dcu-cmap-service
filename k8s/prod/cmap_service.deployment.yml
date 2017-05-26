@@ -30,7 +30,7 @@ spec:
             failureThreshold: 1
           env:
           - name: LIVENESS_TTL
-            value: 3600
+            value: 7200
           - name: LIVENESS_FACTOR
             value: 0.1
           - name: BUILD_DATE
