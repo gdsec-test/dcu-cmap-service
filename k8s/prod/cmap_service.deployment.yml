@@ -22,12 +22,17 @@ spec:
           imagePullPolicy: "Always"
           image: "artifactory.secureserver.net:10014/docker-dcu-local/cmap_service:REPLACE_WITH_GIT_COMMIT"
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 5000
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            exec:
+              command:
+              - /app/kubetipper.sh
+            initialDelaySeconds: 120
+            periodSeconds: 120
+            failureThreshold: 1
           env:
+          - name: LIVENESS_TTL
+            value: 7200
+          - name: LIVENESS_FACTOR
+            value: 0.1
           - name: BUILD_DATE
             value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
           - name: sysenv
