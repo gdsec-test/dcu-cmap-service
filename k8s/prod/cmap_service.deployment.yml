@@ -30,9 +30,9 @@ spec:
             failureThreshold: 1
           env:
           - name: LIVENESS_TTL
-            value: 7200
+            value: "7200"
           - name: LIVENESS_FACTOR
-            value: 0.1
+            value: "0.1"
           - name: BUILD_DATE
             value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
           - name: sysenv
