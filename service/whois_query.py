@@ -2,7 +2,6 @@ import datetime
 import json
 import logging
 import re
-import socket
 import threading
 from datetime import datetime, timedelta
 from urllib import urlopen

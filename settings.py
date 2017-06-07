@@ -36,6 +36,14 @@ class AppConfig(object):
         self.CMAP_PROXY_PASS = PasswordDecrypter.decrypt(os.getenv('CMAP_PROXY_PASS') or 'password')
         self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT') or 'proxy.crt'
         self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY') or 'proxy.key'
+        self.VERTIGOUSER = os.getenv('VERTIGOUSER') or 'vertuser'
+        self.VERTIGOPASS = os.getenv('VERTIGOPASS') or 'vertpass'
+        self.TOOLZILLAUSER = os.getenv('TOOLZILLAUSER') or 'tzuser'
+        self.TOOLZILLAPASS = os.getenv('TOOLZILLAPASS') or 'tzpass'
+        self.DIABLOUSER = os.getenv('DIABLOUSER') or 'diablouser'
+        self.DIABLOPASS = os.getenv('DIABLOPASS') or 'diablopass'
+        self.ANGELOUSER = os.getenv('ANGELOUSER') or 'angelouser'
+        self.ANGELOPASS = os.getenv('ANGELOPASS') or 'angelopass'
 
 
 class ProductionAppConfig(AppConfig):

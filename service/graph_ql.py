@@ -16,6 +16,7 @@ class RegistrarInfo(graphene.ObjectType, DomainService):
 
 class HostInfo(graphene.ObjectType, DomainService):
     ip = graphene.String(description='IP address of the reported domain')
+    env = graphene.String(description='Domain/IP GoDaddy hosting environment')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -156,7 +157,11 @@ class DomainQuery(graphene.ObjectType):
 
     def resolve_host(self, args, context, info):
         whois = context.get('whois').get_hosting_info(self.domain)
-        return HostInfo(**whois)
+        if whois['name'] == 'GoDaddy.com LLC':
+            environment = context.get('shotgun').setrun(self.domain)
+            return HostInfo(**whois), environment
+        else:
+            return HostInfo(**whois)
 
     def resolve_registrar(self, args, context, info):
         whois = context.get('whois').get_registrar_info(self.domain)
