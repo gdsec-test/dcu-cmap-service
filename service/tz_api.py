@@ -9,7 +9,6 @@ class ToolzillaApi(object):
     """
     Uses the AbsGUID interface. Class is used to look up a GUID in the Toolzilla API given a domain name.
     """
-
     url = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
     ssl._create_default_https_context = ssl._create_unverified_context
 

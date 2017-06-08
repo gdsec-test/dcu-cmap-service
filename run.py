@@ -52,7 +52,7 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
        'redis': redis_obj,
        'shopper': ShopperAPI(config, redis_obj),
        'whois': WhoisQuery(config, redis_obj),
-       'shotgun': Shotgun()}
+       'shotgun': Shotgun(config)}
 
 
 @app.route('/health', methods=['GET'])

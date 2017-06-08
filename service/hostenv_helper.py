@@ -1,59 +1,52 @@
-from multiprocessing import Pool
+from pathos.multiprocessing import ProcessingPool as Pool
 from itertools import product
 from diablo_api import DiabloApi
 from vertigo_api import VertigoApi
 from angelo_api import AngeloApi
-from tz_api import ToolzillaApi
+# from tz_api import ToolzillaApi
 from suds.client import Client
-from blindal.crypter import Crypter
 from suds.sax.element import Element
 import ssl
-import os
-from settings import config_by_name
 from enrichment import nutrition_label
-
-env = os.getenv('sysenv') or 'dev'
-config = config_by_name[env]()
-vrun = VertigoApi(config)
-drun = DiabloApi(config)
-arun = AngeloApi(config)
-trun = ToolzillaApi(config)
+import logging
 
 
 class Shotgun(object):
+
+    def __init__(self, config):
+        self.tz_pass = config.TOOLZILLAPASS
+        self.vrun = VertigoApi(config)
+        self.drun = DiabloApi(config)
+        self.arun = AngeloApi(config)
+        #self.trun = ToolzillaApi(config)
 
     def run_guid(self, data):
         env = data[0]
         domain = data[1]
         if env == 'vertigo':
-            return vrun.guid_query(domain)
+            return self.vrun.guid_query(domain)
         elif env == 'diablo':
-            return drun.guid_query(domain)
+            return self.drun.guid_query(domain)
         elif env == 'angelo':
-            return arun.guid_query(domain)
+            return self.arun.guid_query(domain)
         elif env == 'tz':
-            return trun.guid_query(domain)
+            return self.guid_query(domain)
 
     def get_hostname_tz(self, guid):
         url = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
         user = 'svc_dcu'
-        pwd = config.get('TOOLZILLAPASS', None)
-
-        data = None
-
-        with open("key.txt", "r") as f:
-            data = f.readline().split()
+        pwd = self.tz_pass
 
         if pwd is not None:
-            pwd = Crypter.decrypt(pwd, data[0], data[1])
+
+            auth_head = Element('acc:Authentication User="' + user + '" Password="' + pwd + '"')
+            ssl._create_default_https_context = ssl._create_unverified_context
+
+            client = Client(url)
+            client.set_options(soapheaders=auth_head)
+
         else:
             print 'no tz password passed'
-
-        auth_head = Element('acc:Authentication User="' + user + '" Password="' + pwd + '"')
-        ssl._create_default_https_context = ssl._create_unverified_context
-
-        client = Client(url)
-        client.set_options(soapheaders=auth_head)
 
         try:
 
@@ -66,18 +59,61 @@ class Shotgun(object):
             os = enrichment[1]
             product = enrichment[2]
 
-            return hostname, dc, os, product
+            data = [dc, os, product]
+
+            return data
 
         except Exception as e:
             print str(e)
             print client.last_received()
 
+    def guid_query(self, domain):
+        """
+        Queries the Toolzilla API for a GUID for a domain name.
+        :param domain:
+        :return: GUID or None
+        """
+        url = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
+        user = 'svc_dcu'
+        pwd = self.tz_pass
+
+        if pwd is not None:
+
+            auth_head = Element('acc:Authentication User="' + user + '" Password="' + pwd + '"')
+            ssl._create_default_https_context = ssl._create_unverified_context
+
+            client = Client(url)
+            client.set_options(soapheaders=auth_head)
+
+        else:
+            print 'no tz password passed'
+
+        try:
+            data = client.service.searchByDomain(domain)
+            # checks to make sure the returned data is not an error
+            if str(type(data)) != "<class 'suds.sax.text.Text'>":
+                logging.info('Domain searched for: %s', domain)
+                hosting_guid = str(data[0][0][2][0])
+                return hosting_guid
+
+            return None
+
+        except Exception as e:
+            logging.error(e.message)
+            logging.error(client.last_received())
+            return None
+
     def setrun(self, domain):
         pool = Pool()
+        data = []
         try:
             result = pool.map(self.run_guid, [x for x in product(*[['angelo', 'vertigo', 'diablo', 'tz'], [domain]])])
             env = [self.get_hostname_tz(x) for x in result if x]
-            return env
+            result = filter(lambda x: x is not None, result)
+            for x in env[0]:
+                data.append(x)
+
+            data.append(result[0])
 
         except Exception as e:
             print str(e)
@@ -85,3 +121,4 @@ class Shotgun(object):
         finally:
             pool.close()
             pool.join()
+            return data

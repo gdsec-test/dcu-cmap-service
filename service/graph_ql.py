@@ -17,6 +17,11 @@ class RegistrarInfo(graphene.ObjectType, DomainService):
 class HostInfo(graphene.ObjectType, DomainService):
     ip = graphene.String(description='IP address of the reported domain')
     env = graphene.String(description='Domain/IP GoDaddy hosting environment')
+    hostname = graphene.String(description='Hostname of our server')
+    os = graphene.String(description='OS of our server')
+    guid = graphene.String(description='GUID for hosting account')
+    dc = graphene.String(description='Name of DC that our server is in')
+    product = graphene.String(description='Name of our hosting product in use')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -159,9 +164,12 @@ class DomainQuery(graphene.ObjectType):
         whois = context.get('whois').get_hosting_info(self.domain)
         if whois['name'] == 'GoDaddy.com LLC':
             environment = context.get('shotgun').setrun(self.domain)
-            return HostInfo(**whois), environment
-        else:
-            return HostInfo(**whois)
+            whois['dc'] = environment[0]
+            whois['os'] = environment[1]
+            whois['product'] = environment[2]
+            whois['guid'] = environment[3]
+
+        return HostInfo(**whois)
 
     def resolve_registrar(self, args, context, info):
         whois = context.get('whois').get_registrar_info(self.domain)

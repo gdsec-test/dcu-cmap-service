@@ -14,3 +14,4 @@ requests
 tld==0.7.6
 dnspython
 netaddr==0.7.19
+pathos
