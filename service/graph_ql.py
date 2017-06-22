@@ -5,6 +5,7 @@ import graphene
 from flask_graphql import GraphQLView
 
 
+
 class DomainService(graphene.AbstractType):
     name = graphene.String(description='Name of registrar or hosting provider')
     email = graphene.List(graphene.String, description='Email contact(s)')
@@ -153,6 +154,7 @@ class DomainQuery(graphene.ObjectType):
     domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
     domain = graphene.String(description='Domain Name from DomainQuery')
     blacklist = graphene.Boolean(description='Domain Name Blacklist Status - Do Not Suspend!')
+    alexa_rank = graphene.Int(description='Alexa World Wide Rank for domain')
 
     def resolve_host(self, args, context, info):
         whois = context.get('whois').get_hosting_info(self.domain)
@@ -178,6 +180,10 @@ class DomainQuery(graphene.ObjectType):
     def resolve_blacklist(self, args, context, info):
         vip = context.get('vip').query_entity(self.domain)
         return vip
+
+    def resolve_alexa_rank(self, args, context, info):
+        alexa = context.get('alexa').urlinfo(self.domain)
+        return alexa
 
     def resolve_domain_status(self, args, context, info):
         domain = DomainStatusInfo()
