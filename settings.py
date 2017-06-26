@@ -37,9 +37,9 @@ class AppConfig(object):
         self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT') or 'proxy.crt'
         self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY') or 'proxy.key'
         self.ACCESS_ID = os.getenv('ACCESS_ID') or 'access.id'
-        self.ACCESS_ID = urllib.quote(PasswordDecrypter.decrypt(self.ACCESS_ID))
+        self.ACCESS_ID = PasswordDecrypter.decrypt(self.ACCESS_ID)
         self.SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY') or 'secret.access.key'
-        self.SECRET_ACCESS_KEY = urllib.quote(PasswordDecrypter.decrypt(self.SECRET_ACCESS_KEY))
+        self.SECRET_ACCESS_KEY = PasswordDecrypter.decrypt(self.SECRET_ACCESS_KEY)
 
 
 class ProductionAppConfig(AppConfig):
