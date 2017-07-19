@@ -50,6 +50,7 @@ class ProductionAppConfig(AppConfig):
     DB = 'phishstory'
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_p_phish'
+    SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
@@ -59,6 +60,7 @@ class OTEAppConfig(AppConfig):
     DB = 'otephishstory'
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_o_phish'
+    SMDB_URL = 'https://smdb.test.intranet.gdg/ipservice/ipam.asmx?WSDL'
 
     def __init__(self):
         super(OTEAppConfig, self).__init__()
@@ -68,6 +70,7 @@ class DevelopmentAppConfig(AppConfig):
     DB = 'devphishstory'
     DB_HOST = '10.22.188.208'
     DB_USER = 'devuser'
+    SMDB_URL ='https://smdb.int.dev-godaddy.com/IPService/ipam.asmx?WSDL'
 
     def __init__(self):
         super(DevelopmentAppConfig, self).__init__()
@@ -76,6 +79,7 @@ class DevelopmentAppConfig(AppConfig):
 class LocalAppConfig(AppConfig):
     DB = 'local'
     DB_HOST = 'localhost'
+    SMDB_URL ='https://smdb.int.dev-godaddy.com/IPService/ipam.asmx?WSDL'
 
     def __init__(self):
         super(LocalAppConfig, self).__init__()

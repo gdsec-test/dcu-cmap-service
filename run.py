@@ -15,7 +15,7 @@ from service.vip_clients import VipClients
 from service.crm_client_api import CrmClientApi
 from service.shopper_api import ShopperAPI
 from service.whois_query import WhoisQuery
-from service.hostenv_helper import Shotgun
+from service.hostenv_helper import SearchAll, Ipam
 
 from settings import config_by_name
 
@@ -52,7 +52,8 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
        'redis': redis_obj,
        'shopper': ShopperAPI(config, redis_obj),
        'whois': WhoisQuery(config, redis_obj),
-       'shotgun': Shotgun(config)}
+       'searchall': SearchAll(config),
+       'ipam': Ipam(config)}
 
 
 @app.route('/health', methods=['GET'])

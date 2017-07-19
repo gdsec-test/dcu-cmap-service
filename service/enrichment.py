@@ -25,20 +25,21 @@ def nutrition_label(hostname):
         product = '2GH'
 
     elif dc == 'DNS':
-        product = 'Closed'
+        product = 'Not Hosting'
 
     elif dc == 'Corp':
-        product = 'Closed'
+        product = 'Not Hosting'
 
     elif dc == 'VPH':
-        product = 'Open'
+        product = 'VPH'
 
-    elif dc == 'Check VAT':
-        os = 'Check VAT'
-        product = 'Open'
+    elif dc == 'vert':
+        dc = 'P3'
+        os = ''
+        product = 'Vertigo'
 
     elif dc == 'Failed':
-        product = 'Open'
+        product = 'Not Hosting'
 
     else:
         os = os_finder(os)
@@ -74,7 +75,7 @@ def dc_finder(dc):
         return 'A2'
 
     elif dc == 've':
-        return 'Check VAT'
+        return 'vert'
 
     elif dc == 'cn':
         return 'DNS'
@@ -111,10 +112,10 @@ def product_finder(product):
         return 'VPS'
 
     elif product[0] == 'v' and product[2] == 'w':
-        return 'Plesk'
+        return 'Angelo'
 
-    elif product[0] == 'w':
-        return 'WPaaS'
+    elif product[:3] == 'wvp':
+        return 'Angelo'
 
     elif product[0] == 'c':
-        return 'cPanel'
+        return 'Diablo'

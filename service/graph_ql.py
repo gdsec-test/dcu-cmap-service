@@ -22,6 +22,7 @@ class HostInfo(graphene.ObjectType, DomainService):
     guid = graphene.String(description='GUID for hosting account')
     dc = graphene.String(description='Name of DC that our server is in')
     product = graphene.String(description='Name of our hosting product in use')
+    shopper = graphene.String(description='Shopper account ID')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -163,11 +164,15 @@ class DomainQuery(graphene.ObjectType):
     def resolve_host(self, args, context, info):
         whois = context.get('whois').get_hosting_info(self.domain)
         if whois['name'] == 'GoDaddy.com LLC':
-            environment = context.get('shotgun').setrun(self.domain)
-            whois['dc'] = environment[0]
-            whois['os'] = environment[1]
-            whois['product'] = environment[2]
-            whois['guid'] = environment[3]
+            host_info = context.get('ipam').get_properties_for_ip(self.domain)
+            print host_info
+            whois['dc'] = host_info['dc']
+            whois['os'] = host_info['os']
+            whois['product'] = host_info['product']
+            whois['guid'] = host_info['guid']
+            whois['shopper'] = host_info['shopper']
+            whois['hostname'] = host_info['hostname']
+            whois['ip'] = host_info['ip']
 
         return HostInfo(**whois)
 

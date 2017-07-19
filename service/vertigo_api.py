@@ -25,7 +25,9 @@ class VertigoApi(object):
 
             if returned_json['data']:
                 guid = returned_json['data'][0]['accountUid']
-                return guid
+                shopper = returned_json['data'][0]['shopperId']
+                os = returned_json['data'][0]['template_name']
+                return {'guid': guid, 'shopper': shopper, 'os': os}
 
             return None
 

@@ -25,7 +25,9 @@ class AngeloApi(object):
             if r.status_code == 200:
                 returned_json = r.json()
                 guid = str(returned_json['orion_id'])
-                return guid
+                shopper = str(returned_json['shopper_id'])
+                os = 'Windows'
+                return {'guid': guid, 'shopper': shopper, 'os': os}
             elif r.status_code == 400:
                 t = ast.literal_eval(r.text)
                 logging.info(t)

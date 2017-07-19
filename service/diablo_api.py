@@ -23,7 +23,9 @@ class DiabloApi(object):
 
             if returned_json['data']:
                 guid = returned_json['data'][0]['orion_guid']
-                return guid
+                shopper = returned_json['data'][0]['shopper_id']
+                os = 'Linux'
+                return {'guid': guid, 'shopper': shopper, 'os': os}
 
             elif r.status_code == 400:
                 t = ast.literal_eval(r.text)
