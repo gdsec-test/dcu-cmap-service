@@ -5,12 +5,12 @@ import logging
 
 class DiabloApi(object):
 
-    url = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts?addon_domain_eq='
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
         self.user = settings.DIABLOUSER
         self.pwd = settings.DIABLOPASS
+        self.url = settings.DIABLO_URL
 
     def guid_query(self, domain):
 
@@ -22,15 +22,14 @@ class DiabloApi(object):
             returned_json = r.json()
 
             if returned_json['data']:
-                guid = returned_json['data'][0]['orion_guid']
-                shopper = returned_json['data'][0]['shopper_id']
+                guid = returned_json['data'][0].get('orion_guid')
+                shopper = returned_json['data'][0].get('shopper_id')
                 os = 'Linux'
                 return {'guid': guid, 'shopper': shopper, 'os': os}
 
             elif r.status_code == 400:
                 t = ast.literal_eval(r.text)
                 logging.info(t)
-                return None
 
         except Exception as e:
             logging.error(e.message)

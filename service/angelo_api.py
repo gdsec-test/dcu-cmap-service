@@ -6,12 +6,12 @@ import logging
 
 class AngeloApi(object):
 
-    url = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
         self.ANGELOUSER = settings.ANGELOUSER
         self.ANGELOPASS = settings.ANGELOPASS
+        self.url = settings.ANGELO_URL
 
     def guid_query(self, domain):
 
@@ -34,7 +34,6 @@ class AngeloApi(object):
                 return None
 
             logging.error("Failed Lookup")
-            return None
 
         except:
             logging.error("Failed Lookup")

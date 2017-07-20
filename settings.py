@@ -51,6 +51,10 @@ class ProductionAppConfig(AppConfig):
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_p_phish'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
+    TZ_URL = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
+    VERT_URL = 'https://vertigo.godaddy.com/vertigo/v1/container/?ips__ipv4='
+    ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
+    DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts?addon_domain_eq='
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()

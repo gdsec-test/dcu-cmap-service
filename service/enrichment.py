@@ -13,10 +13,11 @@ def nutrition_label(hostname):
         if hostname[5] == 8:
             product = '4GH'
 
-        elif hostname[5] == 'v' and hostname[7] == 'w':
-            product = 'Plesk'
-        elif hostname[5] == 'v' and hostname[7] != 'w':
+        elif hostname[5] == 'v':
             product = 'VPS'
+            if hostname[7] == 'w':
+                product = 'Plesk'
+
         else:
             product = product_finder(product)
 
@@ -55,39 +56,19 @@ def nutrition_label(hostname):
 
 
 def dc_finder(dc):
-
-    if dc == 'p3':
-        return 'P3'
-
-    elif dc == 'n1':
-        return 'N1'
-
-    elif dc == 'p1':
-        return 'P1'
-
-    elif dc == 's2':
-        return 'S2'
-
-    elif dc == 'sg':
-        return 'SG2'
-
-    elif dc == 'a2':
-        return 'A2'
-
-    elif dc == 've':
-        return 'vert'
-
-    elif dc == 'cn':
-        return 'DNS'
-
-    elif dc == 'vp':
-        return 'VPH'
-
-    elif dc == 'fw':
-        return 'Corp'
-
-    else:
-        return 'Failed'
+    result = {
+        'p3': 'P3',
+        'n1': 'N1',
+        'p1': 'P1',
+        's2': 'S2',
+        'sg': 'SG2',
+        'a2': 'A2',
+        've': 'vert',
+        'cn': 'DNS',
+        'vp': 'VPH',
+        'fw': 'Corp'
+    }.get(dc, 'Failed')
+    return result
 
 
 def os_finder(os):
@@ -101,17 +82,14 @@ def os_finder(os):
 
 
 def product_finder(product):
-
-    if product[0] == 'h' and product[1] == 'g':
-        return '4GH'
-
-    elif product[0] == 'h' and product[1] != 'g':
+    if product[0] == 'h':
+        if product[1] == 'g':
+            return '4GH'
         return '2GH'
 
-    elif product[0] == 'v' and product[2] == 'h':
-        return 'VPS'
-
-    elif product[0] == 'v' and product[2] == 'w':
+    elif product[0] == 'v':
+        if product[2] == 'h':
+            return 'VPS'
         return 'Angelo'
 
     elif product[:3] == 'wvp':

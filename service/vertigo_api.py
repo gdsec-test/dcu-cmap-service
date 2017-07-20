@@ -5,12 +5,12 @@ import socket
 
 class VertigoApi(object):
 
-    url = 'https://vertigo.godaddy.com/vertigo/v1/container/?ips__ipv4='
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
         self.user = settings.VERTIGOUSER
         self.pwd = settings.VERTIGOPASS
+        self.url = settings.VERT_URL
 
     def guid_query(self, domain):
 
@@ -24,12 +24,10 @@ class VertigoApi(object):
             returned_json = response.json()
 
             if returned_json['data']:
-                guid = returned_json['data'][0]['accountUid']
-                shopper = returned_json['data'][0]['shopperId']
-                os = returned_json['data'][0]['template_name']
+                guid = returned_json['data'][0].get('accountUid', None)
+                shopper = returned_json['data'][0].get('shopperId', None)
+                os = returned_json['data'][0].get('template_name', None)
                 return {'guid': guid, 'shopper': shopper, 'os': os}
-
-            return None
 
         except Exception as e:
             logging.error(e.message)

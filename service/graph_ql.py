@@ -166,13 +166,13 @@ class DomainQuery(graphene.ObjectType):
         if whois['name'] == 'GoDaddy.com LLC':
             host_info = context.get('ipam').get_properties_for_ip(self.domain)
             print host_info
-            whois['dc'] = host_info['dc']
-            whois['os'] = host_info['os']
-            whois['product'] = host_info['product']
-            whois['guid'] = host_info['guid']
-            whois['shopper'] = host_info['shopper']
-            whois['hostname'] = host_info['hostname']
-            whois['ip'] = host_info['ip']
+            whois['dc'] = host_info.get('dc')
+            whois['os'] = host_info.get('os')
+            whois['product'] = host_info.get('product')
+            whois['guid'] = host_info.get('guid')
+            whois['shopper'] = host_info.get('shopper')
+            whois['hostname'] = host_info.get('hostname')
+            whois['ip'] = host_info.get('ip')
 
         return HostInfo(**whois)
 

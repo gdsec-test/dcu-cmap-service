@@ -10,13 +10,13 @@ class ToolzillaApi(object):
     """
     Uses the AbsGUID interface. Class is used to look up a GUID in the Toolzilla API given a domain name.
     """
-    url = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
     ssl._create_default_https_context = ssl._create_unverified_context
 
     def __init__(self, settings):
         self.user = settings.TOOLZILLAUSER
         self.pwd = settings.TOOLZILLAPASS
-        auth_head = Element('acc:Authentication User="' + self.user + '" Password="' + self.pwd + '"')
+        self.url = settings.TZ_URL
+        auth_head = Element('acc:Authentication User="%s" Password="%s"' % (self.user, self.pwd))
         self.client = suds.client.Client(self.url)
         self.client.set_options(soapheaders=auth_head)
 
@@ -31,11 +31,8 @@ class ToolzillaApi(object):
             # checks to make sure the returned data is not an error
             if data:
                 logging.info('guid searched for: %s', guid)
-                data = data.split('.')
-                hostname = data[0]
+                hostname = data.split('.')[0]
                 return hostname
-
-            return None
 
         except Exception as e:
             logging.error(e.message)
@@ -71,7 +68,6 @@ class ToolzillaApi(object):
                     product = extra[2]
                     return {'guid': hosting_guid, 'shopper': shopper, 'product': product, 'os': os, 'hostname': hostname, 'dc': dc}
 
-            return None
 
         except Exception as e:
             logging.error(e.message)

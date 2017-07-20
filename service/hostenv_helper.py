@@ -1,132 +1,14 @@
-from pathos.multiprocessing import ProcessingPool as Pool
-from itertools import product
 from diablo_api import DiabloApi
 from vertigo_api import VertigoApi
 from angelo_api import AngeloApi
 from tz_api import ToolzillaApi
 from suds.client import Client
-from suds.sax.element import Element
 from suds import WebFault
-import ssl
 from enrichment import nutrition_label
 import logging
 from suds.transport.https import WindowsHttpAuthenticated
 from urllib2 import URLError
 import socket
-
-
-
-class SearchAll(object):
-
-    def __init__(self, config):
-        self.tz_pass = config.TOOLZILLAPASS
-        self.vrun = VertigoApi(config)
-        self.drun = DiabloApi(config)
-        self.arun = AngeloApi(config)
-        self.trun = ToolzillaApi(config)
-
-    def run_guid(self, data):
-        env = data[0]
-        domain = data[1]
-        if env == 'vertigo':
-            return self.vrun.guid_query(domain)
-        elif env == 'diablo':
-            return self.drun.guid_query(domain)
-        elif env == 'angelo':
-            return self.arun.guid_query(domain)
-        elif env == 'tz':
-            return self.guid_query(domain)
-
-    def get_hostname_tz(self, guid):
-        url = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
-        user = 'svc_dcu'
-        pwd = self.tz_pass
-
-        if pwd is not None:
-
-            auth_head = Element('acc:Authentication User="' + user + '" Password="' + pwd + '"')
-            ssl._create_default_https_context = ssl._create_unverified_context
-
-            client = Client(url)
-            client.set_options(soapheaders=auth_head)
-
-        else:
-            print 'no tz password passed'
-
-        try:
-
-            hostname = client.service.getHostNameByGuid(guid)
-            hostname = hostname.split('.')[0]
-            hostname = hostname.lower()
-
-            enrichment = nutrition_label(hostname)
-            dc = enrichment[0]
-            os = enrichment[1]
-            product = enrichment[2]
-
-            data = [dc, os, product]
-
-            return data
-
-        except Exception as e:
-            print str(e)
-            print client.last_received()
-
-    def guid_query(self, domain):
-        """
-        Queries the Toolzilla API for a GUID for a domain name.
-        :param domain:
-        :return: GUID or None
-        """
-        url = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
-        user = 'svc_dcu'
-        pwd = self.tz_pass
-
-        if pwd is not None:
-
-            auth_head = Element('acc:Authentication User="' + user + '" Password="' + pwd + '"')
-            ssl._create_default_https_context = ssl._create_unverified_context
-
-            client = Client(url)
-            client.set_options(soapheaders=auth_head)
-
-        else:
-            print 'no tz password passed'
-
-        try:
-            data = client.service.searchByDomain(domain)
-            # checks to make sure the returned data is not an error
-            if str(type(data)) != "<class 'suds.sax.text.Text'>":
-                logging.info('Domain searched for: %s', domain)
-                hosting_guid = str(data[0][0][2][0])
-                return hosting_guid
-
-            return None
-
-        except Exception as e:
-            logging.error(e.message)
-            logging.error(client.last_received())
-            return None
-
-    def setrun(self, domain):
-        pool = Pool()
-        data = []
-        try:
-            result = pool.map(self.run_guid, [x for x in product(*[['angelo', 'vertigo', 'diablo', 'tz'], [domain]])])
-            env = [self.get_hostname_tz(x) for x in result if x]
-            result = filter(lambda x: x is not None, result)
-            for x in env[0]:
-                data.append(x)
-
-            data.append(result[0])
-
-        except Exception as e:
-            print str(e)
-
-        finally:
-            pool.close()
-            pool.join()
-            return data
 
 
 class Ipam(object):
@@ -196,11 +78,9 @@ class Ipam(object):
 
             # Manually parse the SOAP XML response.
             return soapResult
-        except (WebFault, URLError) as e:
-            try:
-                raise Exception("IPAM SOAP Fault: %s" % e.fault.faultstring)
-            except AttributeError as e2:
-                raise Exception("IPAM SOAP Attribute Fault: %s" % str(e2))
+        except Exception as e:
+            logging.error(e.message)
+            return None
 
     # Make sure all method parameters were supplied. The only exception is 'vlan', which is optional.
     def __validate_params(self, params):
@@ -219,18 +99,21 @@ class Ipam(object):
         ip = socket.gethostbyname(domain)
         self.__validate_params(locals())
         ipam = self.client.service.GetPropertiesForIP(ip, transport=self.ntlm)
-        if ipam['HostName']:
+        if ipam.get('HostName'):
             data = nutrition_label(ipam['HostName'])
             if data[2] != 'Not Hosting':
                 d = self._guid_locater(data[2], domain)
-                return {'hostname': ipam['HostName'], 'dc': data[0], 'os': d['os'], 'product': data[2], 'ip': ip,
-                            'guid': d['guid'], 'shopper': d['shopper']}
+                if d:
+                    return {'hostname': ipam.get('HostName'), 'dc': data[0], 'os': d.get('os'), 'product': data[2], 'ip': ip,
+                            'guid': d.get('guid'), 'shopper': d.get('shopper')}
+                else:
+                    logging.error('_guid_locater failed on: %s' % domain)
             else:
                 return 'No hosting product found'
         elif ipam['HostName'] is None:
             data = self.trun.guid_query(domain)
-            return {'dc': data['dc'], 'os': data['os'], 'product': data['product'], 'ip': ip, 'guid': data['guid'],
-                    'shopper': data['shopper'], 'hostname': data['hostname']}
+            return {'dc': data.get('dc'), 'os': data.get('os'), 'product': data.get('product'), 'ip': ip,
+                    'guid': data.get('guid'), 'shopper': data.get('shopper'), 'hostname': data.get('hostname')}
         else:
             return None
 
