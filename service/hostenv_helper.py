@@ -16,8 +16,8 @@ class Ipam(object):
     # This method is called automatically when this class is instantiated.
     def __init__(self, config):
 
-        self.smdbUsername = config.TOOLZILLAUSER
-        self.smdbPassword = config.TOOLZILLAPASS
+        self.smdbUsername = config.SMDBUSER
+        self.smdbPassword = config.SMDBPASS
         self.tz_pass = config.TOOLZILLAPASS
         self.vrun = VertigoApi(config)
         self.drun = DiabloApi(config)
@@ -76,7 +76,6 @@ class Ipam(object):
             # Dynamically make SOAP call.
             soapResult = getattr(self.client.service, method)(*params)
 
-            # Manually parse the SOAP XML response.
             return soapResult
         except Exception as e:
             logging.error(e.message)
@@ -99,21 +98,28 @@ class Ipam(object):
         ip = socket.gethostbyname(domain)
         self.__validate_params(locals())
         ipam = self.client.service.GetPropertiesForIP(ip, transport=self.ntlm)
-        if ipam.get('HostName'):
-            data = nutrition_label(ipam['HostName'])
-            if data[2] != 'Not Hosting':
-                d = self._guid_locater(data[2], domain)
-                if d:
-                    return {'hostname': ipam.get('HostName'), 'dc': data[0], 'os': d.get('os'), 'product': data[2], 'ip': ip,
-                            'guid': d.get('guid'), 'shopper': d.get('shopper')}
-                else:
-                    logging.error('_guid_locater failed on: %s' % domain)
+        if hasattr(ipam, 'HostName'):
+            ipam_hostname = getattr(ipam, 'HostName')
+            if ipam_hostname is None:
+                data = self.trun.guid_query(domain)
+                return {'dc': data.get('dc', None), 'os': data.get('os', None), 'product': data.get('product', None),
+                        'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
+                        'hostname': data.get('hostname', None)}
             else:
-                return 'No hosting product found'
-        elif ipam['HostName'] is None:
-            data = self.trun.guid_query(domain)
-            return {'dc': data.get('dc'), 'os': data.get('os'), 'product': data.get('product'), 'ip': ip,
-                    'guid': data.get('guid'), 'shopper': data.get('shopper'), 'hostname': data.get('hostname')}
+                data = nutrition_label(ipam_hostname)
+                if len(data) < 3 or data[2] != 'Not Hosting':
+                    d = self._guid_locater(data[2], domain)
+                    if d:
+                        return {'hostname': ipam_hostname, 'dc': data[0], 'os': d.get('os', None),
+                                'product': data[2], 'ip': ip, 'guid': d.get('guid', None),
+                                'shopper': d.get('shopper', None)}
+                    else:
+                        logging.error('_guid_locater failed on: %s' % domain)
+                        return {'hostname': ipam_hostname, 'dc': data[0], 'os': data[1],
+                                'product': data[2], 'ip': ip, 'guid': None,
+                                'shopper': None}
+                else:
+                    return 'No hosting product found'
         else:
             return None
 

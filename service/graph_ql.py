@@ -16,7 +16,6 @@ class RegistrarInfo(graphene.ObjectType, DomainService):
 
 class HostInfo(graphene.ObjectType, DomainService):
     ip = graphene.String(description='IP address of the reported domain')
-    env = graphene.String(description='Domain/IP GoDaddy hosting environment')
     hostname = graphene.String(description='Hostname of our server')
     os = graphene.String(description='OS of our server')
     guid = graphene.String(description='GUID for hosting account')
@@ -165,14 +164,18 @@ class DomainQuery(graphene.ObjectType):
         whois = context.get('whois').get_hosting_info(self.domain)
         if whois['name'] == 'GoDaddy.com LLC':
             host_info = context.get('ipam').get_properties_for_ip(self.domain)
-            print host_info
-            whois['dc'] = host_info.get('dc')
-            whois['os'] = host_info.get('os')
-            whois['product'] = host_info.get('product')
-            whois['guid'] = host_info.get('guid')
-            whois['shopper'] = host_info.get('shopper')
-            whois['hostname'] = host_info.get('hostname')
-            whois['ip'] = host_info.get('ip')
+            if type(host_info) is dict:
+                whois['dc'] = host_info.get('dc', None)
+                whois['os'] = host_info.get('os', None)
+                whois['product'] = host_info.get('product', None)
+                whois['guid'] = host_info.get('guid', None)
+                whois['shopper'] = host_info.get('shopper', None)
+                whois['hostname'] = host_info.get('hostname', None)
+                whois['ip'] = host_info.get('ip', None)
+            else:
+                if whois.get('ip', None) is None:
+                    whois['ip'] = None
+                whois.update({'dc': None, 'os': None, 'product': None, 'guid': None, 'shopper': None, 'hostname': None})
 
         return HostInfo(**whois)
 

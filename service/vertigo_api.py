@@ -23,7 +23,7 @@ class VertigoApi(object):
             response = requests.get(self.url + ip, auth=(self.user, self.pwd), headers=self.headers, verify=False)
             returned_json = response.json()
 
-            if returned_json['data']:
+            if returned_json.get('data', False):
                 guid = returned_json['data'][0].get('accountUid', None)
                 shopper = returned_json['data'][0].get('shopperId', None)
                 os = returned_json['data'][0].get('template_name', None)

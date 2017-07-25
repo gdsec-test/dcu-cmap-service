@@ -21,7 +21,7 @@ class DiabloApi(object):
             r = requests.get(self.url + domain, auth=(self.user, self.pwd), headers=self.headers, verify=False)
             returned_json = r.json()
 
-            if returned_json['data']:
+            if returned_json.get('data', False):
                 guid = returned_json['data'][0].get('orion_guid')
                 shopper = returned_json['data'][0].get('shopper_id')
                 os = 'Linux'
@@ -33,4 +33,5 @@ class DiabloApi(object):
 
         except Exception as e:
             logging.error(e.message)
-            return None
+
+        return None

@@ -44,6 +44,8 @@ class AppConfig(object):
         self.DIABLOPASS = os.getenv('DIABLOPASS') or 'diablopass'
         self.ANGELOUSER = os.getenv('ANGELOUSER') or 'angelouser'
         self.ANGELOPASS = os.getenv('ANGELOPASS') or 'angelopass'
+        self.SMDBUSER = os.getenv('SMDBUSER') or 'smdbuser'
+        self.SMDBPASS = os.getenv('SMDBPASS') or 'smdbpass'
 
 
 class ProductionAppConfig(AppConfig):

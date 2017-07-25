@@ -68,8 +68,8 @@ class ToolzillaApi(object):
                     product = extra[2]
                     return {'guid': hosting_guid, 'shopper': shopper, 'product': product, 'os': os, 'hostname': hostname, 'dc': dc}
 
-
         except Exception as e:
             logging.error(e.message)
             logging.error(self.client.last_received())
-            return None
+
+        return None

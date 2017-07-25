@@ -24,17 +24,16 @@ class AngeloApi(object):
                               auth=(self.ANGELOUSER, self.ANGELOPASS), headers=self.headers, verify=False)
             if r.status_code == 200:
                 returned_json = r.json()
-                guid = str(returned_json['orion_id'])
-                shopper = str(returned_json['shopper_id'])
+                guid = str(returned_json.get('orion_id', None))
+                shopper = str(returned_json.get('shopper_id', None))
                 os = 'Windows'
                 return {'guid': guid, 'shopper': shopper, 'os': os}
             elif r.status_code == 400:
                 t = ast.literal_eval(r.text)
                 logging.info(t)
-                return None
 
             logging.error("Failed Lookup")
 
         except:
             logging.error("Failed Lookup")
-            return None
+        return None

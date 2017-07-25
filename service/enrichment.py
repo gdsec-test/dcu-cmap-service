@@ -10,7 +10,7 @@ def nutrition_label(hostname):
         os = hostname[4]
         os = os_finder(os)
 
-        if hostname[5] == 8:
+        if hostname[5] == '8':
             product = '4GH'
 
         elif hostname[5] == 'v':
@@ -21,7 +21,7 @@ def nutrition_label(hostname):
         else:
             product = product_finder(product)
 
-    elif dc == 'P3' and hostname[4] == 8:
+    elif dc == 'P3' and hostname[4] == '8':
         os = 'Windows'
         product = '2GH'
 
