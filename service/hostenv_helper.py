@@ -3,11 +3,9 @@ from vertigo_api import VertigoApi
 from angelo_api import AngeloApi
 from tz_api import ToolzillaApi
 from suds.client import Client
-from suds import WebFault
 from enrichment import nutrition_label
 import logging
 from suds.transport.https import WindowsHttpAuthenticated
-from urllib2 import URLError
 import socket
 
 
@@ -16,24 +14,19 @@ class Ipam(object):
     # This method is called automatically when this class is instantiated.
     def __init__(self, config):
 
-        self.smdbUsername = config.SMDBUSER
-        self.smdbPassword = config.SMDBPASS
-        self.tz_pass = config.TOOLZILLAPASS
         self.vrun = VertigoApi(config)
         self.drun = DiabloApi(config)
         self.arun = AngeloApi(config)
         self.trun = ToolzillaApi(config)
 
-        self.url = config.SMDB_URL
-
         # Create the NTLM authentication object.
-        self.ntlm = WindowsHttpAuthenticated(username=self.smdbUsername, password=self.smdbPassword)
+        self.ntlm = WindowsHttpAuthenticated(username=config.SMDBUSER, password=config.SMDBPASS)
 
         # Set the logging for SUDS to only critical. We don't care about anything less.
         logging.disable(logging.CRITICAL)
 
         # Create the SUDS SOAP client.
-        self.client = Client(self.url, transport=self.ntlm)
+        self.client = Client(config.SMDB_URL, transport=self.ntlm)
 
         # Create lookup object dictionary
         # self.ctx = {vertigo}
@@ -97,7 +90,14 @@ class Ipam(object):
 
         ip = socket.gethostbyname(domain)
         self.__validate_params(locals())
-        ipam = self.client.service.GetPropertiesForIP(ip, transport=self.ntlm)
+
+        try:
+            ipam = self.client.service.GetPropertiesForIP(ip, transport=self.ntlm)
+
+        except Exception as e:
+            logging.error(e.message)
+            return None
+
         if hasattr(ipam, 'HostName'):
             ipam_hostname = getattr(ipam, 'HostName')
             if ipam_hostname is None:

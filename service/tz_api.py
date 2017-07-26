@@ -37,7 +37,7 @@ class ToolzillaApi(object):
         except Exception as e:
             logging.error(e.message)
             logging.error(self.client.last_received())
-            return None
+        return None
 
     def guid_query(self, domain):
         """

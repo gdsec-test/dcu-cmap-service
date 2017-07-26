@@ -31,4 +31,5 @@ class VertigoApi(object):
 
         except Exception as e:
             logging.error(e.message)
-            return None
+
+        return None
