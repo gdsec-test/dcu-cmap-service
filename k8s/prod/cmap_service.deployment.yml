@@ -72,6 +72,56 @@ spec:
               secretKeyRef:
                 name: auth-alexa
                 key: username
+          - name: ANGELOUSER
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: angelouser
+          - name: ANGELOPASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: angelopass
+          - name: DIABLOUSER
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: diablouser
+          - name: DIABLOPASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: diablopass
+          - name: VERTIGOUSER
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: vertigouser
+          - name: VERTIGOPASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: vertigopass
+          - name: TOOLZILLAUSER
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: tzuser
+          - name: TOOLZILLAPASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: tzpass
+          - name: SMDBUSER
+            valueFrom:
+              secretKeyRef:
+                name: auth-smdb
+                key: username
+          - name: SMDBPASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-smdb
+                key: password
 
           volumeMounts:
           - name: encryption-keys
