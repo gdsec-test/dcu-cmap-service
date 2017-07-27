@@ -26,6 +26,10 @@ class AppConfig(object):
     DB_PORT = '27017'
     COLLECTION = 'blacklist'
     DATE_FORMAT = '%Y-%m-%d'
+    TZ_URL = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
+    VERT_URL = 'https://vertigo.godaddy.com/vertigo/v1/container/?ips__ipv4='
+    ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
+    DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts?addon_domain_eq='
 
     def __init__(self):
         self.REDIS = os.getenv('REDIS') or 'redis'
@@ -38,14 +42,19 @@ class AppConfig(object):
         self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY') or 'proxy.key'
         self.VERTIGOUSER = os.getenv('VERTIGOUSER') or 'vertuser'
         self.VERTIGOPASS = os.getenv('VERTIGOPASS') or 'vertpass'
+        self.VERTIGOPASS = PasswordDecrypter.decrypt(self.VERTIGOPASS)
         self.TOOLZILLAUSER = os.getenv('TOOLZILLAUSER') or 'tzuser'
         self.TOOLZILLAPASS = os.getenv('TOOLZILLAPASS') or 'tzpass'
+        self.TOOLZILLAPASS = PasswordDecrypter.decrypt(self.TOOLZILLAPASS)
         self.DIABLOUSER = os.getenv('DIABLOUSER') or 'diablouser'
         self.DIABLOPASS = os.getenv('DIABLOPASS') or 'diablopass'
+        self.DIABLOPASS = PasswordDecrypter.decrypt(self.DIABLOPASS)
         self.ANGELOUSER = os.getenv('ANGELOUSER') or 'angelouser'
         self.ANGELOPASS = os.getenv('ANGELOPASS') or 'angelopass'
+        self.ANGELOPASS = PasswordDecrypter.decrypt(self.ANGELOPASS)
         self.SMDBUSER = os.getenv('SMDBUSER') or 'smdbuser'
         self.SMDBPASS = os.getenv('SMDBPASS') or 'smdbpass'
+        self.SMDBPASS = PasswordDecrypter.decrypt(self.SMDBPASS)
         self.ACCESS_ID = os.getenv('ACCESS_ID') or 'access.id'
         self.ACCESS_ID = PasswordDecrypter.decrypt(self.ACCESS_ID)
         self.SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY') or 'secret.access.key'
@@ -57,10 +66,6 @@ class ProductionAppConfig(AppConfig):
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_p_phish'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
-    TZ_URL = 'https://toolzilla.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
-    VERT_URL = 'https://vertigo.godaddy.com/vertigo/v1/container/?ips__ipv4='
-    ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
-    DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts?addon_domain_eq='
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
