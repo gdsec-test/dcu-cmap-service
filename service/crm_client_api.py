@@ -14,14 +14,17 @@ class CrmClientApi(object):
     REDIS_DATA_KEY = 'result'
 
     def __init__(self, settings, redis_obj):
-        self._client = Client(self._WSDL, location=self._LOCATION, 
-                              headers=RequestsTransport.get_soap_headers(),
-                              transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
-                                                          password=settings.CMAP_PROXY_PASS,
-                                                          cert=settings.CMAP_PROXY_CERT,
-                                                          key=settings.CMAP_PROXY_KEY))
-        self._request = self._client.factory.create(self._FACTORY)
-        self._redis = redis_obj
+        try:
+            self._client = Client(self._WSDL, location=self._LOCATION,
+                                  headers=RequestsTransport.get_soap_headers(),
+                                  transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                                              password=settings.CMAP_PROXY_PASS,
+                                                              cert=settings.CMAP_PROXY_CERT,
+                                                              key=settings.CMAP_PROXY_KEY))
+            self._request = self._client.factory.create(self._FACTORY)
+            self._redis = redis_obj
+        except Exception as e:
+            print e.message
 
     def get_shopper_portfolio_information(self, shopper_id):
         query_dict = {}

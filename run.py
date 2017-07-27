@@ -2,7 +2,7 @@ import os
 import tld
 import yaml
 import graphene
-
+import logging
 import logging.config
 
 from flask import Flask
@@ -16,6 +16,7 @@ from service.crm_client_api import CrmClientApi
 from service.shopper_api import ShopperAPI
 from service.whois_query import WhoisQuery
 from service.hostenv_helper import Ipam
+from service.alexa import CallAwis
 
 from settings import config_by_name
 
@@ -52,7 +53,9 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
        'redis': redis_obj,
        'shopper': ShopperAPI(config, redis_obj),
        'whois': WhoisQuery(config, redis_obj),
-       'ipam': Ipam(config)}
+       'ipam': Ipam(config),
+       'alexa': CallAwis(config)
+       }
 
 
 @app.route('/health', methods=['GET'])

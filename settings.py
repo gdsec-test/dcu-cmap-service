@@ -46,6 +46,10 @@ class AppConfig(object):
         self.ANGELOPASS = os.getenv('ANGELOPASS') or 'angelopass'
         self.SMDBUSER = os.getenv('SMDBUSER') or 'smdbuser'
         self.SMDBPASS = os.getenv('SMDBPASS') or 'smdbpass'
+        self.ACCESS_ID = os.getenv('ACCESS_ID') or 'access.id'
+        self.ACCESS_ID = PasswordDecrypter.decrypt(self.ACCESS_ID)
+        self.SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY') or 'secret.access.key'
+        self.SECRET_ACCESS_KEY = PasswordDecrypter.decrypt(self.SECRET_ACCESS_KEY)
 
 
 class ProductionAppConfig(AppConfig):
