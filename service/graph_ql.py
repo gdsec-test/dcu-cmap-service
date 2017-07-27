@@ -17,6 +17,12 @@ class RegistrarInfo(graphene.ObjectType, DomainService):
 
 class HostInfo(graphene.ObjectType, DomainService):
     ip = graphene.String(description='IP address of the reported domain')
+    hostname = graphene.String(description='Hostname of our server')
+    os = graphene.String(description='OS of our server')
+    guid = graphene.String(description='GUID for hosting account')
+    dc = graphene.String(description='Name of DC that our server is in')
+    product = graphene.String(description='Name of our hosting product in use')
+    shopper = graphene.String(description='Shopper account ID')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -158,6 +164,21 @@ class DomainQuery(graphene.ObjectType):
 
     def resolve_host(self, args, context, info):
         whois = context.get('whois').get_hosting_info(self.domain)
+        if whois['name'] == 'GoDaddy.com LLC':
+            host_info = context.get('ipam').get_properties_for_ip(self.domain)
+            if type(host_info) is dict:
+                whois['dc'] = host_info.get('dc', None)
+                whois['os'] = host_info.get('os', None)
+                whois['product'] = host_info.get('product', None)
+                whois['guid'] = host_info.get('guid', None)
+                whois['shopper'] = host_info.get('shopper', None)
+                whois['hostname'] = host_info.get('hostname', None)
+                whois['ip'] = host_info.get('ip', None)
+            else:
+                if whois.get('ip', None) is None:
+                    whois['ip'] = None
+                whois.update({'dc': None, 'os': None, 'product': None, 'guid': None, 'shopper': None, 'hostname': None})
+
         return HostInfo(**whois)
 
     def resolve_registrar(self, args, context, info):
