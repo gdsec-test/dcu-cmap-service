@@ -102,16 +102,6 @@ spec:
               secretKeyRef:
                 name: auth-hosting-envs
                 key: vertigopass
-          - name: TOOLZILLAUSER
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: tzuser
-          - name: TOOLZILLAPASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: tzpass
           - name: SMDBUSER
             valueFrom:
               secretKeyRef:

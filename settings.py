@@ -44,9 +44,6 @@ class AppConfig(object):
         self.VERTIGOUSER = os.getenv('VERTIGOUSER') or 'vertuser'
         self.VERTIGOPASS = os.getenv('VERTIGOPASS') or 'vertpass'
         self.VERTIGOPASS = PasswordDecrypter.decrypt(self.VERTIGOPASS)
-        self.TOOLZILLAUSER = os.getenv('TOOLZILLAUSER') or 'tzuser'
-        self.TOOLZILLAPASS = os.getenv('TOOLZILLAPASS') or 'tzpass'
-        self.TOOLZILLAPASS = PasswordDecrypter.decrypt(self.TOOLZILLAPASS)
         self.DIABLOUSER = os.getenv('DIABLOUSER') or 'diablouser'
         self.DIABLOPASS = os.getenv('DIABLOPASS') or 'diablopass'
         self.DIABLOPASS = PasswordDecrypter.decrypt(self.DIABLOPASS)
