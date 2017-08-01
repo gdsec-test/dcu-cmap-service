@@ -196,11 +196,14 @@ class WhoisQuery(object):
                     query = WhoisEntry.load(domain_name, NICClient().whois(domain_name, 'whois.godaddy.com', True))
                     if query.registrar:
                         query.registrar = 'GoDaddy.com, LLC'
+                        query.emails = ['abuse@godaddy.com']
                     else:
                         # If query.registrar is None, go for the alternate whois query
                         raise PywhoisError
                 except PywhoisError:
                     query = whois(domain_name)
+                    if isinstance(query.emails, basestring):
+                        query.emails = [query.emails]
                 query_value = dict(name=query.registrar, email=query.emails)
                 create_date = query.creation_date[0] if isinstance(query.creation_date, list) else query.creation_date
                 create_date = create_date.strftime(self.date_format) if create_date and  \
