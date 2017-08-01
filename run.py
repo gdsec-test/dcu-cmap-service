@@ -48,12 +48,12 @@ app.debug = True
 # Only instantiate the helper classes once, and attach it to the context, which is available
 #  to all the other classes which need to use them
 ctx = {'crm': CrmClientApi(config, redis_obj),
-       'regdb': RegDbAPI(config, redis_obj),
        'vip': VipClients(config, redis_obj),
        'redis': redis_obj,
        'shopper': ShopperAPI(config, redis_obj),
        'whois': WhoisQuery(config, redis_obj),
        'ipam': Ipam(config),
+       'regdb': RegDbAPI(config, redis_obj),
        'alexa': CallAwis(config)
        }
 

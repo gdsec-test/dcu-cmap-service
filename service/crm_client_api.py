@@ -1,8 +1,8 @@
 import json
 import logging
-from request_transport import RequestsTransport
 import xml.etree.ElementTree as ET
 
+from request_transport import RequestsTransport
 from suds.client import Client
 from functions import return_expected_dict_due_to_exception
 
@@ -14,6 +14,7 @@ class CrmClientApi(object):
     REDIS_DATA_KEY = 'result'
 
     def __init__(self, settings, redis_obj):
+        self._redis = redis_obj
         try:
             self._client = Client(self._WSDL, location=self._LOCATION,
                                   headers=RequestsTransport.get_soap_headers(),
@@ -22,9 +23,8 @@ class CrmClientApi(object):
                                                               cert=settings.CMAP_PROXY_CERT,
                                                               key=settings.CMAP_PROXY_KEY))
             self._request = self._client.factory.create(self._FACTORY)
-            self._redis = redis_obj
         except Exception as e:
-            print e.message
+            logging.error("Failed CRM Client Init: %s", e.message)
 
     def get_shopper_portfolio_information(self, shopper_id):
         query_dict = {}

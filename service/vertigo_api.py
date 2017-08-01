@@ -8,9 +8,9 @@ class VertigoApi(object):
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
-        self.user = settings.VERTIGOUSER
-        self.pwd = settings.VERTIGOPASS
         self.url = settings.VERT_URL
+        self.auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
+        self.cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
 
     def guid_query(self, domain):
 
@@ -20,7 +20,7 @@ class VertigoApi(object):
 
             ip = socket.gethostbyname(domain)
 
-            response = requests.get(self.url + ip, auth=(self.user, self.pwd), headers=self.headers, verify=False)
+            response = requests.get(self.url + ip, cert=self.cert, auth=self.auth, headers=self.headers, verify=False)
             returned_json = response.json()
 
             if returned_json.get('data', False):
@@ -30,6 +30,6 @@ class VertigoApi(object):
                 return {'guid': guid, 'shopper': shopper, 'os': os}
 
         except Exception as e:
-            logging.error(e.message)
+            logging.error("Failed Vertigo Lookup: %s", e.message)
 
         return None

@@ -1,30 +1,33 @@
-import suds.client
-import suds.sax.text
 import logging
-import ssl
-from suds.sax.element import Element
+
+from suds.client import Client
 from enrichment import nutrition_label
+from request_transport import RequestsTransport
 
 
 class ToolzillaApi(object):
     """
     Uses the AbsGUID interface. Class is used to look up a GUID in the Toolzilla API given a domain name.
     """
-    ssl._create_default_https_context = ssl._create_unverified_context
+    _LOCATION = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService'
+    _WSDL = _LOCATION + '/WSDL'
 
     def __init__(self, settings):
-        self.user = settings.TOOLZILLAUSER
-        self.pwd = settings.TOOLZILLAPASS
-        self.url = settings.TZ_URL
-        auth_head = Element('acc:Authentication User="%s" Password="%s"' % (self.user, self.pwd))
-        self.client = suds.client.Client(self.url)
-        self.client.set_options(soapheaders=auth_head)
+        try:
+            self.client = Client(self._WSDL, location=self._LOCATION,
+                                 headers=RequestsTransport.get_soap_headers(),
+                                 transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                                             password=settings.CMAP_PROXY_PASS,
+                                                             cert=settings.CMAP_PROXY_CERT,
+                                                             key=settings.CMAP_PROXY_KEY))
+        except Exception as e:
+            logging.error("Failed Toolzilla Client Init: %s", e.message)
 
     def _hostname_query(self, guid):
         """
         Queries the Toolzilla API for a GUID for a domain name.
-        :param domain:
-        :return: GUID or None
+        :param guid:
+        :return: hostname or None
         """
         try:
             data = self.client.service.getHostNameByGuid(guid)
@@ -35,7 +38,7 @@ class ToolzillaApi(object):
                 return hostname
 
         except Exception as e:
-            logging.error(e.message)
+            logging.error("Failed Toolzilla Lookup: %s", e.message)
             logging.error(self.client.last_received())
         return None
 
@@ -66,10 +69,11 @@ class ToolzillaApi(object):
                     os = extra[1]
                     dc = extra[0]
                     product = extra[2]
-                    return {'guid': hosting_guid, 'shopper': shopper, 'product': product, 'os': os, 'hostname': hostname, 'dc': dc}
+                    return {'guid': hosting_guid, 'shopper': shopper, 'product': product, 'os': os,
+                            'hostname': hostname, 'dc': dc}
 
         except Exception as e:
-            logging.error(e.message)
+            logging.error("Failed Toolzilla Lookup: %s", e.message)
             logging.error(self.client.last_received())
 
         return None

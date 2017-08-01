@@ -102,6 +102,9 @@ class Ipam(object):
             ipam_hostname = getattr(ipam, 'HostName')
             if ipam_hostname is None:
                 data = self.trun.guid_query(domain)
+                # if data comes back as None, set it to a dict so get() can be run on it
+                if data is None:
+                    data = {}
                 return {'dc': data.get('dc', None), 'os': data.get('os', None), 'product': data.get('product', None),
                         'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
                         'hostname': data.get('hostname', None)}
@@ -124,7 +127,6 @@ class Ipam(object):
             return None
 
     def _guid_locater(self, product, domain):
-
         if product == 'Vertigo':
             return self.vrun.guid_query(domain)
         elif product == 'Diablo':
