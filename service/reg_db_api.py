@@ -1,8 +1,8 @@
 import json
 import logging
 import xml.etree.ElementTree as ET
-from request_transport import RequestsTransport
 
+from request_transport import RequestsTransport
 from functions import get_tld_by_domain_name
 
 
@@ -12,14 +12,17 @@ class RegDbAPI(object):
     REDIS_DATA_KEY = 'result'
 
     def __init__(self, settings, redis_obj):
-        from suds.client import Client
-        self._client = Client(self._WSDL, location=self._LOCATION,
-                              headers=RequestsTransport.get_soap_headers(),
-                              transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
-                                                          password=settings.CMAP_PROXY_PASS,
-                                                          cert=settings.CMAP_PROXY_CERT,
-                                                          key=settings.CMAP_PROXY_KEY))
         self._redis = redis_obj
+        from suds.client import Client
+        try:
+            self._client = Client(self._WSDL, location=self._LOCATION,
+                                  headers=RequestsTransport.get_soap_headers(),
+                                  transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                                              password=settings.CMAP_PROXY_PASS,
+                                                              cert=settings.CMAP_PROXY_CERT,
+                                                              key=settings.CMAP_PROXY_KEY))
+        except Exception as e:
+            logging.error("Failed REG DB Client Init: %s", e.message)
 
     def get_domain_count_by_shopper_id(self, shopper_id):
         # Check redis cache for domain count
@@ -45,8 +48,7 @@ class RegDbAPI(object):
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
                 doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name.encode('idna')))
-                if doc.find('RECORDSET') is None or \
-                                doc.find('RECORDSET').find('RECORD') is None:
+                if doc.find('RECORDSET') is None or doc.find('RECORDSET').find('RECORD') is None:
                     query_value = dict(parent=None, child=None)
                 else:
                     doc_record = doc.find('RECORDSET').find('RECORD')

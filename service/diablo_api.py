@@ -8,9 +8,8 @@ class DiabloApi(object):
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
-        self.user = settings.DIABLOUSER
-        self.pwd = settings.DIABLOPASS
         self.url = settings.DIABLO_URL
+        self.auth = (settings.DIABLOUSER, settings.DIABLOPASS)
 
     def guid_query(self, domain):
 
@@ -18,7 +17,7 @@ class DiabloApi(object):
 
         try:
 
-            r = requests.get(self.url + domain, auth=(self.user, self.pwd), headers=self.headers, verify=False)
+            r = requests.get(self.url + domain, auth=self.auth, headers=self.headers, verify=False)
             returned_json = r.json()
 
             if returned_json.get('data', False):
@@ -31,7 +30,9 @@ class DiabloApi(object):
                 t = ast.literal_eval(r.text)
                 logging.info(t)
 
+            logging.error("Failed Diablo Lookup")
+
         except Exception as e:
-            logging.error(e.message)
+            logging.error("Failed Diablo Lookup: %s", e.message)
 
         return None
