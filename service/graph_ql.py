@@ -221,13 +221,17 @@ class Query(graphene.ObjectType):
                                    description='Top level query based on shopper id')
 
     def resolve_domain_query(self, args, context, info):
-        domain = args.get('domain')
+        domain = args.get('domain', None)
+        if domain is None or len(domain) < 4:
+            raise ValueError("Invalid domain string provided")
         if context.get('whois').is_ip(domain):
             domain = context.get('whois').get_domain_from_ip(domain)
         return DomainQuery(domain=domain)
 
     def resolve_shopper_query(self, args, context, info):
-        shopper = args.get('id')
+        shopper = args.get('id', None)
+        if shopper is None or len(shopper) < 1:
+            raise ValueError("Invalid shopper id string provided")
         extra_data = context.get('shopper').get_shopper_by_shopper_id(shopper, ['date_created',
                                                                                 'first_name',
                                                                                 'email'])
