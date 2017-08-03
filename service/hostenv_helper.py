@@ -130,8 +130,11 @@ class Ipam(object):
         if product == 'Vertigo':
             return self.vrun.guid_query(domain)
         elif product == 'Diablo':
-            return self.drun.guid_query(domain)
+            result = self.drun.guid_query(domain)
+            if result is not None:
+                return result
         elif product == 'Angelo':
-            return self.arun.guid_query(domain)
-        else:
-            return self.trun.guid_query(domain)
+            result = self.arun.guid_query(domain)
+            if result is not None:
+                return result
+        return self.trun.guid_query(domain)
