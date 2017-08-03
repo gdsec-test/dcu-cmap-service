@@ -120,6 +120,7 @@ class Shopper(graphene.AbstractType):
     domainsearch = graphene.Field(DomainSearch, regex=graphene.String(required=True))
     first_name = graphene.String(description='First Name for Shopper')
     email = graphene.String(description='Email Address for Shopper')
+    vip_unconfirmed = graphene.String(description='Shopper ID is unknown, unable to query shopper VIP status')
 
     def resolve_domain_count(self, args, context, info):
         client = context.get('regdb')
@@ -195,7 +196,8 @@ class DomainQuery(graphene.ObjectType):
         shopper_client = context.get('shopper')
         extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['date_created',
                                                                                'first_name',
-                                                                               'email'])
+                                                                               'email',
+                                                                               'vip_unconfirmed'])
         return ShopperByDomain(shopper_id=active_shopper, **extra_data)
 
     def resolve_blacklist(self, args, context, info):
