@@ -5,6 +5,42 @@ import graphene
 from flask_graphql import GraphQLView
 
 
+class ShopperPortfolio(graphene.AbstractType):
+    PhoneExt = graphene.String(description='Account Rep Phone Extension')
+    FirstName = graphene.String(description='Account Rep First Name')
+    LastName = graphene.String(description='Account Rep Last Name')
+    accountRep = graphene.String(description='Account Rep Full Name')
+    Email = graphene.String(description='Account Rep Email Address')
+    PortfolioTypeID = graphene.String(description='Account Rep Portfolio Type ID')
+    InternalPhoneQueue = graphene.String(description='Account Rep Internal Phone Queue')
+    InternalImageURL = graphene.String(description='Image URL for Shopper Portfolio Type')
+    PortfolioType = graphene.String(description='Shopper Portfolio Type')
+    blacklist = graphene.Boolean(description='Shopper Blacklist Status - Do Not Suspend!')
+    shopper_id = graphene.String(description='Shopper ID')
+
+
+class ShopperProfile(graphene.ObjectType, ShopperPortfolio):
+    # The following is a dynamic 'catch-all' method to intercept calls
+    #  to any of the resolve_??? methods, instead of having to explicitly
+    #  write out however many of them there need to be.  The member variables
+    #  will still need to be defined in the ShopperPortfolio class.
+    # http://stackoverflow.com/questions/42215848/specifically-named-dynamic-class-methods-in-python
+    def __getattribute__(self, attr):
+        if attr.startswith('resolve_'):
+            if hasattr(self, attr[8:]):
+                return lambda: getattr(self, attr[8:])
+            return lambda: 'There is no value for {}'.format(attr[8:])
+        return super(ShopperProfile, self).__getattribute__(attr)
+
+    def resolve_accountRep(self, args, context, info):
+        # In case the 'self' class properties are not present, substitute with empty strings
+        first_name = self.__dict__.get('FirstName') if self.__dict__.get('FirstName') is not None else ''
+        last_name = self.__dict__.get('LastName') if self.__dict__.get('LastName') is not None else ''
+        email = self.__dict__.get('Email') if self.__dict__.get('Email') is not None else ''
+        if '' == first_name + last_name + email:
+            return None
+        return '{} {} ({})'.format(first_name, last_name, email)
+
 
 class DomainService(graphene.AbstractType):
     name = graphene.String(description='Name of registrar or hosting provider')
@@ -23,6 +59,8 @@ class HostInfo(graphene.ObjectType, DomainService):
     dc = graphene.String(description='Name of DC that our server is in')
     product = graphene.String(description='Name of our hosting product in use')
     shopper = graphene.String(description='Shopper account ID')
+    vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
+    vip_unconfirmed = graphene.String(description='Shopper ID is unknown, unable to query shopper VIP status')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -60,20 +98,6 @@ class StatusInfo(graphene.Interface):
     statusCode = graphene.String(description='The registrar status code for provided domain name')
 
 
-class ShopperPortfolio(graphene.AbstractType):
-    PhoneExt = graphene.String(description='Account Rep Phone Extension')
-    FirstName = graphene.String(description='Account Rep First Name')
-    LastName = graphene.String(description='Account Rep Last Name')
-    accountRep = graphene.String(description='Account Rep Full Name')
-    Email = graphene.String(description='Account Rep Email Address')
-    PortfolioTypeID = graphene.String(description='Account Rep Portfolio Type ID')
-    InternalPhoneQueue = graphene.String(description='Account Rep Internal Phone Queue')
-    InternalImageURL = graphene.String(description='Image URL for Shopper Portfolio Type')
-    PortfolioType = graphene.String(description='Shopper Portfolio Type')
-    blacklist = graphene.Boolean(description='Shopper Blacklist Status - Do Not Suspend!')
-    shopper_id = graphene.String(description='Shopper ID')
-
-
 #TODO: Finish endpoint once client cert is white-listed
 class DomainStatusInfo(graphene.ObjectType):
     class Meta:
@@ -81,30 +105,6 @@ class DomainStatusInfo(graphene.ObjectType):
 
     def resolve_statusCode(self, args, context, info):
         return "PLACEHOLDER: domain status code"
-
-
-class ShopperProfile(graphene.ObjectType, ShopperPortfolio):
-
-    # The following is a dynamic 'catch-all' method to intercept calls
-    #  to any of the resolve_??? methods, instead of having to explicitly
-    #  write out however many of them there need to be.  The member variables
-    #  will still need to be defined in the ShopperPortfolio class.
-    # http://stackoverflow.com/questions/42215848/specifically-named-dynamic-class-methods-in-python
-    def __getattribute__(self, attr):
-        if attr.startswith('resolve_'):
-            if hasattr(self, attr[8:]):
-                return lambda: getattr(self, attr[8:])
-            return lambda: 'There is no value for {}'.format(attr[8:])
-        return super(ShopperProfile, self).__getattribute__(attr)
-
-    def resolve_accountRep(self, args, context, info):
-        # In case the 'self' class properties are not present, substitute with empty strings
-        first_name = self.__dict__.get('FirstName') if self.__dict__.get('FirstName') is not None else ''
-        last_name = self.__dict__.get('LastName') if self.__dict__.get('LastName') is not None else ''
-        email = self.__dict__.get('Email') if self.__dict__.get('Email') is not None else ''
-        if '' == first_name + last_name + email:
-            return None
-        return '{} {} ({})'.format(first_name, last_name, email)
 
 
 class Shopper(graphene.AbstractType):
@@ -180,7 +180,17 @@ class DomainQuery(graphene.ObjectType):
                     whois['ip'] = None
                 whois.update({'dc': None, 'os': None, 'product': None, 'guid': None, 'shopper': None, 'hostname': None})
 
-        return HostInfo(**whois)
+        vip = {'blacklist': True}
+        whois['vip_unconfirmed'] = False
+        if whois.get('shopper', None) is None:
+            whois['vip_unconfirmed'] = True
+        else:
+            vip = context.get('crm').get_shopper_portfolio_information(whois.get('shopper'))
+            # Query the blacklist, whose entities never get suspended
+            vip['blacklist'] = context.get('vip').query_entity(whois.get('shopper'))
+        host_obj = HostInfo(**whois)
+        host_obj.vip = ShopperProfile(**vip)
+        return host_obj
 
     def resolve_registrar(self, args, context, info):
         whois = context.get('whois').get_registrar_info(self.domain)
