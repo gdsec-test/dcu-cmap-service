@@ -165,7 +165,7 @@ class DomainQuery(graphene.ObjectType):
                 whois.update({'data_center': None, 'os': None, 'product': None,
                               'guid': None, 'shopper_id': None, 'hostname': None})
 
-        vip = {'blacklist': True}
+        vip = {'blacklist': False}
         if whois.get('shopper_id', None) is not None:
             vip = context.get('crm').get_shopper_portfolio_information(whois.get('shopper_id'))
             # Query the blacklist, whose entities never get suspended
