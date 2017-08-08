@@ -83,6 +83,8 @@ class ASNPrefixes(object):
 class WhoisQuery(object):
 
     REDIS_DATA_KEY = 'result'
+    GODADDY_NAME = 'GoDaddy.com LLC'
+    GODADDY_ABUSE_EMAIL = 'abuse@goaddy.com'
 
     def __init__(self, config, redis_obj):
         self._redis = redis_obj
@@ -124,6 +126,9 @@ class WhoisQuery(object):
         :param domain_name:
         :return:
         """
+        COMPANY_NAME_KEY = 'hosting_company_name'
+        ABUSE_EMAIL_KEY = 'hosting_abuse_email'
+        IP_KEY = 'ip'
         email_list = []
         query_value = {}
         try:
@@ -140,26 +145,28 @@ class WhoisQuery(object):
                     ip = self.get_ip_from_domain(domain_name)
                 query_value = dict(ip=ip)
                 if self._check_hosted_here(ip):
-                    query_value['name'] = 'GoDaddy.com LLC'
-                    query_value['email'] = ['abuse@goaddy.com']
+                    query_value[COMPANY_NAME_KEY] = self.GODADDY_NAME
+                    query_value[ABUSE_EMAIL_KEY] = [self.GODADDY_ABUSE_EMAIL]
                     self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
                     return query_value
                 self._logger.info("Resorting to IPWhois lookup for {}".format(ip))
                 info = IPWhois(ip).lookup_rdap()
-                query_value['name'] = info.get('network').get('name')
+                query_value[COMPANY_NAME_KEY] = info.get('network').get('name')
                 for k, v in info['objects'].iteritems():
                     email_address = v['contact']['email']
                     if email_address:
                         for i in email_address:
                             email_list.append(i['value'])
-                query_value['email'] = email_list
+                query_value[ABUSE_EMAIL_KEY] = email_list
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
             self._logger.error("Error in getting the hosting whois info for %s : %s", domain_name, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
-            query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email', 'ip'])
+            query_value = return_expected_dict_due_to_exception(query_value, [COMPANY_NAME_KEY,
+                                                                              ABUSE_EMAIL_KEY,
+                                                                              IP_KEY])
         return query_value
 
     def _check_hosted_here(self, ip):
@@ -184,6 +191,9 @@ class WhoisQuery(object):
         :param domain_name:
         :return:
         """
+        REGISTRAR_NAME_KEY = 'registrar_name'
+        ABUSE_EMAIL_KEY = 'registrar_abuse_email'
+        DOMAIN_CREATE_DATE_KEY = 'domain_create_date'
         query_value = {}
         try:
             if domain_name is None or domain_name == '':
@@ -195,8 +205,8 @@ class WhoisQuery(object):
                 try:
                     query = WhoisEntry.load(domain_name, NICClient().whois(domain_name, 'whois.godaddy.com', True))
                     if query.registrar:
-                        query.registrar = 'GoDaddy.com, LLC'
-                        query.emails = ['abuse@godaddy.com']
+                        query.registrar = self.GODADDY_NAME
+                        query.emails = [self.GODADDY_ABUSE_EMAIL]
                     else:
                         # If query.registrar is None, go for the alternate whois query
                         raise PywhoisError
@@ -204,16 +214,19 @@ class WhoisQuery(object):
                     query = whois(domain_name)
                     if isinstance(query.emails, basestring):
                         query.emails = [query.emails]
-                query_value = dict(name=query.registrar, email=query.emails)
-                create_date = query.creation_date[0] if isinstance(query.creation_date, list) else query.creation_date
-                create_date = create_date.strftime(self.date_format) if create_date and  \
-                    isinstance(create_date, datetime) else None
-                query_value['create_date'] = create_date
+                query_value = dict(registrar_name=query.registrar, registrar_abuse_email=query.emails)
+                domain_create_date = query.creation_date[0] if isinstance(query.creation_date, list)\
+                    else query.creation_date
+                domain_create_date = domain_create_date.strftime(self.date_format) if domain_create_date and  \
+                    isinstance(domain_create_date, datetime) else None
+                query_value[DOMAIN_CREATE_DATE_KEY] = domain_create_date
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
             logging.error("Error in getting the registrar whois info for %s : %s", domain_name, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
-            query_value = return_expected_dict_due_to_exception(query_value, ['name', 'email', 'create_date'])
+            query_value = return_expected_dict_due_to_exception(query_value, [REGISTRAR_NAME_KEY,
+                                                                              ABUSE_EMAIL_KEY,
+                                                                              DOMAIN_CREATE_DATE_KEY])
         return query_value

@@ -6,20 +6,16 @@ from flask_graphql import GraphQLView
 
 
 class ShopperPortfolio(graphene.AbstractType):
-    PhoneExt = graphene.String(description='Account Rep Phone Extension')
-    FirstName = graphene.String(description='Account Rep First Name')
-    LastName = graphene.String(description='Account Rep Last Name')
-    accountRep = graphene.String(description='Account Rep Full Name')
-    Email = graphene.String(description='Account Rep Email Address')
-    PortfolioTypeID = graphene.String(description='Account Rep Portfolio Type ID')
-    InternalPhoneQueue = graphene.String(description='Account Rep Internal Phone Queue')
-    InternalImageURL = graphene.String(description='Image URL for Shopper Portfolio Type')
-    PortfolioType = graphene.String(description='Shopper Portfolio Type')
+    accountRepFirstName = graphene.String(description='Account Rep First Name')
+    accountRepLastName = graphene.String(description='Account Rep Last Name')
+    accountRepEmail = graphene.String(description='Account Rep Email Address')
+    portfolioType = graphene.String(description='Shopper Portfolio Type')
     blacklist = graphene.Boolean(description='Shopper Blacklist Status - Do Not Suspend!')
     shopper_id = graphene.String(description='Shopper ID')
 
 
 class ShopperProfile(graphene.ObjectType, ShopperPortfolio):
+
     # The following is a dynamic 'catch-all' method to intercept calls
     #  to any of the resolve_??? methods, instead of having to explicitly
     #  write out however many of them there need to be.  The member variables
@@ -32,35 +28,24 @@ class ShopperProfile(graphene.ObjectType, ShopperPortfolio):
             return lambda: 'There is no value for {}'.format(attr[8:])
         return super(ShopperProfile, self).__getattribute__(attr)
 
-    def resolve_accountRep(self, args, context, info):
-        # In case the 'self' class properties are not present, substitute with empty strings
-        first_name = self.__dict__.get('FirstName') if self.__dict__.get('FirstName') is not None else ''
-        last_name = self.__dict__.get('LastName') if self.__dict__.get('LastName') is not None else ''
-        email = self.__dict__.get('Email') if self.__dict__.get('Email') is not None else ''
-        if '' == first_name + last_name + email:
-            return None
-        return '{} {} ({})'.format(first_name, last_name, email)
+
+class RegistrarInfo(graphene.ObjectType):
+    domain_create_date = graphene.String(description='Date domain was registered')
+    registrar_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
+    registrar_name = graphene.String(description='Name of registrar or hosting provider')
 
 
-class DomainService(graphene.AbstractType):
-    name = graphene.String(description='Name of registrar or hosting provider')
-    email = graphene.List(graphene.String, description='Email contact(s)')
-
-
-class RegistrarInfo(graphene.ObjectType, DomainService):
-    create_date = graphene.String(description='Date domain was registered')
-
-
-class HostInfo(graphene.ObjectType, DomainService):
-    ip = graphene.String(description='IP address of the reported domain')
-    hostname = graphene.String(description='Hostname of our server')
-    os = graphene.String(description='OS of our server')
+class HostInfo(graphene.ObjectType):
+    data_center = graphene.String(description='Name of DataCenter that our server is in')
     guid = graphene.String(description='GUID for hosting account')
-    dc = graphene.String(description='Name of DC that our server is in')
+    hosting_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
+    hosting_company_name = graphene.String(description='Name of registrar or hosting provider')
+    hostname = graphene.String(description='Hostname of our server')
+    ip = graphene.String(description='IP address of the reported domain')
+    os = graphene.String(description='OS of our server')
     product = graphene.String(description='Name of our hosting product in use')
-    shopper = graphene.String(description='Shopper account ID')
+    shopper_id = graphene.String(description='Shopper account ID')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
-    vip_unconfirmed = graphene.String(description='Shopper ID is unknown, unable to query shopper VIP status')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -90,7 +75,8 @@ class DomainSearch(graphene.ObjectType):
 
     def resolve_results(self, args, context, info):
         regex = re.compile(self.pattern)
-        return [DomainData(domainid=item[0], domain=item[1].decode('idna')) for item in self.domainlist if regex.match(item[1])]
+        return [DomainData(domainid=item[0], domain=item[1].decode('idna'))
+                for item in self.domainlist if regex.match(item[1])]
 
 
 class StatusInfo(graphene.Interface):
@@ -111,16 +97,14 @@ class Shopper(graphene.AbstractType):
     """
     Top level Shopper Info
     """
-    shopper_id = graphene.String(description='The oldest shopper_id on record')
-    date_created = graphene.String(description='The create data of the shopper')
     domain_count = graphene.Int(description='Number of domains owned by the shopper')
+    domain_search = graphene.Field(DomainSearch, regex=graphene.String(required=True))
+    shopper_create_date = graphene.String(description='The create data of the shopper')
+    shopper_email = graphene.String(description='Email Address for Shopper')
+    shopper_first_name = graphene.String(description='First Name for Shopper')
+    shopper_id = graphene.String(description='The oldest shopper_id on record')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
-    # TODO: I dont think "child" does anything...
-    child = graphene.String(description='Child account owned by the shopper')
-    domainsearch = graphene.Field(DomainSearch, regex=graphene.String(required=True))
-    first_name = graphene.String(description='First Name for Shopper')
-    email = graphene.String(description='Email Address for Shopper')
-    vip_unconfirmed = graphene.String(description='Shopper ID is unknown, unable to query shopper VIP status')
+
 
     def resolve_domain_count(self, args, context, info):
         client = context.get('regdb')
@@ -154,40 +138,38 @@ class ShopperByDomain(graphene.ObjectType, Shopper):
 
 
 class DomainQuery(graphene.ObjectType):
+    alexa_rank = graphene.Int(description='Alexa World Wide Rank for domain')
+    api_reseller = graphene.Field(ApiResellerInfo, description='API Reseller Information for Provided Domain Name')
+    blacklist = graphene.Boolean(description='Domain Name Blacklist Status - Do Not Suspend!')
+    domain = graphene.String(description='Domain Name from DomainQuery')
+    domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
     host = graphene.Field(HostInfo, description='Hosting Information for Provided Domain Name')
     registrar = graphene.Field(RegistrarInfo, description='Registrar Information for Provided Domain Name')
-    api_reseller = graphene.Field(ApiResellerInfo, description='API Reseller Information for Provided Domain Name')
     shopper_info = graphene.Field(ShopperByDomain, description='Shopper Information for Provided Domain Name')
-    domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
-    domain = graphene.String(description='Domain Name from DomainQuery')
-    blacklist = graphene.Boolean(description='Domain Name Blacklist Status - Do Not Suspend!')
-    alexa_rank = graphene.Int(description='Alexa World Wide Rank for domain')
 
     def resolve_host(self, args, context, info):
         whois = context.get('whois').get_hosting_info(self.domain)
-        if whois['name'] == 'GoDaddy.com LLC':
+        if whois['hosting_company_name'] == 'GoDaddy.com LLC':
             host_info = context.get('ipam').get_properties_for_ip(self.domain)
             if type(host_info) is dict:
-                whois['dc'] = host_info.get('dc', None)
+                whois['data_center'] = host_info.get('data_center', None)
                 whois['os'] = host_info.get('os', None)
                 whois['product'] = host_info.get('product', None)
                 whois['guid'] = host_info.get('guid', None)
-                whois['shopper'] = host_info.get('shopper', None)
+                whois['shopper_id'] = host_info.get('shopper_id', None)
                 whois['hostname'] = host_info.get('hostname', None)
                 whois['ip'] = host_info.get('ip', None)
             else:
                 if whois.get('ip', None) is None:
                     whois['ip'] = None
-                whois.update({'dc': None, 'os': None, 'product': None, 'guid': None, 'shopper': None, 'hostname': None})
+                whois.update({'data_center': None, 'os': None, 'product': None,
+                              'guid': None, 'shopper_id': None, 'hostname': None})
 
         vip = {'blacklist': True}
-        whois['vip_unconfirmed'] = False
-        if whois.get('shopper', None) is None:
-            whois['vip_unconfirmed'] = True
-        else:
-            vip = context.get('crm').get_shopper_portfolio_information(whois.get('shopper'))
+        if whois.get('shopper_id', None) is not None:
+            vip = context.get('crm').get_shopper_portfolio_information(whois.get('shopper_id'))
             # Query the blacklist, whose entities never get suspended
-            vip['blacklist'] = context.get('vip').query_entity(whois.get('shopper'))
+            vip['blacklist'] = context.get('vip').query_entity(whois.get('shopper_id'))
         host_obj = HostInfo(**whois)
         host_obj.vip = ShopperProfile(**vip)
         return host_obj
@@ -204,10 +186,9 @@ class DomainQuery(graphene.ObjectType):
         client = context.get('regdb')
         active_shopper = client.get_shopper_id_by_domain_name(self.domain)
         shopper_client = context.get('shopper')
-        extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['date_created',
-                                                                               'first_name',
-                                                                               'email',
-                                                                               'vip_unconfirmed'])
+        extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['shopper_create_date',
+                                                                               'shopper_first_name',
+                                                                               'shopper_email'])
         return ShopperByDomain(shopper_id=active_shopper, **extra_data)
 
     def resolve_blacklist(self, args, context, info):
@@ -241,13 +222,13 @@ class Query(graphene.ObjectType):
         return DomainQuery(domain=domain)
 
     def resolve_shopper_query(self, args, context, info):
-        shopper = args.get('id', None)
-        if shopper is None or len(shopper) < 1:
+        shopper_id = args.get('id', None)
+        if shopper_id is None or len(shopper_id) < 1:
             raise ValueError("Invalid shopper id string provided")
-        extra_data = context.get('shopper').get_shopper_by_shopper_id(shopper, ['date_created',
-                                                                                'first_name',
-                                                                                'email'])
-        return ShopperQuery(shopper_id=args.get('id'), **extra_data)
+        extra_data = context.get('shopper').get_shopper_by_shopper_id(shopper_id, ['shopper_create_date',
+                                                                                   'shopper_first_name',
+                                                                                   'shopper_email'])
+        return ShopperQuery(shopper_id=shopper_id, **extra_data)
 
 
 class GraphQLViewWithCaching(GraphQLView):
@@ -257,6 +238,7 @@ class GraphQLViewWithCaching(GraphQLView):
     #  may be compared to a Redis cache for quick response (if cached entry exists).
     #  If the query is not yet cached, then cache it along with the result/status_code
     #  after the call to superclass get_response() has returned
+
     def get_response(self, request, data, show_graphiql=False):
         redis = self.context.get('redis')
         redis_key = request.data
