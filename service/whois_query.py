@@ -84,7 +84,7 @@ class WhoisQuery(object):
 
     REDIS_DATA_KEY = 'result'
     GODADDY_NAME = 'GoDaddy.com LLC'
-    GODADDY_ABUSE_EMAIL = 'abuse@goaddy.com'
+    GODADDY_ABUSE_EMAIL = 'abuse@godaddy.com'
 
     def __init__(self, config, redis_obj):
         self._redis = redis_obj
