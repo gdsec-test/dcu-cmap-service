@@ -25,9 +25,9 @@ class VertigoApi(object):
 
             if returned_json.get('data', False):
                 guid = returned_json['data'][0].get('accountUid', None)
-                shopper = returned_json['data'][0].get('shopperId', None)
+                shopper_id = returned_json['data'][0].get('shopperId', None)
                 os = returned_json['data'][0].get('template_name', None)
-                return {'guid': guid, 'shopper': shopper, 'os': os}
+                return {'guid': guid, 'shopper_id': shopper_id, 'os': os}
 
         except Exception as e:
             logging.error("Failed Vertigo Lookup: %s", e.message)

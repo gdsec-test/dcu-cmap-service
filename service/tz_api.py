@@ -54,23 +54,23 @@ class ToolzillaApi(object):
             if str(type(data)) != "<class 'suds.sax.text.Text'>":
 
                 logging.info('Domain searched for: %s', domain)
-                shopper = str(data[0][0]['ShopperId'][0])
+                shopper_id = str(data[0][0]['ShopperId'][0])
                 hosting_guid = str(data[0][0]['AccountUid'][0])
                 product = str(data[0][0]['ProductType'][0])
                 if product == 'wpaas':
-                    return {'guid': hosting_guid, 'shopper': shopper, 'product': product, 'os': 'Linux',
-                            'hostname': 'Unable to locate', 'dc': 'Unable to locate'}
+                    return {'guid': hosting_guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Linux',
+                            'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
                 elif product == 'dhs':
-                    return {'guid': hosting_guid, 'shopper': shopper, 'product': product, 'os': 'Unable to locate',
-                            'hostname': 'Unable to locate', 'dc': 'Unable to locate'}
+                    return {'guid': hosting_guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Unable to locate',
+                            'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
                 else:
                     hostname = self._hostname_query(hosting_guid)
                     extra = nutrition_label(hostname)
                     os = extra[1]
                     dc = extra[0]
                     product = extra[2]
-                    return {'guid': hosting_guid, 'shopper': shopper, 'product': product, 'os': os,
-                            'hostname': hostname, 'dc': dc}
+                    return {'guid': hosting_guid, 'shopper_id': shopper_id, 'product': product, 'os': os,
+                            'hostname': hostname, 'data_center': dc}
 
         except Exception as e:
             logging.error("Failed Toolzilla Lookup: %s", e.message)

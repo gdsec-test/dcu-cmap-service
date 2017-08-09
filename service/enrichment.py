@@ -1,12 +1,12 @@
 def nutrition_label(hostname):
     hostname = hostname.lower()
-    dc = hostname[:2]
+    data_center = hostname[:2]
     os = hostname[3]
     product = hostname[4:]
 
-    dc = dc_finder(dc)
+    data_center = dc_finder(data_center)
 
-    if dc == 'SG2':
+    if data_center == 'SG2':
         os = hostname[4]
         os = os_finder(os)
 
@@ -21,25 +21,25 @@ def nutrition_label(hostname):
         else:
             product = product_finder(product)
 
-    elif dc == 'P3' and hostname[4] == '8':
+    elif data_center == 'P3' and hostname[4] == '8':
         os = 'Windows'
         product = '2GH'
 
-    elif dc == 'DNS':
+    elif data_center == 'DNS':
         product = 'Not Hosting'
 
-    elif dc == 'Corp':
+    elif data_center == 'Corp':
         product = 'Not Hosting'
 
-    elif dc == 'VPH':
+    elif data_center == 'VPH':
         product = 'VPH'
 
-    elif dc == 'vert':
+    elif data_center == 'vert':
         dc = 'P3'
         os = ''
         product = 'Vertigo'
 
-    elif dc == 'Failed':
+    elif data_center == 'Failed':
         product = 'Not Hosting'
 
     else:
@@ -52,7 +52,7 @@ def nutrition_label(hostname):
         else:
             product = product_finder(product)
 
-    return dc, os, product
+    return data_center, os, product
 
 
 def dc_finder(dc):

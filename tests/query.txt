@@ -2,10 +2,11 @@
   domainQuery(domain: "yahoo.com") {
     domain
     registrar {
-      name
+      registrarName
     }
-    reseller {
-      parentChild
+    apiReseller {
+      child
+      parent
     }
   }
   shopperQuery(id: "10374993") {
@@ -17,11 +18,7 @@
       FirstName
       LastName
       Email
-      PhoneExt
       shopperId
-      InternalPhoneQueue
-      InternalImageURL
-      PortfolioTypeID
       PortfolioType
       Vip
     }
@@ -37,7 +34,7 @@ Integrated code test
       shopperId
       othershopperlist {
         shopperId
-        dateCreated
+        shopperCreateDate
         firstName
         email
       }

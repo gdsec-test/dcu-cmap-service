@@ -105,22 +105,22 @@ class Ipam(object):
                 # if data comes back as None, set it to a dict so get() can be run on it
                 if data is None:
                     data = {}
-                return {'dc': data.get('dc', None), 'os': data.get('os', None), 'product': data.get('product', None),
-                        'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
-                        'hostname': data.get('hostname', None)}
+                return {'data_center': data.get('data_center', None), 'os': data.get('os', None),
+                        'product': data.get('product', None), 'ip': ip, 'guid': data.get('guid', None),
+                        'shopper_id': data.get('shopper_id', None), 'hostname': data.get('hostname', None)}
             else:
                 data = nutrition_label(ipam_hostname)
                 if len(data) < 3 or data[2] != 'Not Hosting':
                     d = self._guid_locater(data[2], domain)
                     if d:
-                        return {'hostname': ipam_hostname, 'dc': data[0], 'os': d.get('os', None),
+                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': d.get('os', None),
                                 'product': data[2], 'ip': ip, 'guid': d.get('guid', None),
-                                'shopper': d.get('shopper', None)}
+                                'shopper_id': d.get('shopper_id', None)}
                     else:
                         logging.error('_guid_locater failed on: %s' % domain)
-                        return {'hostname': ipam_hostname, 'dc': data[0], 'os': data[1],
+                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
                                 'product': data[2], 'ip': ip, 'guid': None,
-                                'shopper': None}
+                                'shopper_id': None}
                 else:
                     return 'No hosting product found'
         else:
