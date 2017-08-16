@@ -51,7 +51,7 @@ class CallAwis(object):
         uri = CallAwis._create_uri(self.params)
         signature = self._create_signature()
 
-        url = "http://%s/?%s&Signature=%s" % (self.ServiceHost, uri, signature)
+        url = "https://%s/?%s&Signature=%s" % (self.ServiceHost, uri, signature)
         return CallAwis._return_output(url)
 
     @staticmethod
