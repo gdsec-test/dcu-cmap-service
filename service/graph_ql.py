@@ -148,7 +148,7 @@ class DomainQuery(graphene.ObjectType):
     shopper_info = graphene.Field(ShopperByDomain, description='Shopper Information for Provided Domain Name')
 
     def resolve_host(self, args, context, info):
-        whois = context.get('whois').get_hosting_info(self.domain)
+        whois = context.get('bd').get_hosting_info(self.domain)
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
             host_info = context.get('ipam').get_properties_for_ip(self.domain)
             if type(host_info) is dict:
@@ -175,7 +175,7 @@ class DomainQuery(graphene.ObjectType):
         return host_obj
 
     def resolve_registrar(self, args, context, info):
-        whois = context.get('whois').get_registrar_info(self.domain)
+        whois = context.get('bd').get_registrar_info(self.domain)
         return RegistrarInfo(**whois)
 
     def resolve_api_reseller(self, args, context, info):
