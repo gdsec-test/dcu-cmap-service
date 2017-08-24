@@ -30,6 +30,7 @@ class ShopperProfile(graphene.ObjectType, ShopperPortfolio):
 
 
 class RegistrarInfo(graphene.ObjectType):
+    brand = graphene.String(description='Registrar brand detected by Brand Detection')
     domain_create_date = graphene.String(description='Date domain was registered')
     registrar_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
     registrar_name = graphene.String(description='Name of registrar or hosting provider')
@@ -38,6 +39,7 @@ class RegistrarInfo(graphene.ObjectType):
 class HostInfo(graphene.ObjectType):
     data_center = graphene.String(description='Name of DataCenter that our server is in')
     guid = graphene.String(description='GUID for hosting account')
+    brand = graphene.String(description='Hosting brand detected by Brand Detection')
     hosting_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
     hosting_company_name = graphene.String(description='Name of registrar or hosting provider')
     hostname = graphene.String(description='Hostname of our server')
