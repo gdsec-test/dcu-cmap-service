@@ -35,7 +35,7 @@ class BrandDetectionHelper(object):
         try:
             with sessions.Session() as session:
                 self._logger.info("Fetching registrar information for {}".format(domain))
-                url = self._brand_detection_url + self._REGISTRAR_ENDPOINT + "?domain=".format(domain)
+                url = self._brand_detection_url + self._REGISTRAR_ENDPOINT + "?domain={}".format(domain)
                 return session.get(url=url).json()
         except Exception as e:
             self._logger.error("Unable to query Brand Detection service for {} : {}".format(domain, e.message))
