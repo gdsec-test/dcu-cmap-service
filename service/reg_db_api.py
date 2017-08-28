@@ -12,6 +12,7 @@ class RegDbAPI(object):
     REDIS_DATA_KEY = 'result'
 
     def __init__(self, settings, redis_obj):
+        self._logger = logging.getLogger(__name__)
         self._redis = redis_obj
         from suds.client import Client
         try:
@@ -22,7 +23,7 @@ class RegDbAPI(object):
                                                               cert=settings.CMAP_PROXY_CERT,
                                                               key=settings.CMAP_PROXY_KEY))
         except Exception as e:
-            logging.error("Failed REG DB Client Init: %s", e.message)
+            self._logger.error("Failed REG DB Client Init: %s", e.message)
 
     def get_domain_count_by_shopper_id(self, shopper_id):
         # Check redis cache for domain count
@@ -37,7 +38,7 @@ class RegDbAPI(object):
                 self._redis.set_value(redis_record_key, query_value)
             return query_value
         except Exception as e:
-            logging.error("Error in getting the domain count for %s : %s", shopper_id, e.message)
+            self._logger.error("Error in getting the domain count for %s : %s", shopper_id, e.message)
 
     def get_parent_child_shopper_by_domain_name(self, domain_name_as_provided):
         # In the event that we were provided a sub-domain name as opposed to a tld
@@ -60,7 +61,7 @@ class RegDbAPI(object):
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
             return query_value
         except Exception as e:
-            logging.error("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
+            self._logger.error("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
 
     def get_shopper_id_by_domain_name(self, domain_name_as_provided):
         # In the event that we were provided a sub-domain name as opposed to a tld
@@ -80,7 +81,7 @@ class RegDbAPI(object):
                 self._redis.set_value(redis_record_key, query_value)
             return query_value
         except Exception as e:
-            logging.error("Error in getting the shopper id for %s : %s", domain_name, e.message)
+            self._logger.error("Error in getting the shopper id for %s : %s", domain_name, e.message)
 
     def get_domain_list_by_shopper_id(self, shopper_id):
         # Check redis cache for domain list by shopper id
@@ -96,4 +97,4 @@ class RegDbAPI(object):
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
             return query_value
         except Exception as e:
-            logging.error("Error in getting the domain list for %s : %s", shopper_id, e.message)
+            self._logger.error("Error in getting the domain list for %s : %s", shopper_id, e.message)

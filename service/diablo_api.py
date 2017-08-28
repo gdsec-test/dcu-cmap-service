@@ -8,6 +8,7 @@ class DiabloApi(object):
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
+        self._logger = logging.getLogger(__name__)
         self.url = settings.DIABLO_URL
         self.auth = (settings.DIABLOUSER, settings.DIABLOPASS)
 
@@ -28,11 +29,11 @@ class DiabloApi(object):
 
             elif r.status_code == 400:
                 t = ast.literal_eval(r.text)
-                logging.info(t)
+                self._logger.info(t)
 
-            logging.error("Failed Diablo Lookup")
+            self._logger.error("Failed Diablo Lookup")
 
         except Exception as e:
-            logging.error("Failed Diablo Lookup: %s", e.message)
+            self._logger.error("Failed Diablo Lookup: %s", e.message)
 
         return None
