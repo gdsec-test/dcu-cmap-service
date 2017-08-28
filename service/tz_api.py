@@ -13,6 +13,7 @@ class ToolzillaApi(object):
     _WSDL = _LOCATION + '/WSDL'
 
     def __init__(self, settings):
+        self._logger = logging.getLogger(__name__)
         try:
             self.client = Client(self._WSDL, location=self._LOCATION,
                                  headers=RequestsTransport.get_soap_headers(),
@@ -21,7 +22,7 @@ class ToolzillaApi(object):
                                                              cert=settings.CMAP_PROXY_CERT,
                                                              key=settings.CMAP_PROXY_KEY))
         except Exception as e:
-            logging.error("Failed Toolzilla Client Init: %s", e.message)
+            self._logger.error("Failed Toolzilla Client Init: %s", e.message)
 
     def _hostname_query(self, guid):
         """
@@ -33,13 +34,13 @@ class ToolzillaApi(object):
             data = self.client.service.getHostNameByGuid(guid)
             # checks to make sure the returned data is not an error
             if data:
-                logging.info('guid searched for: %s', guid)
+                self._logger.info('guid searched for: %s', guid)
                 hostname = data.split('.')[0]
                 return hostname
 
         except Exception as e:
-            logging.error("Failed Toolzilla Lookup: %s", e.message)
-            logging.error(self.client.last_received())
+            self._logger.error("Failed Toolzilla Lookup: %s", e.message)
+            self._logger.error(self.client.last_received())
         return None
 
     def guid_query(self, domain):
@@ -53,7 +54,7 @@ class ToolzillaApi(object):
             # checks to make sure the returned data is not an error
             if str(type(data)) != "<class 'suds.sax.text.Text'>":
 
-                logging.info('Domain searched for: %s', domain)
+                self._logger.info('Domain searched for: %s', domain)
                 shopper_id = str(data[0][0]['ShopperId'][0])
                 hosting_guid = str(data[0][0]['AccountUid'][0])
                 product = str(data[0][0]['ProductType'][0])
@@ -73,7 +74,7 @@ class ToolzillaApi(object):
                             'hostname': hostname, 'data_center': dc}
 
         except Exception as e:
-            logging.error("Failed Toolzilla Lookup: %s", e.message)
-            logging.error(self.client.last_received())
+            self._logger.error("Failed Toolzilla Lookup: %s", e.message)
+            self._logger.error(self.client.last_received())
 
         return None

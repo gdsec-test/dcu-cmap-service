@@ -2,7 +2,6 @@ import os
 import tld
 import yaml
 import graphene
-import logging
 import logging.config
 
 from flask import Flask

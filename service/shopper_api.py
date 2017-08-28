@@ -11,6 +11,7 @@ class ShopperAPI(object):
     REDIS_DATA_KEY = 'result'
 
     def __init__(self, settings, redis_obj):
+        self._logger = logging.getLogger(__name__)
         self._redis = redis_obj
         self._auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
         self._cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
@@ -51,7 +52,7 @@ class ShopperAPI(object):
                         shopper_email=shopper_data.get('email'),
                         shopper_create_date=shopper_data.get('createdAt'))
         except Exception as e:
-            logging.error("Error in getting the shopper info for %s : %s", shopper_id, e.message)
+            self._logger.error("Error in getting the shopper info for %s : %s", shopper_id, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
             shopper_data = return_expected_dict_due_to_exception(shopper_data, fields)
         return shopper_data
