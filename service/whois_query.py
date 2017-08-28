@@ -87,10 +87,10 @@ class WhoisQuery(object):
     GODADDY_ABUSE_EMAIL = 'abuse@godaddy.com'
 
     def __init__(self, config, redis_obj):
+        self._logger = logging.getLogger(__name__)
         self._redis = redis_obj
         self.date_format = config.DATE_FORMAT
         self._asn = ASNPrefixes()
-        self._logger = logging.getLogger(__name__)
 
     def is_ip(self, source_domain_or_ip):
         """
@@ -108,7 +108,7 @@ class WhoisQuery(object):
         try:
             return dnsresolver.query(domain_name, 'A')[0].address
         except Exception as e:
-            logging.error("Unable to get ip for %s : %s", domain_name, e.message)
+            self._logger.error("Unable to get ip for %s : %s", domain_name, e.message)
 
     def get_domain_from_ip(self, ip):
         dnsresolver = resolver.Resolver()
@@ -118,7 +118,7 @@ class WhoisQuery(object):
         try:
             return dnsresolver.query(addr, 'PTR')[0].to_text().rstrip('.').encode('idna')
         except Exception as e:
-            logging.error("Unable to get domain for %s : %s", ip, e.message)
+            self._logger.error("Unable to get domain for %s : %s", ip, e.message)
 
     def get_hosting_info(self, domain_name):
         """
@@ -224,7 +224,7 @@ class WhoisQuery(object):
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
         except Exception as e:
-            logging.error("Error in getting the registrar whois info for %s : %s", domain_name, e.message)
+            self._logger.error("Error in getting the registrar whois info for %s : %s", domain_name, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
             query_value = return_expected_dict_due_to_exception(query_value, [REGISTRAR_NAME_KEY,
                                                                               ABUSE_EMAIL_KEY,
