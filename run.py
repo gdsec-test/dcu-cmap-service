@@ -24,7 +24,7 @@ from settings import config_by_name
 set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), '/tmp/names.dat'))
 set_setting(
     'NAMES_SOURCE_URL',
-    'https://dxr.mozilla.org/mozilla-beta/source/netwerk/dns/effective_tld_names.dat'
+    'https://hg.mozilla.org/releases/mozilla-beta/raw-file/6b5cce5da78594813192d46f129b6e5a012c9650/netwerk/dns/effective_tld_names.dat'
 )
 tld.utils.PROJECT_DIR = lambda x: x
 
