@@ -16,6 +16,7 @@ from service.shopper_api import ShopperAPI
 from service.whois_query import WhoisQuery
 from service.hostenv_helper import Ipam
 from service.alexa import CallAwis
+from service.brand_detection_helper import BrandDetectionHelper
 
 from settings import config_by_name
 
@@ -54,10 +55,11 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
        'vip': VipClients(config, redis_obj),
        'redis': redis_obj,
        'shopper': ShopperAPI(config, redis_obj),
-       'whois': WhoisQuery(config, redis_obj),
        'ipam': Ipam(config),
        'regdb': RegDbAPI(config, redis_obj),
-       'alexa': CallAwis(config)
+       'alexa': CallAwis(config),
+       'whois': WhoisQuery(),
+       'bd': BrandDetectionHelper(config)
        }
 
 
