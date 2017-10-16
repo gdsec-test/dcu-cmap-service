@@ -3,6 +3,7 @@ import json
 import graphene
 
 from flask_graphql import GraphQLView
+from functions import get_tld_by_domain_name
 
 
 class ShopperPortfolio(graphene.AbstractType):
@@ -177,7 +178,9 @@ class DomainQuery(graphene.ObjectType):
         return host_obj
 
     def resolve_registrar(self, args, context, info):
-        whois = context.get('bd').get_registrar_info(self.domain)
+        # If we were given a domain with a subdomain, request registrar information for just the domain.tld
+        domain = get_tld_by_domain_name(self.domain)
+        whois = context.get('bd').get_registrar_info(domain)
         return RegistrarInfo(**whois)
 
     def resolve_api_reseller(self, args, context, info):
