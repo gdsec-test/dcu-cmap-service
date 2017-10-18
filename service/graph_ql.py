@@ -47,7 +47,8 @@ class HostInfo(graphene.ObjectType):
     ip = graphene.String(description='IP address of the reported domain')
     os = graphene.String(description='OS of our server')
     product = graphene.String(description='Name of our hosting product in use')
-    shopper_id = graphene.String(description='Shopper account ID')
+    shopper = graphene.String(description='Shopper account ID')
+    mwp_id = graphene.String(description='ID required for MWP 1.0 account suspension/reinstatement')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
 
 
@@ -162,6 +163,7 @@ class DomainQuery(graphene.ObjectType):
                 whois['shopper_id'] = host_info.get('shopper_id', None)
                 whois['hostname'] = host_info.get('hostname', None)
                 whois['ip'] = host_info.get('ip', None)
+                whois['mwp_id'] = host_info.get('accountid', None)
             else:
                 if whois.get('ip', None) is None:
                     whois['ip'] = None

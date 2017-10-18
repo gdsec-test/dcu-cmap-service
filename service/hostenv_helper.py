@@ -2,6 +2,7 @@ from diablo_api import DiabloApi
 from vertigo_api import VertigoApi
 from angelo_api import AngeloApi
 from tz_api import ToolzillaApi
+from mwpone_api import MwpOneApi
 from suds.client import Client
 from enrichment import nutrition_label
 import logging
@@ -18,6 +19,7 @@ class Ipam(object):
         self.drun = DiabloApi(config)
         self.arun = AngeloApi(config)
         self.trun = ToolzillaApi(config)
+        self.mrun = MwpOneApi(config)
 
         # Create the NTLM authentication object.
         self.ntlm = WindowsHttpAuthenticated(username=config.SMDBUSER, password=config.SMDBPASS)
@@ -102,9 +104,13 @@ class Ipam(object):
                 # if data comes back as None, set it to a dict so get() can be run on it
                 if data is None:
                     data = {}
-                return {'data_center': data.get('data_center', None), 'os': data.get('os', None),
-                        'product': data.get('product', None), 'ip': ip, 'guid': data.get('guid', None),
-                        'shopper_id': data.get('shopper_id', None), 'hostname': data.get('hostname', None)}
+                if data.get('product') == 'wpaas':
+                    return self.mrun.mwpone_locate(domain)
+                else:
+                    return {'dc': data.get('dc', None), 'os': data.get('os', None), 'product': data.get('product', None),
+                        'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
+                        'hostname': data.get('hostname', None)}
+
             else:
                 data = nutrition_label(ipam_hostname)
                 if len(data) < 3 or data[2] != 'Not Hosting':
