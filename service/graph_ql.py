@@ -23,7 +23,7 @@ class HostInfo(graphene.ObjectType, DomainService):
     dc = graphene.String(description='Name of DC that our server is in')
     product = graphene.String(description='Name of our hosting product in use')
     shopper = graphene.String(description='Shopper account ID')
-    accountid = graphene.String(description='ID required for MWP 1.0 account suspension/reinstatement')
+    mwp_id = graphene.String(description='ID required for MWP 1.0 account suspension/reinstatement')
 
 
 class ApiResellerService(graphene.AbstractType):
@@ -176,7 +176,7 @@ class DomainQuery(graphene.ObjectType):
                 whois['shopper'] = host_info.get('shopper', None)
                 whois['hostname'] = host_info.get('hostname', None)
                 whois['ip'] = host_info.get('ip', None)
-                whois['accountid'] = host_info.get('accountid', None)
+                whois['mwp_id'] = host_info.get('accountid', None)
             else:
                 if whois.get('ip', None) is None:
                     whois['ip'] = None
