@@ -31,6 +31,7 @@ class AppConfig(object):
     ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts?addon_domain_eq='
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
+    MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts/?domain='
 
     def __init__(self):
         self.REDIS = os.getenv('REDIS') or 'redis'
@@ -53,6 +54,9 @@ class AppConfig(object):
         self.SMDBUSER = os.getenv('SMDBUSER') or 'smdbuser'
         self.SMDBPASS = os.getenv('SMDBPASS') or 'smdbpass'
         self.SMDBPASS = PasswordDecrypter.decrypt(self.SMDBPASS)
+        self.MWPONEUSER = os.getenv('MWPONEUSER') or 'mwponeuser'
+        self.MWPONEPASS = os.getenv('MWPONEPASS') or 'mwponepass'
+        self.MWPONEPASS = PasswordDecrypter.decrypt(self.MWPONEPASS)
         self.ACCESS_ID = os.getenv('ACCESS_ID') or 'access.id'
         self.ACCESS_ID = PasswordDecrypter.decrypt(self.ACCESS_ID)
         self.SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY') or 'secret.access.key'
