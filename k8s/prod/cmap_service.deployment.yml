@@ -8,6 +8,7 @@ metadata:
     app: "cmap-service"
 spec:
   replicas: 2
+  revisionHistoryLimit: 2
   template:
     metadata:
       labels:
@@ -39,6 +40,8 @@ spec:
             value: prod
           - name: HTTP_ONLY
             value: 'true'
+          - name: BRAND_DETECTION_URL
+            value: http://brand-detection.abuse-api-prod.svc.cluster.local:5000
           - name: CMAP_PROXY_USER
             valueFrom:
               secretKeyRef:

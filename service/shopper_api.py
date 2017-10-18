@@ -11,6 +11,7 @@ class ShopperAPI(object):
     REDIS_DATA_KEY = 'result'
 
     def __init__(self, settings, redis_obj):
+        self._logger = logging.getLogger(__name__)
         self._redis = redis_obj
         self._auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
         self._cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
@@ -26,7 +27,6 @@ class ShopperAPI(object):
         shopper_data = {}
         try:
             if shopper_id is None or shopper_id == '':
-                shopper_data['vip_unconfirmed'] = True
                 raise ValueError('Blank shopper id was provided')
             redis_record_key = '{}-shopper_info_by_id'.format(shopper_id)
             shopper_data = self._redis.get_value(redis_record_key)
@@ -48,12 +48,11 @@ class ShopperAPI(object):
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: shopper_data}))
             else:
                 shopper_data = json.loads(shopper_data).get(self.REDIS_DATA_KEY)
-            return dict(first_name=shopper_data.get('contact', {}).get('nameFirst'),
-                        email=shopper_data.get('email'),
-                        date_created=shopper_data.get('createdAt'),
-                        vip_unconfirmed=False)
+            return dict(shopper_first_name=shopper_data.get('contact', {}).get('nameFirst'),
+                        shopper_email=shopper_data.get('email'),
+                        shopper_create_date=shopper_data.get('createdAt'))
         except Exception as e:
-            logging.error("Error in getting the shopper info for %s : %s", shopper_id, e.message)
+            self._logger.error("Error in getting the shopper info for %s : %s", shopper_id, e.message)
             # If exception occurred before query_value had completed assignment, set keys to None
             shopper_data = return_expected_dict_due_to_exception(shopper_data, fields)
         return shopper_data

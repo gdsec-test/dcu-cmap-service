@@ -8,6 +8,7 @@ class VertigoApi(object):
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
+        self._logger = logging.getLogger(__name__)
         self.url = settings.VERT_URL
         self.auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
         self.cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
@@ -25,11 +26,11 @@ class VertigoApi(object):
 
             if returned_json.get('data', False):
                 guid = returned_json['data'][0].get('accountUid', None)
-                shopper = returned_json['data'][0].get('shopperId', None)
+                shopper_id = returned_json['data'][0].get('shopperId', None)
                 os = returned_json['data'][0].get('template_name', None)
-                return {'guid': guid, 'shopper': shopper, 'os': os}
+                return {'guid': guid, 'shopper_id': shopper_id, 'os': os}
 
         except Exception as e:
-            logging.error("Failed Vertigo Lookup: %s", e.message)
+            self._logger.error("Failed Vertigo Lookup: %s", e.message)
 
         return None

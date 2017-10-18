@@ -14,7 +14,7 @@ class Ipam(object):
 
     # This method is called automatically when this class is instantiated.
     def __init__(self, config):
-
+        self._logger = logging.getLogger(__name__)
         self.vrun = VertigoApi(config)
         self.drun = DiabloApi(config)
         self.arun = AngeloApi(config)
@@ -23,9 +23,6 @@ class Ipam(object):
 
         # Create the NTLM authentication object.
         self.ntlm = WindowsHttpAuthenticated(username=config.SMDBUSER, password=config.SMDBPASS)
-
-        # Set the logging for SUDS to only critical. We don't care about anything less.
-        logging.disable(logging.CRITICAL)
 
         # Create the SUDS SOAP client.
         self.client = Client(config.SMDB_URL, transport=self.ntlm)
@@ -73,7 +70,7 @@ class Ipam(object):
 
             return soapResult
         except Exception as e:
-            logging.error(e.message)
+            self._logger.error(e.message)
             return None
 
     # Make sure all method parameters were supplied. The only exception is 'vlan', which is optional.
@@ -97,7 +94,7 @@ class Ipam(object):
             ipam = self.client.service.GetPropertiesForIP(ip, transport=self.ntlm)
 
         except Exception as e:
-            logging.error(e.message)
+            self._logger.error(e.message)
             return None
 
         if hasattr(ipam, 'HostName'):
@@ -113,19 +110,20 @@ class Ipam(object):
                     return {'dc': data.get('dc', None), 'os': data.get('os', None), 'product': data.get('product', None),
                         'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
                         'hostname': data.get('hostname', None)}
+
             else:
                 data = nutrition_label(ipam_hostname)
                 if len(data) < 3 or data[2] != 'Not Hosting':
                     d = self._guid_locater(data[2], domain)
                     if d:
-                        return {'hostname': ipam_hostname, 'dc': data[0], 'os': d.get('os', None),
+                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': d.get('os', None),
                                 'product': data[2], 'ip': ip, 'guid': d.get('guid', None),
-                                'shopper': d.get('shopper', None)}
+                                'shopper_id': d.get('shopper_id', None)}
                     else:
-                        logging.error('_guid_locater failed on: %s' % domain)
-                        return {'hostname': ipam_hostname, 'dc': data[0], 'os': data[1],
+                        self._logger.error('_guid_locater failed on: %s' % domain)
+                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
                                 'product': data[2], 'ip': ip, 'guid': None,
-                                'shopper': None}
+                                'shopper_id': None}
                 else:
                     return 'No hosting product found'
         else:

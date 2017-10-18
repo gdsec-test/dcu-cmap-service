@@ -2,7 +2,6 @@ import os
 import tld
 import yaml
 import graphene
-import logging
 import logging.config
 
 from flask import Flask
@@ -17,12 +16,17 @@ from service.shopper_api import ShopperAPI
 from service.whois_query import WhoisQuery
 from service.hostenv_helper import Ipam
 from service.alexa import CallAwis
+from service.brand_detection_helper import BrandDetectionHelper
 
 from settings import config_by_name
 
 
 # Define a file we have write access to as the definitive tld names file
 set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), '/tmp/names.dat'))
+set_setting(
+    'NAMES_SOURCE_URL',
+    'https://hg.mozilla.org/releases/mozilla-beta/raw-file/6b5cce5da78594813192d46f129b6e5a012c9650/netwerk/dns/effective_tld_names.dat'
+)
 tld.utils.PROJECT_DIR = lambda x: x
 
 # setup logging
@@ -51,10 +55,11 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
        'vip': VipClients(config, redis_obj),
        'redis': redis_obj,
        'shopper': ShopperAPI(config, redis_obj),
-       'whois': WhoisQuery(config, redis_obj),
        'ipam': Ipam(config),
        'regdb': RegDbAPI(config, redis_obj),
-       'alexa': CallAwis(config)
+       'alexa': CallAwis(config),
+       'whois': WhoisQuery(),
+       'bd': BrandDetectionHelper(config)
        }
 
 
