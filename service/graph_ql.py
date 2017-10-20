@@ -47,7 +47,7 @@ class HostInfo(graphene.ObjectType):
     ip = graphene.String(description='IP address of the reported domain')
     os = graphene.String(description='OS of our server')
     product = graphene.String(description='Name of our hosting product in use')
-    shopper = graphene.String(description='Shopper account ID')
+    shopper_id = graphene.String(description='Shopper account ID')
     mwp_id = graphene.String(description='ID required for MWP 1.0 account suspension/reinstatement')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
 
