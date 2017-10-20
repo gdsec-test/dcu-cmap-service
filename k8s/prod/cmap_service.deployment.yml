@@ -115,6 +115,16 @@ spec:
               secretKeyRef:
                 name: auth-smdb
                 key: password
+          - name: MWPONEUSER
+            valueFrom:
+              secretKeyRef:
+                name: auth-happy-envs
+                key: mwponeuser
+          - name: MWPONEPASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-happy-envs
+                key: mwponepass
 
           volumeMounts:
           - name: encryption-keys
