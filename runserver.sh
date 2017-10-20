@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-python -c "import re;f=open('/etc/resolv.conf','r');t=f.read();t=re.sub(r'nameserver',r'nameserver 172.31.251.11\nnameserver',t);t=re.sub(r'ndots:\d+',r'ndots:1',t);open('/etc/resolv.conf','w').write(t)"
+python -c "import re;f=open('/etc/resolv.conf','r');t=f.read();t=re.sub(r'(nameserver \S+)',r'\1\nnameserver 172.31.251.11',t);t=re.sub(r'ndots:\d+',r'ndots:1',t);open('/etc/resolv.conf','w').write(t)"
 
 if [ -z "$HTTP_ONLY" ]
 then
