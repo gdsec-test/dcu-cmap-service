@@ -11,7 +11,6 @@ import socket
 
 
 class Ipam(object):
-
     # This method is called automatically when this class is instantiated.
     def __init__(self, config):
         self._logger = logging.getLogger(__name__)
@@ -107,9 +106,10 @@ class Ipam(object):
                 if data.get('product') == 'wpaas':
                     return self.mrun.mwpone_locate(domain)
                 else:
-                    return {'dc': data.get('dc', None), 'os': data.get('os', None), 'product': data.get('product', None),
-                        'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
-                        'hostname': data.get('hostname', None)}
+                    return {'dc': data.get('dc', None), 'os': data.get('os', None),
+                            'product': data.get('product', None),
+                            'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
+                            'hostname': data.get('hostname', None)}
 
             else:
                 data = nutrition_label(ipam_hostname)

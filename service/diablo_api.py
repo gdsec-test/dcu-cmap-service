@@ -1,6 +1,7 @@
-import requests
 import ast
 import logging
+
+from requests import sessions, packages
 
 
 class DiabloApi(object):
@@ -14,11 +15,12 @@ class DiabloApi(object):
 
     def guid_query(self, domain):
 
-        requests.packages.urllib3.disable_warnings()
+        packages.urllib3.disable_warnings()
 
         try:
 
-            r = requests.get(self.url + domain, auth=self.auth, headers=self.headers, verify=False)
+            with sessions.Session() as session:
+                r = session.get(self.url + domain, auth=self.auth, headers=self.headers, verify=False)
             returned_json = r.json()
 
             if returned_json.get('data', False):

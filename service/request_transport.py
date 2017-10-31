@@ -1,7 +1,8 @@
-import requests
+from requests import sessions
 import io
-from suds.transport import Reply, TransportError
+from suds.transport import Reply
 from suds.transport.https import HttpAuthenticated
+
 
 class RequestsTransport(HttpAuthenticated):
     def __init__(self, **kwargs):
@@ -11,16 +12,16 @@ class RequestsTransport(HttpAuthenticated):
         HttpAuthenticated.__init__(self, **kwargs)
 
     def open(self, request):
-
-        resp = requests.get(request.url, data=request.message,
-                            headers=request.headers, cert=self.cert, auth=self.auth)
+        with sessions.Session() as session:
+            resp = session.get(request.url, data=request.message,
+                               headers=request.headers, cert=self.cert, auth=self.auth)
         result = io.StringIO(resp.content.decode('utf-8'))
         return result
 
     def send(self, request):
-
-        resp = requests.post(request.url, data=request.message,
-                             headers=request.headers, cert=self.cert, auth=self.auth)
+        with sessions.Session() as session:
+            resp = session.post(request.url, data=request.message,
+                                headers=request.headers, cert=self.cert, auth=self.auth)
         result = Reply(resp.status_code, resp.headers, resp.content)
         return result
 

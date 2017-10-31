@@ -1,4 +1,4 @@
-import requests
+from requests import sessions
 import logging
 
 
@@ -19,8 +19,9 @@ class MwpOneApi:
         """
 
         try:
-            r = requests.get(self.url + domain, auth=self.auth, headers=self.headers, verify=False)
-            text = r.json()
+            with sessions.Session() as session:
+                r = session.get(self.url + domain, auth=self.auth, headers=self.headers, verify=False)
+                text = r.json()
 
         except Exception as e:
             logging.error(e.message)

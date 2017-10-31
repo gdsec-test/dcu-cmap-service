@@ -4,6 +4,7 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+
 # Functions to convert random date strings into a mongo date format
 def zero_pad_date_slice(date_slice):
     if len(date_slice) == 1:
@@ -12,7 +13,6 @@ def zero_pad_date_slice(date_slice):
 
 
 def convert_string_date_to_mongo_format(old_date):
-
     good_date = old_date
     mongo_date_format = '{}-{}-{}'
 
@@ -78,8 +78,8 @@ def get_tld_by_domain_name(domain_name):
         domain_name = 'http://' + domain_name if domain_name[:7] != 'http://' else domain_name
         domain_object = tld.get_tld(domain_name, as_object=True)
         tld_domain = domain_object.tld
-    except:
-        _logger.warning("{} not found in tld file...updating and retrying".format(domain_name))
+    except Exception as e:
+        _logger.warning("Error updating TLD file for domain {} : {}. Retrying".format(domain_name, e.message))
         tld.update_tld_names()
 
         # Clearing out the global tld_names variable from tld to force it to update

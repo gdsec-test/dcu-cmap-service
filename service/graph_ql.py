@@ -16,7 +16,6 @@ class ShopperPortfolio(graphene.AbstractType):
 
 
 class ShopperProfile(graphene.ObjectType, ShopperPortfolio):
-
     # The following is a dynamic 'catch-all' method to intercept calls
     #  to any of the resolve_??? methods, instead of having to explicitly
     #  write out however many of them there need to be.  The member variables
@@ -88,7 +87,7 @@ class StatusInfo(graphene.Interface):
     statusCode = graphene.String(description='The registrar status code for provided domain name')
 
 
-#TODO: Finish endpoint once client cert is white-listed
+# TODO: Finish endpoint once client cert is white-listed
 class DomainStatusInfo(graphene.ObjectType):
     class Meta:
         interfaces = (StatusInfo,)
@@ -108,7 +107,6 @@ class Shopper(graphene.AbstractType):
     shopper_first_name = graphene.String(description='First Name for Shopper')
     shopper_id = graphene.String(description='The oldest shopper_id on record')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
-
 
     def resolve_domain_count(self, args, context, info):
         client = context.get('regdb')
@@ -241,6 +239,7 @@ class Query(graphene.ObjectType):
 class GraphQLViewWithCaching(GraphQLView):
     REDIS_KEY = 'result'
     STATUS_KEY = 'status_code'
+
     # Subclassing GraphQLView in order to intercept the incoming query, so that it
     #  may be compared to a Redis cache for quick response (if cached entry exists).
     #  If the query is not yet cached, then cache it along with the result/status_code
