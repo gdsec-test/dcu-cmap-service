@@ -6,7 +6,7 @@ from flask_graphql import GraphQLView
 from functions import get_tld_by_domain_name
 
 
-class ShopperPortfolio(graphene.AbstractType):
+class ShopperPortfolio:
     accountRepFirstName = graphene.String(description='Account Rep First Name')
     accountRepLastName = graphene.String(description='Account Rep Last Name')
     accountRepEmail = graphene.String(description='Account Rep Email Address')
@@ -51,7 +51,7 @@ class HostInfo(graphene.ObjectType):
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
 
 
-class ApiResellerService(graphene.AbstractType):
+class ApiResellerService:
     parent = graphene.String(description='API Reseller Parent shopper id')
     child = graphene.String(description='API Reseller Child shopper id')
 
@@ -96,7 +96,7 @@ class DomainStatusInfo(graphene.ObjectType):
         return "PLACEHOLDER: domain status code"
 
 
-class Shopper(graphene.AbstractType):
+class Shopper:
     """
     Top level Shopper Info
     """
