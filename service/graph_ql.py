@@ -76,7 +76,7 @@ class DomainSearch(graphene.ObjectType):
     results = graphene.List(DomainData, description='List of results matching domain search regex')
     domainlist = []
 
-    def resolve_results(self, args, context, info):
+    def resolve_results(self, info, **args):
         regex = re.compile(self.pattern)
         return [DomainData(domainid=item[0], domain=item[1].decode('idna'))
                 for item in self.domainlist if regex.match(item[1])]
@@ -92,7 +92,7 @@ class DomainStatusInfo(graphene.ObjectType):
     class Meta:
         interfaces = (StatusInfo,)
 
-    def resolve_statusCode(self, args, context, info):
+    def resolve_statusCode(self, info, **args):
         return "PLACEHOLDER: domain status code"
 
 
@@ -108,23 +108,23 @@ class Shopper:
     shopper_id = graphene.String(description='The oldest shopper_id on record')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
 
-    def resolve_domain_count(self, args, context, info):
-        client = context.get('regdb')
+    def resolve_domain_count(self, info, **args):
+        client = info.context.get('regdb')
         return client.get_domain_count_by_shopper_id(self.shopper_id)
 
-    def resolve_domainsearch(self, args, context, info):
+    def resolve_domainsearch(self, info, **args):
         regex = args.get('regex')
-        client = context.get('regdb')
+        client = info.context.get('regdb')
         data = client.get_domain_list_by_shopper_id(self.shopper_id)
         ds = DomainSearch()
         ds.domainlist = data
         ds.pattern = regex
         return ds
 
-    def resolve_vip(self, args, context, info):
-        query_dict = context.get('crm').get_shopper_portfolio_information(self.shopper_id)
+    def resolve_vip(self, info, **args):
+        query_dict = info.context.get('crm').get_shopper_portfolio_information(self.shopper_id)
         # Query the blacklist, whose entities never get suspended
-        query_dict['blacklist'] = context.get('vip').query_entity(self.shopper_id)
+        query_dict['blacklist'] = info.context.get('vip').query_entity(self.shopper_id)
         return ShopperProfile(**query_dict)
 
 
@@ -149,10 +149,10 @@ class DomainQuery(graphene.ObjectType):
     registrar = graphene.Field(RegistrarInfo, description='Registrar Information for Provided Domain Name')
     shopper_info = graphene.Field(ShopperByDomain, description='Shopper Information for Provided Domain Name')
 
-    def resolve_host(self, args, context, info):
-        whois = context.get('bd').get_hosting_info(self.domain)
+    def resolve_host(self, info, **args):
+        whois = info.context.get('bd').get_hosting_info(self.domain)
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
-            host_info = context.get('ipam').get_properties_for_ip(self.domain)
+            host_info = info.context.get('ipam').get_properties_for_ip(self.domain)
             if type(host_info) is dict:
                 whois['data_center'] = host_info.get('data_center', None)
                 whois['os'] = host_info.get('os', None)
@@ -170,41 +170,41 @@ class DomainQuery(graphene.ObjectType):
 
         vip = {'blacklist': False}
         if whois.get('shopper_id', None) is not None:
-            vip = context.get('crm').get_shopper_portfolio_information(whois.get('shopper_id'))
+            vip = info.context.get('crm').get_shopper_portfolio_information(whois.get('shopper_id'))
             # Query the blacklist, whose entities never get suspended
-            vip['blacklist'] = context.get('vip').query_entity(whois.get('shopper_id'))
+            vip['blacklist'] = info.context.get('vip').query_entity(whois.get('shopper_id'))
         host_obj = HostInfo(**whois)
         host_obj.vip = ShopperProfile(**vip)
         return host_obj
 
-    def resolve_registrar(self, args, context, info):
+    def resolve_registrar(self, info, **args):
         # If we were given a domain with a subdomain, request registrar information for just the domain.tld
         domain = get_tld_by_domain_name(self.domain)
-        whois = context.get('bd').get_registrar_info(domain)
+        whois = info.context.get('bd').get_registrar_info(domain)
         return RegistrarInfo(**whois)
 
-    def resolve_api_reseller(self, args, context, info):
-        parent_child = context.get('regdb').get_parent_child_shopper_by_domain_name(self.domain)
+    def resolve_api_reseller(self, info, **args):
+        parent_child = info.context.get('regdb').get_parent_child_shopper_by_domain_name(self.domain)
         return ApiResellerInfo(**parent_child)
 
-    def resolve_shopper_info(self, args, context, info):
-        client = context.get('regdb')
+    def resolve_shopper_info(self, info, **args):
+        client = info.context.get('regdb')
         active_shopper = client.get_shopper_id_by_domain_name(self.domain)
-        shopper_client = context.get('shopper')
+        shopper_client = info.context.get('shopper')
         extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['shopper_create_date',
                                                                                'shopper_first_name',
                                                                                'shopper_email'])
         return ShopperByDomain(shopper_id=active_shopper, **extra_data)
 
-    def resolve_blacklist(self, args, context, info):
-        vip = context.get('vip').query_entity(self.domain)
+    def resolve_blacklist(self, info, **args):
+        vip = info.context.get('vip').query_entity(self.domain)
         return vip
 
-    def resolve_alexa_rank(self, args, context, info):
-        alexa = context.get('alexa').urlinfo(self.domain)
+    def resolve_alexa_rank(self, info, **args):
+        alexa = info.context.get('alexa').urlinfo(self.domain)
         return alexa
 
-    def resolve_domain_status(self, args, context, info):
+    def resolve_domain_status(self, info, **args):
         domain = DomainStatusInfo()
         domain.domain = self.domain
         return domain
@@ -218,21 +218,21 @@ class Query(graphene.ObjectType):
                                    id=graphene.String(required=True),
                                    description='Top level query based on shopper id')
 
-    def resolve_domain_query(self, args, context, info):
+    def resolve_domain_query(self, info, **args):
         domain = args.get('domain', None)
         if domain is None or len(domain) < 4:
             raise ValueError("Invalid domain string provided")
-        if context.get('whois').is_ip(domain):
-            domain = context.get('whois').get_domain_from_ip(domain)
+        if info.context.get('whois').is_ip(domain):
+            domain = info.context.get('whois').get_domain_from_ip(domain)
         return DomainQuery(domain=domain)
 
-    def resolve_shopper_query(self, args, context, info):
+    def resolve_shopper_query(self, info, **args):
         shopper_id = args.get('id', None)
         if shopper_id is None or len(shopper_id) < 1:
             raise ValueError("Invalid shopper id string provided")
-        extra_data = context.get('shopper').get_shopper_by_shopper_id(shopper_id, ['shopper_create_date',
-                                                                                   'shopper_first_name',
-                                                                                   'shopper_email'])
+        extra_data = info.context.get('shopper').get_shopper_by_shopper_id(shopper_id, ['shopper_create_date',
+                                                                                        'shopper_first_name',
+                                                                                        'shopper_email'])
         return ShopperQuery(shopper_id=shopper_id, **extra_data)
 
 
