@@ -2,10 +2,10 @@ import suds
 from suds.client import Client
 import xml.etree.ElementTree as ET
 
-fkUrl = 'http://shopper.prod.phx3.gdg/WSCgdShopper/WSCgdShopper.dll?Handler=GenWSCgdShopperWSDL' #Prod
+fkUrl = 'http://shopper.prod.phx3.gdg/WSCgdShopper/WSCgdShopper.dll?Handler=GenWSCgdShopperWSDL'  # Prod
 
-
-shopperAudit = ET.Element("ShopperAudit", IPAddress='172.18.53.35', RequestedBy='bxberry', ID='9sd', Days='-1', IncludeInitialAssignment='1')
+shopperAudit = ET.Element("ShopperAudit", IPAddress='172.18.53.35', RequestedBy='bxberry', ID='9sd', Days='-1',
+                          IncludeInitialAssignment='1')
 returnFields = ET.SubElement(shopperAudit, "ReturnFields")
 
 ET.SubElement(returnFields, 'Field', Name='birthDay')
@@ -26,7 +26,7 @@ ET.SubElement(returnFields, 'Field', Name='fortKnox_shopperMobileCarrierID')
 ET.SubElement(returnFields, 'Field', Name='fraud')
 ET.SubElement(returnFields, 'Field', Name='gdshop_shopper_payment_type_id')
 ### The WSDs in GitHub say this field exists. They're lying.
-#ET.SubElement(returnFields, 'Field', Name='fortKnox_paymentGroupID')
+# ET.SubElement(returnFields, 'Field', Name='fortKnox_paymentGroupID')
 ET.SubElement(returnFields, 'Field', Name='gdshop_userTypeID')
 ET.SubElement(returnFields, 'Field', Name='gender')
 ET.SubElement(returnFields, 'Field', Name='hasRenewingServices')
@@ -73,6 +73,6 @@ ET.SubElement(returnFields, 'Field', Name='externalID')
 ET.SubElement(returnFields, 'Field', Name='organizationSize')
 ET.SubElement(returnFields, 'Field', Name='ianaTimeZone')
 xmlstr = ET.tostring(shopperAudit, encoding='utf8', method='xml')
-#print xmlstr
+# print xmlstr
 result = Client(fkUrl).service.AuditShopper(xmlstr)
 print result

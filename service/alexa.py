@@ -1,10 +1,11 @@
-from datetime import datetime
-from urllib import quote, urlencode
 import base64
 import hashlib
 import hmac
 import xml.etree.ElementTree as ET
-import requests
+
+from datetime import datetime
+from urllib import quote, urlencode
+from requests import sessions
 
 
 class CallAwis(object):
@@ -56,7 +57,8 @@ class CallAwis(object):
 
     @staticmethod
     def _return_output(url):
-        r = requests.get(url)
+        with sessions.Session() as session:
+            r = session.get(url)
         root = ET.fromstring(r.text)
         element = root.find('.//{http://awis.amazonaws.com/doc/2005-07-11}Rank')
         return element.text

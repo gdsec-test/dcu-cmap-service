@@ -1,6 +1,7 @@
 import logging
-import requests
 import socket
+
+from requests import sessions, packages
 
 
 class VertigoApi(object):
@@ -15,13 +16,14 @@ class VertigoApi(object):
 
     def guid_query(self, domain):
 
-        requests.packages.urllib3.disable_warnings()
+        packages.urllib3.disable_warnings()
 
         try:
 
             ip = socket.gethostbyname(domain)
 
-            response = requests.get(self.url + ip, cert=self.cert, auth=self.auth, headers=self.headers, verify=False)
+            with sessions.Session() as session:
+                response = session.get(self.url + ip, cert=self.cert, auth=self.auth, headers=self.headers, verify=False)
             returned_json = response.json()
 
             if returned_json.get('data', False):

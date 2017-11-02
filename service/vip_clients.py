@@ -3,8 +3,7 @@ from pymongo import MongoClient
 
 
 class VipClients(object):
-
-    MONGO_INSTANCE_KEY = 'entity' # The key name used in the mongodb blacklist record
+    MONGO_INSTANCE_KEY = 'entity'  # The key name used in the mongodb blacklist record
 
     def __init__(self, settings, redis_obj):
         self._logger = logging.getLogger(__name__)

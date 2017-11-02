@@ -1,8 +1,11 @@
+import json
 import logging
 import functions
-import requests
-import json
+
+from requests import sessions
+from requests.models import Response
 from functions import return_expected_dict_due_to_exception
+
 
 class ShopperAPI(object):
     _URL = 'https://shopper.cmap.proxy.int.godaddy.com/v1/shoppers'
@@ -33,14 +36,18 @@ class ShopperAPI(object):
             if shopper_data is None:
                 url = self._URL + "/" + shopper_id + "?auditClientIp=cmap.proxy.int.godaddy.com"
                 # Added error handling due to Bad Gateway errors observed
-                req_val = requests.get(url, self._params, auth=self._auth, cert=self._cert)
-                if type(req_val) is not requests.models.Response:
-                    raise ValueError("Response from cmap proxy was garbled")
-                if req_val.status_code == 502:
-                    raise ValueError("Response from cmap proxy: Bad Gateway")
-                if req_val.status_code != 200:
-                    raise ValueError("Response from cmap proxy: %s" % req_val.content)
-                shopper_data = json.loads(requests.get(url, self._params, auth=self._auth, cert=self._cert).text)
+                with sessions.Session() as session:
+                    req_val = session.get(url, params=self._params, auth=self._auth, cert=self._cert)
+
+                    if type(req_val) is not Response:
+                        raise ValueError("Response from cmap proxy was garbled")
+                    if req_val.status_code == 502:
+                        raise ValueError("Response from cmap proxy: Bad Gateway")
+                    if req_val.status_code != 200:
+                        raise ValueError("Response from cmap proxy: %s" % req_val.content)
+
+                    shopper_data = json.loads(
+                        session.get(url, params=self._params, auth=self._auth, cert=self._cert).text)
                 if self.DATE_STRING in shopper_data:
                     # Change the format of the date string
                     shopper_data[self.DATE_STRING] = functions.convert_string_date_to_mongo_format(

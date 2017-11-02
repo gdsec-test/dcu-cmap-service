@@ -1,11 +1,11 @@
-import requests
 import socket
 import ast
 import logging
 
+from requests import sessions, packages
+
 
 class AngeloApi(object):
-
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
 
     def __init__(self, settings):
@@ -15,13 +15,14 @@ class AngeloApi(object):
 
     def guid_query(self, domain):
 
-        requests.packages.urllib3.disable_warnings()
+        packages.urllib3.disable_warnings()
 
         try:
 
             ip = socket.gethostbyname(domain)
-            r = requests.post(self.url + 'addonDomain=' + domain + '&serverIp=' + ip,
-                              auth=self.auth, headers=self.headers, verify=False)
+            with sessions.Session() as session:
+                r = session.post(self.url + 'addonDomain=' + domain + '&serverIp=' + ip,
+                                 auth=self.auth, headers=self.headers, verify=False)
             if r.status_code == 200:
                 returned_json = r.json()
                 guid = str(returned_json.get('orion_id', None))
