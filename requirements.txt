@@ -1,5 +1,4 @@
-graphene==1.4.1
-graphql-core==1.1
+graphene>=2.0
 flask-graphql==1.4.1
 ipwhois
 python-whois
