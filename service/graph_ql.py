@@ -76,7 +76,7 @@ class DomainSearch(graphene.ObjectType):
     results = graphene.List(DomainData, description='List of results matching domain search regex')
     domainlist = []
 
-    def resolve_results(self):
+    def resolve_results(self, info):
         regex = re.compile(self.pattern)
         return [DomainData(domainid=item[0], domain=item[1].decode('idna'))
                 for item in self.domainlist if regex.match(item[1])]
