@@ -40,7 +40,7 @@ class MwpOneApi:
                         'ip': ip, 'hostname': 'MWP 1.0 does not return hostname', 'accountid': accountid}
 
             else:
-                logging.error('no active MWP 1.0 account ID found for {}').format(domain)
+                logging.error('no active MWP 1.0 account ID found for {}'.format(domain))
                 return None
 
         elif len(text['data']) > 1:
@@ -60,7 +60,7 @@ class MwpOneApi:
                     pass
 
                 else:
-                    logging.error('no active MWP 1.0 account ID found for {}').format(domain)
+                    logging.error('no active MWP 1.0 account ID found for {}'.format(domain))
                     return None
 
     def _dc_helper(self, dc):
