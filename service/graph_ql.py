@@ -151,6 +151,9 @@ class DomainQuery(graphene.ObjectType):
     shopper_info = graphene.Field(ShopperByDomain, description='Shopper Information for Provided Domain Name')
 
     def resolve_host(self, info):
+        # These default initializations are put in place to allow for upgrade to Graphql 2.0. A bug currently exists
+        # that defaults all uninitialized fields as a `graphene.String object at X memory location` rather than null
+        # in Graphql 1.4.1. This fixes that bug until it is addressed. 8 Nov 2017 @nlemay.
         vip = dict(blacklist=False, accountRepFirstName=None, accountRepLastName=None, accountRepEmail=None,
                    portfolioType=None, shopper_id=None)
         whois = dict(data_center=None, os=None, product=None, guid=None, shopper_id=None, hostname=None, ip=None,
