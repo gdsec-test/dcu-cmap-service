@@ -121,6 +121,9 @@ class Shopper:
         return ds
 
     def resolve_vip(self, info):
+        # These default initializations are put in place to allow for upgrade to Graphql 2.0. A bug currently exists
+        # that defaults all uninitialized fields as a `graphene.String object at X memory location` rather than null
+        # in Graphql 1.4.1. This fixes that bug until it is addressed. 8 Nov 2017 @nlemay.
         query_dict = dict(blacklist=False, accountRepFirstName=None, accountRepLastName=None, accountRepEmail=None,
                           portfolioType=None, shopper_id=None)
         query_dict.update(info.context.get('crm').get_shopper_portfolio_information(self.shopper_id))
