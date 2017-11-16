@@ -160,7 +160,7 @@ class DomainQuery(graphene.ObjectType):
         vip = dict(blacklist=False, accountRepFirstName=None, accountRepLastName=None, accountRepEmail=None,
                    portfolioType=None, shopper_id=None)
         whois = dict(data_center=None, os=None, product=None, guid=None, shopper_id=None, hostname=None, ip=None,
-                     mwp_id=None, hosting_company_name=None, brand=None, hosting_abuse_email=None, vip=vip)
+                     mwp_id=None, hosting_company_name=None, brand=None, hosting_abuse_email=None)
 
         whois.update(info.context.get('bd').get_hosting_info(self.domain))
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
@@ -176,11 +176,13 @@ class DomainQuery(graphene.ObjectType):
                 whois['mwp_id'] = host_info.get('accountid', None)
 
         if whois.get('shopper_id', None) is not None:
-            whois['vip'].update(info.context.get('crm').get_shopper_portfolio_information(whois.get('shopper_id')))
+            vip.update(info.context.get('crm').get_shopper_portfolio_information(whois.get('shopper_id')))
             # Query the blacklist, whose entities never get suspended
-            whois['vip']['blacklist'] = info.context.get('vip').query_entity(whois.get('shopper_id'))
+            vip['blacklist'] = info.context.get('vip').query_entity(whois.get('shopper_id'))
 
-        return HostInfo(**whois)
+        host_obj = HostInfo(**whois)
+        host_obj.vip = ShopperProfile(**vip)
+        return host_obj
 
     def resolve_registrar(self, info):
         # If we were given a domain with a subdomain, request registrar information for just the domain.tld
