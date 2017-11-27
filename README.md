@@ -3,7 +3,7 @@
 CMAP Service is a GraphQL Service that retrieves a wide range of information about domains and GoDaddy accounts such as
 1. Host Information (Product, Shopper ID, VIP, Hostname, etc.)
 2. Registrar Information (Registrar Name, Abuse Contacts, Domain Create Date, etc.)
-3. ShopperInfo (Shopper ID, VIP, Shopper Create Date, Domain Count, etc.)
+3. Shopper Information (Shopper ID, VIP, Shopper Create Date, Domain Count, etc.)
 
 ## Cloning
 To clone the repository via SSH perform the following
