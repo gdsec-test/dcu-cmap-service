@@ -13,7 +13,11 @@ git clone git@github.secureserver.net:ITSecurity/cmap_service.git
 It is recommended that you clone this project into a pyvirtualenv or equivalent virtual enviornment.
 
 ## Installing Dependencies
-You can install the required dependencies via
+You can install the required private dependencies via
+```
+pip install -r private_pips.txt
+```
+Followed by installing public dependencies via
 ```
 pip install -r requirements.txt
 ```
