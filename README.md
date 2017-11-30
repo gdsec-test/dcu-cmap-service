@@ -25,25 +25,13 @@ pip install -r requirements.txt
 ## Building
 In order to build the project locally you can run the following commands
 ```
-make dev
-```
-```
-make ote
-```
-```
-make prod
+make [dev, ote, prod]
 ```
 
 ## Deploying
 Deploying CMAP Service to Kubernetes can be achieved via
 ```
-make dev-deploy
-```
-```
-make ote-deploy
-```
-```
-make prod-deploy
+make [dev, ote, prod]-deploy
 ```
 
 ## Testing
@@ -54,9 +42,9 @@ pip install -r test_requirements.txt
 
 After this you may run the tests via
 ```
-nosetests tests/ --cover-package=service/
+nosetests tests/
 ```
-Optionally, you may provide the flag `--with-coverage` to `nosetests` to determine the test coverage of this project.
+Optionally, you may provide the flags `--with-coverage --cover-package=service/` to `nosetests` to determine the test coverage of this project.
 
 ## Built With
 CMAP Service is built utilizing the following key technologies
