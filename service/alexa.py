@@ -100,7 +100,6 @@ class CallAwis(object):
         """
         This method will return an Alexa Rank when given a domain name ex. godaddy.com
         :param domain: string
-        :return: alexa_rank: string
+        :return: a string representing an Alexa Rank or None if lookup fails
         """
-        alexa_rank = self._build_request(domain)
-        return alexa_rank
+        return self._build_request(domain)
