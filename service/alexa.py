@@ -1,18 +1,19 @@
-# AWS Version 4 signing example
-
 # AWIS API (Alexa Web Information Services)
-
 # See: http://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html
 # This version makes a GET request and passes the signature
 # in the Authorization header.
 
-import sys, os, base64, datetime, hashlib, hmac 
-import requests  # pip install requests
-
+import os
+import datetime
+import hashlib
+import hmac
 import xml.etree.ElementTree as ET
+
+from requests import sessions
 
 
 class CallAwis(object):
+    """Makes a GET request to the Amazon Web Information Service API (AWIS) to get Alexa Rank for a domain name"""
 
     # ************* REQUEST VALUES *************
     METHOD = 'GET'
@@ -25,17 +26,18 @@ class CallAwis(object):
     def __init__(self, settings):
 
         # Needed settings
-        self.access_key = os.environ.get('ACCESS_ID')
-        self.secret_key = os.environ.get('SECRET_ACCESS_KEY')
+        self._access_key = os.environ.get('ACCESS_ID')
+        self._secret_key = os.environ.get('SECRET_ACCESS_KEY')
 
-    def sign(self, key, msg):
+    @staticmethod
+    def _sign(key, msg):
         return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
 
-    def get_signature_key(self, key, date_stamp, region_name, service_name):
-        key_date = self.sign(('AWS4' + key).encode('utf-8'), date_stamp)
-        key_region = self.sign(key_date, region_name)
-        key_service = self.sign(key_region, service_name)
-        key_signing = self.sign(key_service, 'aws4_request')
+    def _get_signature_key(self, key, date_stamp, region_name, service_name):
+        key_date = self._sign(('AWS4' + key).encode('utf-8'), date_stamp)
+        key_region = self._sign(key_date, region_name)
+        key_service = self._sign(key_region, service_name)
+        key_signing = self._sign(key_service, 'aws4_request')
         return key_signing
 
     def urlinfo(self, domain):
@@ -62,51 +64,33 @@ class CallAwis(object):
         payload_hash = hashlib.sha256('').hexdigest()
 
         # Combine elements to create canonical request
-        canonical_request = self.METHOD + '\n' \
-                            + canonical_uri + '\n' \
-                            + canonical_querystring + '\n' \
-                            + canonical_headers + '\n' \
-                            + signed_headers + '\n' \
-                            + payload_hash
+        canonical_request = self.METHOD + '\n' + canonical_uri + '\n' + canonical_querystring + '\n' \
+            + canonical_headers + '\n' + signed_headers + '\n' + payload_hash
 
         # ************* CREATE THE STRING TO SIGN *************
         algorithm = 'AWS4-HMAC-SHA256'
-        credential_scope = datestamp + '/' \
-                           + self.REGION \
-                           + '/' \
-                           + self.SERVICE \
-                           + '/' \
-                           + 'aws4_request'
+        credential_scope = datestamp + '/' + self.REGION + '/' + self.SERVICE + '/' + 'aws4_request'
 
-        string_to_sign = algorithm + '\n' \
-                         + amzdate + '\n' \
-                         + credential_scope \
-                         + '\n' \
-                         + hashlib.sha256(canonical_request).hexdigest()
+        string_to_sign = algorithm + '\n' + amzdate + '\n' + credential_scope + '\n' \
+            + hashlib.sha256(canonical_request).hexdigest()
 
         # Create the signing key
-        signing_key = self.get_signature_key(self.secret_key, datestamp, self.REGION, self.SERVICE)
+        signing_key = self._get_signature_key(self._secret_key, datestamp, self.REGION, self.SERVICE)
 
         # Sign the string_to_sign using the signing_key
         signature = hmac.new(signing_key, string_to_sign.encode('utf-8'), hashlib.sha256).hexdigest()
 
         # Create authorization header and add to request headers
-        authorization_header = algorithm + ' ' \
-                               + 'Credential=' \
-                               + self.access_key \
-                               + '/' + credential_scope \
-                               + ', ' + 'SignedHeaders=' \
-                               + signed_headers \
-                               + ', ' \
-                               + 'Signature=' \
-                               + signature
+        authorization_header = algorithm + ' ' + 'Credential=' + self._access_key + '/' + credential_scope + ', ' \
+            + 'SignedHeaders=' + signed_headers + ', ' + 'Signature=' + signature
 
         headers = {'x-amz-date': amzdate, 'Authorization': authorization_header}
 
         # ************* SEND THE REQUEST *************
         request_url = CallAwis.ENDPOINT + '?' + canonical_querystring
 
-        r = requests.get(request_url, headers=headers)
+        with sessions.Session() as session:
+            r = session.get(request_url, headers=headers)
 
         root = ET.fromstring(r.text)
         element = root.find('.//{http://awis.amazonaws.com/doc/2005-07-11}Rank')
