@@ -56,7 +56,18 @@ class ShopperAPI(object):
             else:
                 shopper_data = json.loads(shopper_data).get(self.REDIS_DATA_KEY)
             return dict(shopper_first_name=shopper_data.get('contact', {}).get('nameFirst'),
+                        shopper_last_name=shopper_data.get('contact', {}).get('nameLast'),
+                        shopper_phone_work=shopper_data.get('contact', {}).get('phoneWork'),
+                        shopper_phone_work_ext=shopper_data.get('contact', {}).get('phoneWorkExtension'),
+                        shopper_phone_home=shopper_data.get('contact', {}).get('phoneHome'),
+                        shopper_phone_mobile=shopper_data.get('contact', {}).get('phoneMobile'),
                         shopper_email=shopper_data.get('email'),
+                        shopper_address_1=shopper_data.get('contact', {}).get('address', {}).get('address1'),
+                        shopper_address_2=shopper_data.get('contact', {}).get('address', {}).get('address2'),
+                        shopper_city=shopper_data.get('contact', {}).get('address', {}).get('city'),
+                        shopper_state=shopper_data.get('contact', {}).get('address', {}).get('state'),
+                        shopper_postal_code=shopper_data.get('contact', {}).get('address', {}).get('postalCode'),
+                        shopper_country=shopper_data.get('contact', {}).get('address', {}).get('country'),
                         shopper_create_date=shopper_data.get('createdAt'))
         except Exception as e:
             self._logger.error("Error in getting the shopper info for %s : %s", shopper_id, e.message)
