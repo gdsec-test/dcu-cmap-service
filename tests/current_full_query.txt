@@ -1,4 +1,4 @@
-Current info that will return with a CMAP Query
+Current info that will return with a CMAP Query  2/14/18
 
 {
   domainQuery(domain: "Enter a domain here") {
