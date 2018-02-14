@@ -1,0 +1,67 @@
+Current info that will return with a CMAP Query
+
+{
+  domainQuery(domain: "Enter a domain here") {
+    alexaRank
+    apiReseller {
+      parent
+      child
+    }
+    blacklist
+    domain
+    domainStatus {
+      statusCode
+    }
+    host {
+      dataCenter
+      guid
+      hostingAbuseEmail
+      hostingCompanyName
+      hostname
+      ip
+      os
+      product
+      shopperId
+      mwpId
+      vip {
+        accountRepFirstName
+        accountRepLastName
+        accountRepEmail
+        portfolioType
+        blacklist
+        shopperId
+      }
+    }
+    registrar {
+      domainCreateDate
+      registrarAbuseEmail
+      registrarName
+    }
+    shopperInfo {
+      domainCount
+      shopperCreateDate
+      shopperEmail
+      shopperFirstName
+      shopperLastName
+      shopperAddress1
+      shopperAddress2
+      shopperCity
+      shopperState
+      shopperPostalCode
+      shopperCountry
+      shopperPhoneMobile
+      shopperPhoneHome
+      shopperPhoneWork
+      shopperPhoneWorkExt
+      shopperId
+      vip {
+        accountRepFirstName
+        accountRepLastName
+        accountRepEmail
+        portfolioType
+        blacklist
+        shopperId
+      }
+    }
+  }
+}
