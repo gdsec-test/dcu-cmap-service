@@ -100,12 +100,23 @@ class Shopper:
     """
     Top level Shopper Info
     """
+    shopper_id = graphene.String(description='The oldest shopper_id on record')
     domain_count = graphene.Int(description='Number of domains owned by the shopper')
     domain_search = graphene.Field(DomainSearch, regex=graphene.String(required=True))
     shopper_create_date = graphene.String(description='The create data of the shopper')
     shopper_email = graphene.String(description='Email Address for Shopper')
     shopper_first_name = graphene.String(description='First Name for Shopper')
-    shopper_id = graphene.String(description='The oldest shopper_id on record')
+    shopper_last_name = graphene.String(description='Last Name for Shopper')
+    shopper_address_1 = graphene.String(description='Address 1 for Shopper')
+    shopper_address_2 = graphene.String(description='Address 2 for Shopper')
+    shopper_city = graphene.String(description='City for Shopper')
+    shopper_state = graphene.String(description='State for Shopper')
+    shopper_postal_code = graphene.String(description='Postal Code for Shopper')
+    shopper_country = graphene.String(description='Country for Shopper')
+    shopper_phone_mobile = graphene.String(description='Mobile Phone Number for Shopper')
+    shopper_phone_home = graphene.String(description='Home Phone Number for Shopper')
+    shopper_phone_work = graphene.String(description='Work Phone Number Shopper')
+    shopper_phone_work_ext = graphene.String(description='Work Phone Number Ext for Shopper')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
 
     def resolve_domain_count(self, info):
@@ -200,7 +211,18 @@ class DomainQuery(graphene.ObjectType):
         shopper_client = info.context.get('shopper')
         extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['shopper_create_date',
                                                                                'shopper_first_name',
-                                                                               'shopper_email'])
+                                                                               'shopper_email',
+                                                                               'shopper_last_name',
+                                                                               'shopper_phone_work',
+                                                                               'shopper_phone_work_ext',
+                                                                               'shopper_phone_home',
+                                                                               'shopper_phone_mobile',
+                                                                               'shopper_address_1',
+                                                                               'shopper_address_2',
+                                                                               'shopper_city',
+                                                                               'shopper_state',
+                                                                               'shopper_postal_code',
+                                                                               'shopper_country'])
         return ShopperByDomain(shopper_id=active_shopper, **extra_data)
 
     def resolve_blacklist(self, info):
