@@ -1,6 +1,6 @@
 REPONAME=infosec-dcu/cmap_service
 BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
-DOCKERREPO=artifactory.secureserver.net:10014/docker-dcu-local/cmap_service
+DOCKERREPO=docker-dcu-local.artifactory.secureserver.net/cmap_service
 DATE=$(shell date)
 COMMIT=
 BUILD_BRANCH=origin/master
