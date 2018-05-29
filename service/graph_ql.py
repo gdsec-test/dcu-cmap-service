@@ -37,7 +37,7 @@ class RegistrarInfo(graphene.ObjectType):
 
 
 class HostInfo(graphene.ObjectType):
-    create_date = graphene.String(description='Create Date')
+    created_date = graphene.String(description='Create Date')
     data_center = graphene.String(description='Name of DataCenter that our server is in')
     friendly_name = graphene.String(description='Friendly Name')
     guid = graphene.String(description='GUID for hosting account')
@@ -50,7 +50,7 @@ class HostInfo(graphene.ObjectType):
     product = graphene.String(description='Name of our hosting product in use')
     shopper_id = graphene.String(description='Shopper account ID')
     mwp_id = graphene.String(description='ID required for MWP 1.0 account suspension/reinstatement')
-        vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
+    vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
 
 
 class ApiResellerService:
