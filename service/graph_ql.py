@@ -37,7 +37,7 @@ class RegistrarInfo(graphene.ObjectType):
 
 
 class HostInfo(graphene.ObjectType):
-    created_date = graphene.String(description='Create Date')
+    created_date = graphene.String(description='Created Date')
     data_center = graphene.String(description='Name of DataCenter that our server is in')
     friendly_name = graphene.String(description='Friendly Name')
     guid = graphene.String(description='GUID for hosting account')
