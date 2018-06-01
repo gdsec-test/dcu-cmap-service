@@ -22,6 +22,12 @@ spec:
           name: "cmap-service"
           imagePullPolicy: "Always"
           image: "docker-dcu-local.artifactory.secureserver.net/cmap_service:dev"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 60
+            periodSeconds: 10
           env:
           - name: BUILD_DATE
             value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
