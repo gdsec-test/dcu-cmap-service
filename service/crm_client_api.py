@@ -25,7 +25,7 @@ class CrmClientApi(object):
                                                               key=settings.CMAP_PROXY_KEY))
             self._request = self._client.factory.create(self._FACTORY)
         except Exception as e:
-            self._logger.error("Failed CRM Client Init: %s", e.message)
+            self._logger.error("Failed CRM Client Init: {}".format(e.message))
 
     def get_shopper_portfolio_information(self, shopper_id):
         query_dict = {}

@@ -37,7 +37,9 @@ class RegistrarInfo(graphene.ObjectType):
 
 
 class HostInfo(graphene.ObjectType):
+    created_date = graphene.String(description='Created Date')
     data_center = graphene.String(description='Name of DataCenter that our server is in')
+    friendly_name = graphene.String(description='Friendly Name')
     guid = graphene.String(description='GUID for hosting account')
     brand = graphene.String(description='Hosting brand detected by Brand Detection')
     hosting_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
@@ -171,13 +173,16 @@ class DomainQuery(graphene.ObjectType):
         vip = dict(blacklist=False, accountRepFirstName=None, accountRepLastName=None, accountRepEmail=None,
                    portfolioType=None, shopper_id=None)
         whois = dict(data_center=None, os=None, product=None, guid=None, shopper_id=None, hostname=None, ip=None,
-                     mwp_id=None, hosting_company_name=None, brand=None, hosting_abuse_email=None)
+                     mwp_id=None, hosting_company_name=None, brand=None, hosting_abuse_email=None, created_date=None,
+                     friendly_name=None)
 
         whois.update(info.context.get('bd').get_hosting_info(self.domain))
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
             host_info = info.context.get('ipam').get_properties_for_ip(self.domain)
             if type(host_info) is dict:
                 whois['data_center'] = host_info.get('data_center', None)
+                whois['created_date'] = host_info.get('created_date', None)
+                whois['friendly_name'] = host_info.get('friendly_name', None)
                 whois['os'] = host_info.get('os', None)
                 whois['product'] = host_info.get('product', None)
                 whois['guid'] = host_info.get('guid', None)

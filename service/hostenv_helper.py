@@ -109,7 +109,8 @@ class Ipam(object):
                     return {'dc': data.get('dc', None), 'os': data.get('os', None),
                             'product': data.get('product', None),
                             'ip': ip, 'guid': data.get('guid', None), 'shopper': data.get('shopper', None),
-                            'hostname': data.get('hostname', None)}
+                            'hostname': data.get('hostname', None), 'created_date': data.get('created_date', None),
+                            'friendly_name': data.get('friendly_name', None)}
 
             else:
                 data = nutrition_label(ipam_hostname)
@@ -118,12 +119,13 @@ class Ipam(object):
                     if d:
                         return {'hostname': ipam_hostname, 'data_center': data[0], 'os': d.get('os', None),
                                 'product': data[2], 'ip': ip, 'guid': d.get('guid', None),
-                                'shopper_id': d.get('shopper_id', None)}
+                                'shopper_id': d.get('shopper_id', None), 'created_date': d.get('created_date', None),
+                                'friendly_name': d.get('friendly_name', None)}
                     else:
                         self._logger.error('_guid_locater failed on: %s' % domain)
                         return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
                                 'product': data[2], 'ip': ip, 'guid': None,
-                                'shopper_id': None}
+                                'shopper_id': None, 'created_date': None, 'friendly_name': None}
                 else:
                     return 'No hosting product found'
         else:
