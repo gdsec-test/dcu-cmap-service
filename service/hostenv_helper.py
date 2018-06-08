@@ -3,6 +3,7 @@ from vertigo_api import VertigoApi
 from angelo_api import AngeloApi
 from tz_api import ToolzillaApi
 from mwpone_api import MwpOneApi
+from mwptwo import MwpTwo
 from suds.client import Client
 from enrichment import nutrition_label
 import logging
@@ -19,6 +20,7 @@ class Ipam(object):
         self.arun = AngeloApi(config)
         self.trun = ToolzillaApi(config)
         self.mrun = MwpOneApi(config)
+        self.m2run = MwpTwo(config)
 
         # Create the NTLM authentication object.
         self.ntlm = WindowsHttpAuthenticated(username=config.SMDBUSER, password=config.SMDBPASS)
@@ -121,6 +123,12 @@ class Ipam(object):
                                 'product': data[2], 'ip': ip, 'guid': d.get('guid', None),
                                 'shopper_id': d.get('shopper_id', None), 'created_date': d.get('created_date', None),
                                 'friendly_name': d.get('friendly_name', None)}
+
+                    # Check if domain is hosted on MWP2.0 and if so sending back return with MWP2.0 as product
+                    elif self.m2run.is_mwp2(domain):
+                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
+                                'product': 'MWP 2.0', 'ip': ip, 'guid': None,
+                                'shopper_id': None, 'created_date': None, 'friendly_name': None}
                     else:
                         self._logger.error('_guid_locater failed on: %s' % domain)
                         return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],

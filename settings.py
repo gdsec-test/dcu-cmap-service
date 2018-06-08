@@ -32,6 +32,7 @@ class AppConfig(object):
     DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts?addon_domain_eq='
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts/?domain='
+    MWPTWO_URL = 'http://{domain}/__mwp2_check__'
 
     def __init__(self):
         self.REDIS = os.getenv('REDIS') or 'redis'
