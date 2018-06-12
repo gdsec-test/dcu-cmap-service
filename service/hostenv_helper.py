@@ -126,14 +126,15 @@ class Ipam(object):
 
                     # Check if domain is hosted on MWP2.0 and if so sending back return with MWP2.0 as product
                     elif self.m2run.is_mwp2(domain):
-                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
-                                'product': 'MWP 2.0', 'ip': ip, 'guid': None,
-                                'shopper_id': None, 'created_date': None, 'friendly_name': None}
+                        host_product = 'MWP 2.0'
+
                     else:
                         self._logger.error('_guid_locater failed on: %s' % domain)
-                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
-                                'product': data[2], 'ip': ip, 'guid': None,
-                                'shopper_id': None, 'created_date': None, 'friendly_name': None}
+                        host_product = data[2]
+
+                    return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1], 'product': host_product,
+                            'ip': ip, 'guid': None, 'shopper_id': None, 'created_date': None, 'friendly_name': None}
+
                 else:
                     return 'No hosting product found'
         else:
