@@ -11,7 +11,7 @@ class DiabloApi(object):
     def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
         self.url = settings.DIABLO_URL
-        self.auth = (settings.DIABLOUSER, settings.DIABLOPASS)
+        self.auth = (settings.DIABLO_USER, settings.DIABLO_PASS)
 
     def guid_query(self, domain):
 

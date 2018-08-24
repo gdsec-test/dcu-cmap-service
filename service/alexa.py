@@ -25,8 +25,8 @@ class CallAwis(object):
     REQUEST_PARAMETERS = 'Action=UrlInfo&ResponseGroup=Rank&Url='
 
     def __init__(self, settings):
-        self._access_key = settings.ACCESS_ID
-        self._secret_key = settings.SECRET_ACCESS_KEY
+        self._access_key = settings.ALEXA_ACCESS_ID
+        self._secret_key = settings.ALEXA_ACCESS_KEY
         self._logger = logging.getLogger(__name__)
 
     @staticmethod

@@ -8,7 +8,7 @@ class MwpOneApi:
 
     def __init__(self, settings):
         self.url = settings.MWPONE_URL
-        self.auth = (settings.MWPONEUSER, settings.MWPONEPASS)
+        self.auth = (settings.MWP_ONE_USER, settings.MWP_ONE_PASS)
 
     def mwpone_locate(self, domain):
         """

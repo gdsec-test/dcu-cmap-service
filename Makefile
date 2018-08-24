@@ -5,21 +5,12 @@ DATE=$(shell date)
 COMMIT=
 BUILD_BRANCH=origin/master
 
-# libraries we need to stage for pip to install inside Docker build
-PRIVATE_PIPS=git@github.secureserver.net:ITSecurity/blindAl.git
-
 .PHONY: prep dev stage prod ote clean prod-deploy ote-deploy dev-deploy
 
 all: prep prod
 
 prep:
 	@echo "----- preparing $(REPONAME) build -----"
-	# stage pips we will need to install in Docker build
-	mkdir -p $(BUILDROOT)/private_pips && rm -rf $(BUILDROOT)/private_pips/*
-	for entry in $(PRIVATE_PIPS) ; do \
-		cd $(BUILDROOT)/private_pips && git clone $$entry ; \
-	done
-
 	# copy the app code to the build root
 	cp -rp ./* $(BUILDROOT)
 

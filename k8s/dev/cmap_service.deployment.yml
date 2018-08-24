@@ -35,8 +35,6 @@ spec:
             value: dev
           - name: HTTP_ONLY
             value: 'true'
-          - name: BRAND_DETECTION_URL
-            value: http://brand-detection.abuse-api-dev.svc.cluster.local:5000
           - name: CMAP_PROXY_USER
             valueFrom:
               secretKeyRef:
@@ -51,88 +49,76 @@ spec:
             value: /proxycerts/tls.crt
           - name: CMAP_PROXY_KEY
             value: /proxycerts/tls.key
-          - name: REDIS
-            value: cmap-service-redis.abuse-api-dev.svc.cluster.local
-          - name: KEYFILE
-            value: /keyfiles/key.txt
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
                 name: db-cmap-service
                 key: password
-          - name: SECRET_ACCESS_KEY
+          - name: ALEXA_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: auth-alexa
                 key: password
-          - name: ACCESS_ID
+          - name: ALEXA_ACCESS_ID
             valueFrom:
               secretKeyRef:
                 name: auth-alexa
                 key: username
-          - name: ANGELOUSER
+          - name: ANGELO_USER
             valueFrom:
               secretKeyRef:
                 name: auth-hosting-envs
                 key: angelouser
-          - name: ANGELOPASS
+          - name: ANGELO_PASS
             valueFrom:
               secretKeyRef:
                 name: auth-hosting-envs
                 key: angelopass
-          - name: DIABLOUSER
+          - name: DIABLO_USER
             valueFrom:
               secretKeyRef:
                 name: auth-hosting-envs
                 key: diablouser
-          - name: DIABLOPASS
+          - name: DIABLO_PASS
             valueFrom:
               secretKeyRef:
                 name: auth-hosting-envs
                 key: diablopass
-          - name: VERTIGOUSER
+          - name: VERTIGO_USER
             valueFrom:
               secretKeyRef:
                 name: auth-hosting-envs
                 key: vertigouser
-          - name: VERTIGOPASS
+          - name: VERTIGO_PASS
             valueFrom:
               secretKeyRef:
                 name: auth-hosting-envs
                 key: vertigopass
-          - name: SMDBUSER
+          - name: MWP_ONE_USER
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: mwponeuser
+          - name: MWP_ONE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: auth-hosting-envs
+                key: mwponepass
+          - name: SMDB_USER
             valueFrom:
               secretKeyRef:
                 name: auth-smdb
                 key: username
-          - name: SMDBPASS
+          - name: SMDB_PASS
             valueFrom:
               secretKeyRef:
                 name: auth-smdb
                 key: password
-          - name: MWPONEUSER
-            valueFrom:
-              secretKeyRef:
-                name: auth-happy-envs
-                key: mwponeuser
-          - name: MWPONEPASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-happy-envs
-                key: mwponepass
-
           volumeMounts:
-          - name: encryption-keys
-            mountPath: /keyfiles
-            readOnly: true
           - name: tls-files-proxy
             mountPath: /proxycerts
             readOnly: true
-
       volumes:
-        - name: encryption-keys
-          secret:
-            secretName: encryption-key-files
         - name: tls-files-proxy
           secret:
             secretName: tls-cmap-auth

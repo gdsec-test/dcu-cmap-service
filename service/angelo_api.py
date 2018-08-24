@@ -11,7 +11,7 @@ class AngeloApi(object):
     def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
         self.url = settings.ANGELO_URL
-        self.auth = (settings.ANGELOUSER, settings.ANGELOPASS)
+        self.auth = (settings.ANGELO_USER, settings.ANGELO_PASS)
 
     def guid_query(self, domain):
 

@@ -23,13 +23,8 @@ class Ipam(object):
         self.m2run = MwpTwo(config)
 
         # Create the NTLM authentication object.
-        self.ntlm = WindowsHttpAuthenticated(username=config.SMDBUSER, password=config.SMDBPASS)
-
-        # Create the SUDS SOAP client.
-        self.client = Client(config.SMDB_URL, transport=self.ntlm)
-
-        # Create lookup object dictionary
-        # self.ctx = {vertigo}
+        self.ntlm = WindowsHttpAuthenticated(username=config.SMDB_USER, password=config.SMDB_PASS)
+        self.client = Client(config.SMDB_URL, transport=self.ntlm)  # Create the SUDS SOAP client.
 
     # Convert the string "true" and "false" to boolean.
     def __get_boolean(self, obj):
