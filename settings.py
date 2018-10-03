@@ -27,6 +27,9 @@ class AppConfig(object):
         self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT', 'proxy.crt')
         self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY', 'proxy.key')
 
+        self.CMAP_API_CERT = os.getenv('CMAP_API_CERT', 'api.crt')
+        self.CMAP_API_KEY = os.getenv('CMAP_API_KEY', 'api.key')
+
         self.VERTIGO_USER = os.getenv('VERTIGO_USER', 'vertigo_user')
         self.VERTIGO_PASS = os.getenv('VERTIGO_PASS', 'vertiog_pass')
         self.DIABLO_USER = os.getenv('DIABLO_USER', 'diablo_user')
@@ -50,6 +53,7 @@ class ProductionAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
+    CRM_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
@@ -62,6 +66,7 @@ class OTEAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-ote.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-ote.svc.cluster.local:5000'
+    CRM_API_URL = '' # No CRM API in OTE
 
     def __init__(self):
         super(OTEAppConfig, self).__init__()
@@ -74,6 +79,7 @@ class DevelopmentAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
+    CRM_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
 
     def __init__(self):
         super(DevelopmentAppConfig, self).__init__()

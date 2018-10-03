@@ -8,21 +8,20 @@ from functions import return_expected_dict_due_to_exception
 
 
 class CrmClientApi(object):
-    _LOCATION = 'https://crm.cmap.proxy.int.godaddy.com/Shopper.svc'
-    _WSDL = _LOCATION + '?singleWsdl'
     _FACTORY = '{http://schemas.datacontract.org/2004/07/GoDaddy.CRM.ClientAPI.DataContracts}ShopperPortfolioInformationRequest'
     REDIS_DATA_KEY = 'result'
 
     def __init__(self, settings, redis_obj):
         self._logger = logging.getLogger(__name__)
         self._redis = redis_obj
+        LOCATION = settings.CRM_API_URL
+        self._WSDL = LOCATION + '?singleWsdl'
+
         try:
-            self._client = Client(self._WSDL, location=self._LOCATION,
+            self._client = Client(self._WSDL, location=LOCATION,
                                   headers=RequestsTransport.get_soap_headers(),
-                                  transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
-                                                              password=settings.CMAP_PROXY_PASS,
-                                                              cert=settings.CMAP_PROXY_CERT,
-                                                              key=settings.CMAP_PROXY_KEY))
+                                  transport=RequestsTransport(cert=settings.CMAP_API_CERT,
+                                                              key=settings.CMAP_API_KEY))
             self._request = self._client.factory.create(self._FACTORY)
         except Exception as e:
             self._logger.error("Failed CRM Client Init: {}".format(e.message))
