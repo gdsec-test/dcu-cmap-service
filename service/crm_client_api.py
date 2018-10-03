@@ -2,9 +2,10 @@ import json
 import logging
 import xml.etree.ElementTree as ET
 
-from request_transport import RequestsTransport
 from suds.client import Client
+
 from functions import return_expected_dict_due_to_exception
+from request_transport import RequestsTransport
 
 
 class CrmClientApi(object):

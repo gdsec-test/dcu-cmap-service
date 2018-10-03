@@ -1,5 +1,6 @@
-from requests import sessions
 import logging
+
+from requests import sessions
 
 
 class MwpOneApi:

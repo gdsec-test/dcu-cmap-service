@@ -2,8 +2,8 @@ import json
 import logging
 import xml.etree.ElementTree as ET
 
-from request_transport import RequestsTransport
 from functions import get_tld_by_domain_name
+from request_transport import RequestsTransport
 
 
 class RegDbAPI(object):
@@ -74,8 +74,8 @@ class RegDbAPI(object):
             if query_value is None:
                 doc = ET.fromstring(self._client.service.GetShopperIdByDomainName(domain_name.encode('idna')))
                 if doc.find('RECORDSET') is None or \
-                                doc.find('RECORDSET').find('RECORD') is None or \
-                                doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID') is None:
+                        doc.find('RECORDSET').find('RECORD') is None or \
+                        doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID') is None:
                     return None
                 query_value = doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID').text
                 self._redis.set_value(redis_record_key, query_value)

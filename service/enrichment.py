@@ -35,7 +35,6 @@ def nutrition_label(hostname):
         product = 'VPH'
 
     elif data_center == 'vert':
-        dc = 'P3'
         os = ''
         product = 'Vertigo'
 

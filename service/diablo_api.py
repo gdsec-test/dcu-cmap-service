@@ -1,7 +1,7 @@
 import ast
 import logging
 
-from requests import sessions, packages
+from requests import packages, sessions
 
 
 class DiabloApi(object):

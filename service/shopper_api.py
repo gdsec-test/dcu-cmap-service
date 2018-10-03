@@ -1,9 +1,10 @@
 import json
 import logging
-import functions
 
 from requests import sessions
 from requests.models import Response
+
+import functions
 from functions import return_expected_dict_due_to_exception
 
 

@@ -1,6 +1,7 @@
-import re
-import tld
 import logging
+import re
+
+import tld
 
 _logger = logging.getLogger(__name__)
 

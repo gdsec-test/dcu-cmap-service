@@ -1,7 +1,7 @@
 import logging
 import socket
 
-from requests import sessions, packages
+from requests import packages, sessions
 
 
 class VertigoApi(object):

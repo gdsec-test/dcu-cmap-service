@@ -1,8 +1,9 @@
-import re
 import json
-import graphene
+import re
 
+import graphene
 from flask_graphql import GraphQLView
+
 from functions import get_tld_by_domain_name
 
 
@@ -261,8 +262,8 @@ class Query(graphene.ObjectType):
         if id is None or len(id) < 1:
             raise ValueError("Invalid shopper id string provided")
         extra_data = info.context.get('shopper').get_shopper_by_shopper_id(id, ['shopper_create_date',
-                                                                                        'shopper_first_name',
-                                                                                        'shopper_email'])
+                                                                                'shopper_first_name',
+                                                                                'shopper_email'])
         return ShopperQuery(shopper_id=id, **extra_data)
 
 

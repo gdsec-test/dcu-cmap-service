@@ -1,6 +1,7 @@
 import logging
 
 from suds.client import Client
+
 from enrichment import nutrition_label
 from request_transport import RequestsTransport
 

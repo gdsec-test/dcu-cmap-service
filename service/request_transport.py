@@ -1,5 +1,6 @@
-from requests import sessions
 import io
+
+from requests import sessions
 from suds.transport import Reply
 from suds.transport.https import HttpAuthenticated
 

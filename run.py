@@ -1,25 +1,23 @@
+import logging.config
 import os
+
+import graphene
 import tld
 import yaml
-import graphene
-import logging.config
-
 from flask import Flask
 from tld.conf import set_setting
 
-from service.graph_ql import GraphQLViewWithCaching, Query
-from service.reg_db_api import RegDbAPI
-from service.redis_cache import RedisCache
-from service.vip_clients import VipClients
-from service.crm_client_api import CrmClientApi
-from service.shopper_api import ShopperAPI
-from service.whois_query import WhoisQuery
-from service.hostenv_helper import Ipam
 from service.alexa import CallAwis
 from service.brand_detection_helper import BrandDetectionHelper
-
+from service.crm_client_api import CrmClientApi
+from service.graph_ql import GraphQLViewWithCaching, Query
+from service.hostenv_helper import Ipam
+from service.redis_cache import RedisCache
+from service.reg_db_api import RegDbAPI
+from service.shopper_api import ShopperAPI
+from service.vip_clients import VipClients
+from service.whois_query import WhoisQuery
 from settings import config_by_name
-
 
 # Define a file we have write access to as the definitive tld names file
 set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), '/tmp/names.dat'))
@@ -62,6 +60,7 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
 @app.route('/health', methods=['GET'])
 def health():
     return '', 200
+
 
 schema = graphene.Schema(query=Query)
 app.add_url_rule(

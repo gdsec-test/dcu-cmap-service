@@ -10,41 +10,41 @@ To clone the repository via SSH perform the following
 ```
 git clone git@github.secureserver.net:ITSecurity/cmap_service.git
 ```
-It is recommended that you clone this project into a pyvirtualenv or equivalent virtual enviornment.
+
+It is recommended that you clone this project into a pyvirtualenv or equivalent virtual environment.
 
 ## Installing Dependencies
-You can install the required private dependencies via
-```
-pip install -r private_pips.txt
-```
-Followed by installing public dependencies via
-```
-pip install -r requirements.txt
-```
+To install all dependencies for development and testing simply run `make`.
 
 ## Building
-In order to build the project locally you can run the following commands
+Building a local Docker image for the respective development environments can be achieved by
 ```
 make [dev, ote, prod]
 ```
 
 ## Deploying
-Deploying CMAP Service to Kubernetes can be achieved via
+Deploying the Docker image to Kubernetes can be achieved via
 ```
 make [dev, ote, prod]-deploy
 ```
+You must also ensure you have the proper push permissions to Artifactory or you may experience a `Forbidden` message.
 
 ## Testing
-In order to run the tests you must first install the required dependencies via
 ```
-pip install -r test_requirements.txt
+make test     # runs all unit tests
+make testcov  # runs tests with coverage
 ```
 
-After this you may run the tests via
+## Style and Standards
+All deploys must pass Flake8 linting and all unit tests which are baked into the [Makefile](Makfile).
+
+There are a few commands that might be useful to ensure consistent Python style:
+
 ```
-nosetests tests/
+make flake8  # Runs the Flake8 linter
+make isort   # Sorts all imports
+make tools   # Runs both Flake8 and isort
 ```
-Optionally, you may provide the flags `--with-coverage --cover-package=service/` to `nosetests` to determine the test coverage of this project.
 
 ## Built With
 CMAP Service is built utilizing the following key technologies

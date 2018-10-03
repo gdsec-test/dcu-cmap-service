@@ -1,14 +1,16 @@
-from diablo_api import DiabloApi
-from vertigo_api import VertigoApi
+import logging
+import socket
+
+from suds.client import Client
+from suds.transport.https import WindowsHttpAuthenticated
+
 from angelo_api import AngeloApi
-from tz_api import ToolzillaApi
+from diablo_api import DiabloApi
+from enrichment import nutrition_label
 from mwpone_api import MwpOneApi
 from mwptwo import MwpTwo
-from suds.client import Client
-from enrichment import nutrition_label
-import logging
-from suds.transport.https import WindowsHttpAuthenticated
-import socket
+from tz_api import ToolzillaApi
+from vertigo_api import VertigoApi
 
 
 class Ipam(object):
