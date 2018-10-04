@@ -39,4 +39,5 @@ class BrandDetectionHelper(object):
                 return session.get(url=url).json()
         except Exception as e:
             self._logger.error("Unable to query Brand Detection service for {} : {}".format(domain, e.message))
-            return {'brand': None, 'registrar_name': None, 'registrar_abuse_email': None, 'domain_create_date': None}
+            return {'brand': None, 'registrar_name': None, 'registrar_abuse_email': None, 'domain_create_date': None,
+                    'domain_id': None}
