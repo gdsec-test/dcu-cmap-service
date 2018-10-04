@@ -89,6 +89,10 @@ class LocalAppConfig(AppConfig):
     DB = 'local'
     DB_HOST = 'localhost'
 
+    REDIS = 'localhost'
+    BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
+    CRM_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
+
     def __init__(self):
         super(LocalAppConfig, self).__init__()
         self.DBURL = 'mongodb://{}/{}'.format(self.DB_HOST, self.DB)

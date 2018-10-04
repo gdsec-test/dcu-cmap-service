@@ -14,11 +14,12 @@ class CrmClientApi(object):
     def __init__(self, settings, redis_obj):
         self._logger = logging.getLogger(__name__)
         self._redis = redis_obj
-        LOCATION = settings.CRM_API_URL
-        self._WSDL = LOCATION + '?singleWsdl'
+        location = settings.CRM_API_URL
+        wsdl = location + '?singleWsdl'
 
         try:
-            self._client = Client(self._WSDL, location=LOCATION,
+            self._logger.info("Attempting to initialize CRM Client")
+            self._client = Client(wsdl, location=location,
                                   headers=RequestsTransport.get_soap_headers(),
                                   transport=RequestsTransport(cert=settings.CMAP_API_CERT,
                                                               key=settings.CMAP_API_KEY))
