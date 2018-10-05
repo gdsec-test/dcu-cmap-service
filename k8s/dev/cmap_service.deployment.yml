@@ -49,6 +49,10 @@ spec:
             value: /proxycerts/tls.crt
           - name: CMAP_PROXY_KEY
             value: /proxycerts/tls.key
+          - name: CMAP_API_CERT
+            value: /apicerts/tls.crt
+          - name: CMAP_API_KEY
+            value: /apicerts/tls.key
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
@@ -118,7 +122,13 @@ spec:
           - name: tls-files-proxy
             mountPath: /proxycerts
             readOnly: true
+          - name: tls-files-api
+            mountPath: /apicerts
+            readOnly: true
       volumes:
         - name: tls-files-proxy
           secret:
             secretName: tls-cmap-auth
+        - name: tls-files-api
+          secret:
+            secretName: tls-cmap-api
