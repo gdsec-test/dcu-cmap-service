@@ -53,7 +53,6 @@ class ProductionAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
-    CRM_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
@@ -66,7 +65,6 @@ class OTEAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-ote.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-ote.svc.cluster.local:5000'
-    CRM_API_URL = '' # No CRM API in OTE
 
     def __init__(self):
         super(OTEAppConfig, self).__init__()
@@ -79,7 +77,6 @@ class DevelopmentAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
-    CRM_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
 
     def __init__(self):
         super(DevelopmentAppConfig, self).__init__()
@@ -91,7 +88,6 @@ class LocalAppConfig(AppConfig):
 
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
-    CRM_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
 
     def __init__(self):
         super(LocalAppConfig, self).__init__()
