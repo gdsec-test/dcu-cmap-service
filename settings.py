@@ -26,6 +26,8 @@ class AppConfig(object):
         self.CMAP_PROXY_PASS = os.getenv('CMAP_PROXY_PASS', 'cmap_prox_password')
         self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT', 'proxy.crt')
         self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY', 'proxy.key')
+        self.CMAP_SERVICE_CERT = os.getenv('CMAP_SERVICE_CERT', 'service.crt')
+        self.CMAP_SERVICE_KEY = os.getenv('CMAP_SERVICE_KEY', 'service.key')
 
         self.CMAP_API_CERT = os.getenv('CMAP_API_CERT', 'api.crt')
         self.CMAP_API_KEY = os.getenv('CMAP_API_KEY', 'api.key')
@@ -51,8 +53,11 @@ class ProductionAppConfig(AppConfig):
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_p_phish'
 
+    SSO_URL = 'https://sso.godaddy.com'
+
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
+    GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
@@ -63,8 +68,12 @@ class OTEAppConfig(AppConfig):
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_o_phish'
 
+    SSO_URL = 'https://sso.ote-godaddy.com'
+
     REDIS = 'cmap-service-redis.abuse-api-ote.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-ote.svc.cluster.local:5000'
+    # Go Central OTE URL does not exist.  Using Test
+    GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
 
     def __init__(self):
         super(OTEAppConfig, self).__init__()
@@ -75,8 +84,11 @@ class DevelopmentAppConfig(AppConfig):
     DB_HOST = '10.22.188.208'
     DB_USER = 'devuser'
 
+    SSO_URL = 'https://sso.dev-godaddy.com'
+
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
+    GOCENTRAL_URL = 'https://websites.api.dev-godaddy.com/v2/domains/{domain}/website'
 
     def __init__(self):
         super(DevelopmentAppConfig, self).__init__()
@@ -88,6 +100,7 @@ class LocalAppConfig(AppConfig):
 
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
+    SSO_URL = ''
 
     def __init__(self):
         super(LocalAppConfig, self).__init__()

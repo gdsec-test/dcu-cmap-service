@@ -29,102 +29,105 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
           env:
-          - name: BUILD_DATE
-            value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
-          - name: sysenv
-            value: dev
-          - name: HTTP_ONLY
-            value: 'true'
-          - name: CMAP_PROXY_USER
-            valueFrom:
-              secretKeyRef:
-                name: auth-cmap-proxy
-                key: username
-          - name: CMAP_PROXY_PASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-cmap-proxy
-                key: password
-          - name: CMAP_PROXY_CERT
-            value: /proxycerts/tls.crt
-          - name: CMAP_PROXY_KEY
-            value: /proxycerts/tls.key
-          - name: CMAP_API_CERT
-            value: /apicerts/tls.crt
-          - name: CMAP_API_KEY
-            value: /apicerts/tls.key
-          - name: DB_PASS
-            valueFrom:
-              secretKeyRef:
-                name: db-cmap-service
-                key: password
-          - name: ALEXA_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: auth-alexa
-                key: password
-          - name: ALEXA_ACCESS_ID
-            valueFrom:
-              secretKeyRef:
-                name: auth-alexa
-                key: username
-          - name: ANGELO_USER
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: angelouser
-          - name: ANGELO_PASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: angelopass
-          - name: DIABLO_USER
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: diablouser
-          - name: DIABLO_PASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: diablopass
-          - name: VERTIGO_USER
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: vertigouser
-          - name: VERTIGO_PASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: vertigopass
-          - name: MWP_ONE_USER
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: mwponeuser
-          - name: MWP_ONE_PASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-hosting-envs
-                key: mwponepass
-          - name: SMDB_USER
-            valueFrom:
-              secretKeyRef:
-                name: auth-smdb
-                key: username
-          - name: SMDB_PASS
-            valueFrom:
-              secretKeyRef:
-                name: auth-smdb
-                key: password
+            - name: BUILD_DATE
+              value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
+            - name: sysenv
+              value: dev
+            - name: HTTP_ONLY
+              value: 'true'
+            - name: CMAP_PROXY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-cmap-proxy
+                  key: username
+            - name: CMAP_PROXY_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: auth-cmap-proxy
+                  key: password
+            - name: CMAP_SERVICE_CERT
+              value: /servicecerts/tls.crt
+            - name: CMAP_SERVICE_KEY
+              value: /servicecerts/tls.key
+            - name: CMAP_PROXY_CERT
+              value: /proxycerts/tls.crt
+            - name: CMAP_PROXY_KEY
+              value: /proxycerts/tls.key
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: db-cmap-service
+                  key: password
+            - name: ALEXA_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth-alexa
+                  key: password
+            - name: ALEXA_ACCESS_ID
+              valueFrom:
+                secretKeyRef:
+                  name: auth-alexa
+                  key: username
+            - name: ANGELO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: angelouser
+            - name: ANGELO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: angelopass
+            - name: DIABLO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: diablouser
+            - name: DIABLO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: diablopass
+            - name: VERTIGO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: vertigouser
+            - name: VERTIGO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: vertigopass
+            - name: MWP_ONE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: mwponeuser
+            - name: MWP_ONE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: auth-hosting-envs
+                  key: mwponepass
+            - name: SMDB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-smdb
+                  key: username
+            - name: SMDB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: auth-smdb
+                  key: password
           volumeMounts:
-          - name: tls-files-proxy
-            mountPath: /proxycerts
-            readOnly: true
-          - name: tls-files-api
-            mountPath: /apicerts
-            readOnly: true
+            - name: tls-files-api
+              mountPath: /apicerts
+              readOnly: true
+            - name: tls-files-proxy
+              mountPath: /proxycerts
+              readOnly: true
+            - name: tls-files-service
+              mountPath: /servicecerts
+              readOnly: true
       volumes:
         - name: tls-files-proxy
           secret:
@@ -132,3 +135,6 @@ spec:
         - name: tls-files-api
           secret:
             secretName: tls-cmap-api
+        - name: tls-files-service
+          secret:
+            secretName: tls-cmap-service

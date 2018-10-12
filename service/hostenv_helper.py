@@ -7,6 +7,7 @@ from suds.transport.https import WindowsHttpAuthenticated
 from angelo_api import AngeloApi
 from diablo_api import DiabloApi
 from enrichment import nutrition_label
+from gocentral import GoCentral
 from mwpone_api import MwpOneApi
 from mwptwo import MwpTwo
 from tz_api import ToolzillaApi
@@ -17,12 +18,13 @@ class Ipam(object):
     # This method is called automatically when this class is instantiated.
     def __init__(self, config):
         self._logger = logging.getLogger(__name__)
-        self.vrun = VertigoApi(config)
-        self.drun = DiabloApi(config)
-        self.arun = AngeloApi(config)
-        self.trun = ToolzillaApi(config)
-        self.mrun = MwpOneApi(config)
-        self.m2run = MwpTwo(config)
+        self.vertigo_api = VertigoApi(config)
+        self.diablo_api = DiabloApi(config)
+        self.angelo_api = AngeloApi(config)
+        self.toolzilla_api = ToolzillaApi(config)
+        self.mwp1_api = MwpOneApi(config)
+        self.mwp2_api = MwpTwo(config)
+        self.gocentral_api = GoCentral(config)
 
         # Create the NTLM authentication object.
         self.ntlm = WindowsHttpAuthenticated(username=config.SMDB_USER, password=config.SMDB_PASS)
@@ -84,7 +86,6 @@ class Ipam(object):
 
     # Get details for a specific IP address. Returns a dictionary.
     def get_properties_for_ip(self, domain):
-
         ip = socket.gethostbyname(domain)
         self.__validate_params(locals())
 
@@ -98,12 +99,12 @@ class Ipam(object):
         if hasattr(ipam, 'HostName'):
             ipam_hostname = getattr(ipam, 'HostName')
             if ipam_hostname is None:
-                data = self.trun.guid_query(domain)
+                data = self.toolzilla_api.guid_query(domain)
                 # if data comes back as None, set it to a dict so get() can be run on it
                 if data is None:
                     data = {}
                 if data.get('product') == 'wpaas':
-                    return self.mrun.mwpone_locate(domain)
+                    return self.mwp1_api.mwpone_locate(domain)
                 else:
                     return {'dc': data.get('dc', None), 'os': data.get('os', None),
                             'product': data.get('product', None),
@@ -115,6 +116,7 @@ class Ipam(object):
                 data = nutrition_label(ipam_hostname)
                 if len(data) < 3 or data[2] != 'Not Hosting':
                     d = self._guid_locater(data[2], domain)
+                    gc_dict = self.gocentral_api.is_gocentral(domain)
                     if d:
                         return {'hostname': ipam_hostname, 'data_center': data[0], 'os': d.get('os', None),
                                 'product': data[2], 'ip': ip, 'guid': d.get('guid', None),
@@ -122,8 +124,14 @@ class Ipam(object):
                                 'friendly_name': d.get('friendly_name', None)}
 
                     # Check if domain is hosted on MWP2.0 and if so sending back return with MWP2.0 as product
-                    elif self.m2run.is_mwp2(domain):
+                    elif self.mwp2_api.is_mwp2(domain):
                         host_product = 'MWP 2.0'
+
+                    # Check if domain is hosted on GoCentral and if so sending back return with GoCentral as product
+                    elif gc_dict:
+                        gc_dict.update({'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
+                                        'ip': ip, 'friendly_name': None})
+                        return gc_dict
 
                     else:
                         self._logger.error('_guid_locater failed on: %s' % domain)
@@ -139,13 +147,13 @@ class Ipam(object):
 
     def _guid_locater(self, product, domain):
         if product == 'Vertigo':
-            return self.vrun.guid_query(domain)
+            return self.vertigo_api.guid_query(domain)
         elif product == 'Diablo':
-            result = self.drun.guid_query(domain)
+            result = self.diablo_api.guid_query(domain)
             if result is not None:
                 return result
         elif product == 'Angelo':
-            result = self.arun.guid_query(domain)
+            result = self.angelo_api.guid_query(domain)
             if result is not None:
                 return result
-        return self.trun.guid_query(domain)
+        return self.toolzilla_api.guid_query(domain)
