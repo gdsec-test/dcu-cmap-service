@@ -53,6 +53,10 @@ spec:
               value: /proxycerts/tls.crt
             - name: CMAP_PROXY_KEY
               value: /proxycerts/tls.key
+            - name: CMAP_API_CERT
+              value: /apicerts/tls.crt
+            - name: CMAP_API_KEY
+              value: /apicerts/tls.key
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
