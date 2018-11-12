@@ -25,10 +25,11 @@ class AngeloApi(object):
                                  auth=self.auth, headers=self.headers, verify=False)
             if r.status_code == 200:
                 returned_json = r.json()
-                guid = str(returned_json.get('orion_id', None))
-                shopper_id = str(returned_json.get('shopper_id', None))
+                guid = str(returned_json.get('orion_id'))
+                shopper_id = str(returned_json.get('shopper_id'))
+                private_label_id = str(returned_json.get('reseller_id'))
                 os = 'Windows'
-                return {'guid': guid, 'shopper_id': shopper_id, 'os': os}
+                return {'guid': guid, 'shopper_id': shopper_id, 'os': os, 'private_label_id': private_label_id}
 
             elif r.status_code == 400:
                 t = ast.literal_eval(r.text)

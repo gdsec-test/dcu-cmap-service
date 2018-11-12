@@ -176,7 +176,7 @@ class DomainQuery(graphene.ObjectType):
                    portfolioType=None, shopper_id=None)
         whois = dict(data_center=None, os=None, product=None, guid=None, shopper_id=None, hostname=None, ip=None,
                      mwp_id=None, hosting_company_name=None, brand=None, hosting_abuse_email=None, created_date=None,
-                     friendly_name=None)
+                     friendly_name=None, private_label_id=None)
 
         whois.update(info.context.get('bd').get_hosting_info(self.domain))
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
@@ -192,6 +192,7 @@ class DomainQuery(graphene.ObjectType):
                 whois['hostname'] = host_info.get('hostname', None)
                 whois['ip'] = host_info.get('ip', None)
                 whois['mwp_id'] = host_info.get('accountid', None)
+                whois['private_label_id'] = host_info.get('private_label_id', None)
 
         if whois.get('shopper_id', None) is not None:
             vip.update(info.context.get('crm').get_shopper_portfolio_information(whois.get('shopper_id')))

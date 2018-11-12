@@ -121,7 +121,8 @@ class Ipam(object):
                         return {'hostname': ipam_hostname, 'data_center': data[0], 'os': d.get('os', None),
                                 'product': data[2], 'ip': ip, 'guid': d.get('guid', None),
                                 'shopper_id': d.get('shopper_id', None), 'created_date': d.get('created_date', None),
-                                'friendly_name': d.get('friendly_name', None)}
+                                'friendly_name': d.get('friendly_name', None),
+                                'private_label_id': d.get('private_label_id', None)}
 
                     # Check if domain is hosted on MWP2.0 and if so sending back return with MWP2.0 as product
                     elif self.mwp2_api.is_mwp2(domain):
