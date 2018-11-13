@@ -53,6 +53,7 @@ class HostInfo(graphene.ObjectType):
     shopper_id = graphene.String(description='Shopper account ID')
     mwp_id = graphene.String(description='ID required for MWP 1.0 account suspension/reinstatement')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
+    private_label_id = graphene.String(description='Private Label ID for the reseller')
 
 
 class ApiResellerService:
