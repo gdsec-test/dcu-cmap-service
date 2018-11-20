@@ -40,7 +40,7 @@ class GoCentral(object):
 
         '''
         try:
-            r = requests.get(self._url.format(domain=domain), headers=self.HEADERS, verify=False)
+            r = requests.get(self._url.format(domain=domain), headers=self.HEADERS)
             res = json.loads(r.text)
             if res.get('type', '').lower() == 'gocentral':
                 return dict(product='GoCentral', guid=res.get('accountId'), shopper_id=res.get('shopperId'),

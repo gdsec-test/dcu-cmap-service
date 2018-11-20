@@ -2,7 +2,7 @@ graphene>=2.0
 flask-graphql==1.4.1
 ipwhois
 python-whois
-redis
+redis==2.10.6
 suds
 validictory
 pymongo

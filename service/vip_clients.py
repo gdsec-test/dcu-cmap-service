@@ -19,7 +19,7 @@ class VipClients(object):
             blacklist_status = self._redis.get_value(redis_record_key)
             if blacklist_status is None:
                 result = self._collection.find_one({self.MONGO_INSTANCE_KEY: entity_id})
-                # If the shopper id exists, they are VIP
+                # If the shopper id exists in the blacklist collection, they are VIP
                 blacklist_status = True
                 if result is None:
                     blacklist_status = False
