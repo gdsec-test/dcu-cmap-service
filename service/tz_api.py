@@ -12,6 +12,7 @@ class ToolzillaApi(object):
     """
     _LOCATION = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService'
     _WSDL = _LOCATION + '/WSDL'
+    _CLIENT_EXISTS = False
 
     def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
@@ -22,6 +23,7 @@ class ToolzillaApi(object):
                                                              password=settings.CMAP_PROXY_PASS,
                                                              cert=settings.CMAP_PROXY_CERT,
                                                              key=settings.CMAP_PROXY_KEY))
+            self._CLIENT_EXISTS = True
         except Exception as e:
             self._logger.error("Failed Toolzilla Client Init: %s", e.message)
 
@@ -51,6 +53,9 @@ class ToolzillaApi(object):
         :return: GUID or None
         """
         try:
+            # If a client wasnt instantiated successfully, dont try running a query
+            if not self._CLIENT_EXISTS:
+                raise ValueError('ToolzillaApi object has no attribute: client')
             data = self.client.service.searchByDomain(domain)
             # checks to make sure the returned data is not an error
             if str(type(data)) != "<class 'suds.sax.text.Text'>":
@@ -76,6 +81,7 @@ class ToolzillaApi(object):
 
         except Exception as e:
             self._logger.error("Failed Toolzilla Lookup: %s", e.message)
-            self._logger.error(self.client.last_received())
+            if self._CLIENT_EXISTS:
+                self._logger.error(self.client.last_received())
 
         return None
