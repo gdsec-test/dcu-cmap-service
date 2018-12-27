@@ -51,6 +51,9 @@ class ToolzillaApi(object):
         :return: GUID or None
         """
         try:
+            # If a client wasnt instantiated successfully, dont try running a query
+            if not hasattr(self, 'client'):
+                raise ValueError('ToolzillaApi object has no attribute: client')
             data = self.client.service.searchByDomain(domain)
             # checks to make sure the returned data is not an error
             if str(type(data)) != "<class 'suds.sax.text.Text'>":
@@ -76,6 +79,7 @@ class ToolzillaApi(object):
 
         except Exception as e:
             self._logger.error("Failed Toolzilla Lookup: %s", e.message)
-            self._logger.error(self.client.last_received())
+            if hasattr(self, 'client'):
+                self._logger.error(self.client.last_received())
 
         return None
