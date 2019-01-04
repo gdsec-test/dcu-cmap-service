@@ -3,3 +3,4 @@ coverage
 mockredis
 flake8
 isort
+mock
