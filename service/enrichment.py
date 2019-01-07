@@ -1,44 +1,46 @@
 def nutrition_label(hostname):
     hostname = hostname.lower()
-    data_center = hostname[:2]
+    dc = hostname[:2]
     os = hostname[3]
     product = hostname[4:]
 
-    data_center = dc_finder(data_center)
+    dc = dc_finder(dc)
 
-    if data_center == 'SG2':
+    if dc == 'SG2':
         os = hostname[4]
         os = os_finder(os)
 
         if hostname[5] == '8':
             product = '4GH'
 
-        elif hostname[5] == 'v':
+        elif hostname[5] == 'v' and hostname[7] == 'w':
+            product = 'Plesk'
+        elif hostname[5] == 'v' and hostname[7] != 'w':
             product = 'VPS'
-            if hostname[7] == 'w':
-                product = 'Plesk'
-
+        elif hostname[5:9] == 'cpnl' or hostname[5:8] == 'pcs':
+            product = 'Diablo'
         else:
             product = product_finder(product)
 
-    elif data_center == 'P3' and hostname[4] == '8':
+    elif dc == 'P3' and hostname[4] == '8':
         os = 'Windows'
         product = '2GH'
 
-    elif data_center == 'DNS':
+    elif dc == 'DNS':
         product = 'Not Hosting'
 
-    elif data_center == 'Corp':
+    elif dc == 'Corp':
         product = 'Not Hosting'
 
-    elif data_center == 'VPH':
+    elif dc == 'VPH':
+        os = ''
         product = 'VPH'
 
-    elif data_center == 'vert':
+    elif dc == 'vert':
         os = ''
         product = 'Vertigo'
 
-    elif data_center == 'Failed':
+    elif dc == 'Failed':
         product = 'Not Hosting'
 
     else:
@@ -51,13 +53,15 @@ def nutrition_label(hostname):
         else:
             product = product_finder(product)
 
-    return data_center, os, product
+    return dc, os, product
 
 
 def dc_finder(dc):
     result = {
         'p3': 'P3',
         'n1': 'N1',
+        'n2': 'N2',
+        'n3': 'N3',
         'p1': 'P1',
         's2': 'S2',
         'sg': 'SG2',
@@ -72,9 +76,9 @@ def dc_finder(dc):
 
 def os_finder(os):
 
-    if os == 'L' or 'l':
+    if os == 'l':
         return 'Linux'
-    elif os == 'W' or 'w':
+    elif os == 'w':
         return 'Windows'
     else:
         print 'Error locating OS'
@@ -89,10 +93,12 @@ def product_finder(product):
     elif product[0] == 'v':
         if product[2] == 'h':
             return 'VPS'
+        elif product[1] == 'c':
+            return 'Diablo'
         return 'Angelo'
 
     elif product[:3] == 'wvp':
         return 'Angelo'
 
-    elif product[0] == 'c':
+    elif product[0] == 'c' or product[:3] == 'pcs':
         return 'Diablo'
