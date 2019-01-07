@@ -85,7 +85,6 @@ def os_finder(os):
 
 
 def product_finder(product):
-    print product
     if product[0] == 'h':
         if product[1] == 'g':
             return '4GH'
