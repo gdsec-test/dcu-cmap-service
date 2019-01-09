@@ -45,6 +45,7 @@ class RegDbAPI(object):
         domain_name = get_tld_by_domain_name(domain_name_as_provided)
         # Check redis cache for parent/child api reseller info
         redis_record_key = u'{}-reseller_parent_child'.format(domain_name)
+        query_value = None
         try:
             query_value = self._redis.get_value(redis_record_key)
             if query_value is None:
@@ -59,9 +60,12 @@ class RegDbAPI(object):
                 self._redis.set_value(redis_record_key, json.dumps({self.REDIS_DATA_KEY: query_value}))
             else:
                 query_value = json.loads(query_value).get(self.REDIS_DATA_KEY)
-            return query_value
         except Exception as e:
             self._logger.error("Error in getting the parent/child api reseller for %s : %s", domain_name, e.message)
+            query_value = {}
+
+        finally:
+            return query_value
 
     def get_shopper_id_by_domain_name(self, domain_name_as_provided):
         # In the event that we were provided a sub-domain name as opposed to a tld

@@ -36,3 +36,4 @@ class WhoisQuery(object):
             return dnsresolver.query(addr, 'PTR')[0].to_text().rstrip('.').encode('idna')
         except Exception as e:
             self._logger.error("Unable to get domain for %s : %s", ip, e.message)
+            return ''

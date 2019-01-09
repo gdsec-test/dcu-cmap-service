@@ -74,17 +74,23 @@ def return_expected_dict_due_to_exception(the_container, the_keys):
 
 def get_tld_by_domain_name(domain_name):
     # In the event that we were provided a sub-domain name as opposed to a tld
-    try:
-        # TLD expects to work on a domain name starting with http://
-        domain_name = 'http://' + domain_name if domain_name[:7] != 'http://' else domain_name
-        domain_object = tld.get_tld(domain_name, as_object=True)
-        tld_domain = domain_object.tld
-    except Exception as e:
-        _logger.warning("Error updating TLD file for domain {} : {}. Retrying".format(domain_name, e.message))
-        tld.update_tld_names()
+    if domain_name:
+        try:
+            # TLD expects to work on a domain name starting with http://
+            domain_name = 'http://' + domain_name if domain_name[:7] != 'http://' else domain_name
+            domain_object = tld.get_tld(domain_name, as_object=True)
+            tld_domain = domain_object.tld
+        except Exception as e:
+            _logger.warning("Error updating TLD file for domain {} : {}. Retrying".format(domain_name, e.message))
+            tld.update_tld_names()
 
-        # Clearing out the global tld_names variable from tld to force it to update
-        tld.utils.tld_names = []
-        # Try again
-        tld_domain = tld.get_tld(domain_name)
-    return tld_domain
+            # Clearing out the global tld_names variable from tld to force it to update
+            tld.utils.tld_names = []
+            # Try again
+            try:
+                tld_domain = tld.get_tld(domain_name)
+            except Exception as e:
+                _logger.warning("Retry Error updating TLD file for domain {} : {}.".format(domain_name, e.message))
+                return None
+
+        return tld_domain
