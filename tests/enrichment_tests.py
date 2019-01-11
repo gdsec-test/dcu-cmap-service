@@ -1,4 +1,5 @@
 from nose.tools import assert_equals
+
 from service.enrichment import nutrition_label
 
 

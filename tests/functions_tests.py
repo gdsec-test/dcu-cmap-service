@@ -1,4 +1,5 @@
 from nose.tools import assert_equals, assert_is_none
+
 import service.functions
 
 
