@@ -22,19 +22,19 @@ class TestConvertStringDateToMongoFormat:
         pass
 
     def test_convert_string_date_to_mongo_format_ok(self):
-        old_date = '2016-05-18'
+        old_date = '2016-05-28'
         response = service.functions.convert_string_date_to_mongo_format(old_date)
-        assert_equals(response, '2016-05-18')
+        assert_equals(response, '2016-05-28')
 
     def test_convert_string_date_to_mongo_format_fixed1(self):
-        old_date = '05-18-2016'
+        old_date = '05-28-2016'
         response = service.functions.convert_string_date_to_mongo_format(old_date)
-        assert_equals(response, '2016-05-18')
+        assert_equals(response, '2016-05-28')
 
     def test_convert_string_date_to_mongo_format_fixed2(self):
-        old_date = '2016/05/18'
+        old_date = '2016/05/28'
         response = service.functions.convert_string_date_to_mongo_format(old_date)
-        assert_equals(response, '2016-05-18')
+        assert_equals(response, '2016-05-28')
 
     def test_return_expected_dict_due_to_exception_list(self):
         the_container = ['one', 'two', 3]
