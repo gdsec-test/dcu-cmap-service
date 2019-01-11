@@ -17,43 +17,42 @@ class TestZeroPadDateSlice:
         assert_equals(response, '05')
 
 
-def test_convert_string_date_to_mongo_format_ok():
-    old_date = '2016-05-18'
-    response = service.functions.convert_string_date_to_mongo_format(old_date)
-    assert_equals(response, '2016-05-18')
+class TestConvertStringDateToMongoFormat:
+    def __init__(self):
+        pass
 
+    def test_convert_string_date_to_mongo_format_ok(self):
+        old_date = '2016-05-18'
+        response = service.functions.convert_string_date_to_mongo_format(old_date)
+        assert_equals(response, '2016-05-18')
 
-def test_convert_string_date_to_mongo_format_fixed1():
-    old_date = '05-18-2016'
-    response = service.functions.convert_string_date_to_mongo_format(old_date)
-    assert_equals(response, '2016-05-18')
+    def test_convert_string_date_to_mongo_format_fixed1(self):
+        old_date = '05-18-2016'
+        response = service.functions.convert_string_date_to_mongo_format(old_date)
+        assert_equals(response, '2016-05-18')
 
+    def test_convert_string_date_to_mongo_format_fixed2(self):
+        old_date = '2016/05/18'
+        response = service.functions.convert_string_date_to_mongo_format(old_date)
+        assert_equals(response, '2016-05-18')
 
-def test_convert_string_date_to_mongo_format_fixed2():
-    old_date = '2016/05/18'
-    response = service.functions.convert_string_date_to_mongo_format(old_date)
-    assert_equals(response, '2016-05-18')
+    def test_return_expected_dict_due_to_exception_list(self):
+        the_container = ['one', 'two', 3]
+        the_keys = [1, 2, 'three']
+        response = service.functions.return_expected_dict_due_to_exception(the_container, the_keys)
+        assert_equals(response, ['one', 'two', 3])
 
+    def test_return_expected_dict_due_to_exception_empty_list(self):
+        the_container = []
+        the_keys = ''
+        response = service.functions.return_expected_dict_due_to_exception(the_container, the_keys)
+        assert_equals(response, [{}])
 
-def test_return_expected_dict_due_to_exception_list():
-    the_container = ['one', 'two', 3]
-    the_keys = [1, 2, 'three']
-    response = service.functions.return_expected_dict_due_to_exception(the_container, the_keys)
-    assert_equals(response, ['one', 'two', 3])
-
-
-def test_return_expected_dict_due_to_exception_empty_list():
-    the_container = []
-    the_keys = ''
-    response = service.functions.return_expected_dict_due_to_exception(the_container, the_keys)
-    assert_equals(response, [{}])
-
-
-def test_return_expected_dict_due_to_exception_empty_dict():
-    the_container = {}
-    the_keys = ''
-    response = service.functions.return_expected_dict_due_to_exception(the_container, the_keys)
-    assert_equals(response, {})
+    def test_return_expected_dict_due_to_exception_empty_dict(self):
+        the_container = {}
+        the_keys = ''
+        response = service.functions.return_expected_dict_due_to_exception(the_container, the_keys)
+        assert_equals(response, {})
 
 
 class TestGetTLDbyDomainName:
