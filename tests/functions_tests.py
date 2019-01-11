@@ -1,11 +1,8 @@
-from nose.tools import assert_equals
+from nose.tools import assert_equals, assert_is_none
 import service.functions
 
 
 class TestZeroPadDateSlice:
-    def __init__(self):
-        pass
-
     def test_zero_pad_date_slice_ok(self):
         date_slice = '05'
         response = service.functions.zero_pad_date_slice(date_slice)
@@ -18,9 +15,6 @@ class TestZeroPadDateSlice:
 
 
 class TestConvertStringDateToMongoFormat:
-    def __init__(self):
-        pass
-
     def test_convert_string_date_to_mongo_format_ok(self):
         old_date = '2016-05-28'
         response = service.functions.convert_string_date_to_mongo_format(old_date)
@@ -56,9 +50,6 @@ class TestConvertStringDateToMongoFormat:
 
 
 class TestGetTLDbyDomainName:
-    def __init__(self):
-        pass
-
     def test_get_tld_by_domain_name_protocol(self):
         domain_name = 'http://this.should.pass.com'
         response = service.functions.get_tld_by_domain_name(domain_name)
@@ -72,4 +63,4 @@ class TestGetTLDbyDomainName:
     def test_get_tld_by_domain_name_bad(self):
         domain_name = 'fake.tld.ccc'
         response = service.functions.get_tld_by_domain_name(domain_name)
-        assert_equals(response, None)
+        assert_is_none(response)
