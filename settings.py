@@ -47,6 +47,9 @@ class AppConfig(object):
         self.ALEXA_ACCESS_ID = os.getenv('ALEXA_ACCESS_ID', 'alexa_access_id')
         self.ALEXA_ACCESS_KEY = os.getenv('ALEXA_ACCESS_KEY', 'secret_access_key')
 
+        self.SUBSCRIPTIONS_CERT = os.getenv('SUBSCRIPTIONS_CERT', 'subscriptions_api.cert')
+        self.SUBSCRIPTIONS_KEY = os.getenv('SUBSCRIPTIONS_KEY', 'subscription_api.key')
+
 
 class ProductionAppConfig(AppConfig):
     DB = 'phishstory'
@@ -58,6 +61,7 @@ class ProductionAppConfig(AppConfig):
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
+    SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
@@ -74,6 +78,7 @@ class OTEAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-ote.svc.cluster.local:5000'
     # Go Central OTE URL does not exist.  Using Test
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
+    SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
 
     def __init__(self):
         super(OTEAppConfig, self).__init__()
@@ -89,6 +94,7 @@ class DevelopmentAppConfig(AppConfig):
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.dev-godaddy.com/v2/domains/{domain}/website'
+    SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
 
     def __init__(self):
         super(DevelopmentAppConfig, self).__init__()

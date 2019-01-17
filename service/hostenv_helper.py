@@ -10,6 +10,7 @@ from enrichment import nutrition_label
 from gocentral import GoCentral
 from mwpone_api import MwpOneApi
 from mwptwo import MwpTwo
+from subscriptions_api import SubscriptionsAPI
 from tz_api import ToolzillaApi
 from vertigo_api import VertigoApi
 
@@ -25,6 +26,7 @@ class Ipam(object):
         self.mwp1_api = MwpOneApi(config)
         self.mwp2_api = MwpTwo(config)
         self.gocentral_api = GoCentral(config)
+        self.subscriptions_api = SubscriptionsAPI(config)
 
         # Create the NTLM authentication object.
         self.ntlm = WindowsHttpAuthenticated(username=config.SMDB_USER, password=config.SMDB_PASS)
@@ -76,7 +78,7 @@ class Ipam(object):
     # Make sure all method parameters were supplied. The only exception is 'vlan', which is optional.
     def __validate_params(self, params):
         for key, val in params.iteritems():
-            if val is None and key != 'vlan':
+            if val is None and key not in {'vlan', 'shopper_id'}:
                 raise Exception('Missing parameter %s' % key)
 
     # Get IP's assigned to a specific hostname. Returns a list.
@@ -85,7 +87,7 @@ class Ipam(object):
         return self.__get_ips(self.__soap_call('GetIPsByHostname', hostname, 'GetIPsByHostnameResult'))
 
     # Get details for a specific IP address. Returns a dictionary.
-    def get_properties_for_ip(self, domain):
+    def get_properties_for_ip(self, domain, shopper_id):
         ip = socket.gethostbyname(domain)
         self.__validate_params(locals())
 
@@ -98,6 +100,20 @@ class Ipam(object):
 
         if hasattr(ipam, 'HostName'):
             ipam_hostname = getattr(ipam, 'HostName')
+            # First check if the host details can be retrieved using the subscriptions API
+            # If not, fall back on the existing way to retrieve host details.
+            subscription = self.subscriptions_api.has_hosting_subscription(shopper_id, domain)
+            if subscription:
+                self._logger.info('Successfully retrieved subscriptions info for domain: {} and shopper: {}'.format(domain, shopper_id))
+                product_name = subscription.get('product', {}).get('namespace')
+                product_dict = self._guid_locater(product_name, domain)
+                if product_dict:
+                    return {'hostname': ipam_hostname, 'data_center': None, 'os': product_dict.get('os'),
+                            'product': product_name, 'ip': ip, 'guid': product_dict.get('guid'),
+                            'shopper_id': product_dict.get('shopper_id'), 'created_date': product_dict.get('created_date'),
+                            'friendly_name': product_dict.get('friendly_name'),
+                            'private_label_id': product_dict.get('private_label_id')}
+
             if ipam_hostname is None:
                 data = self.toolzilla_api.guid_query(domain)
                 # if data comes back as None, set it to a dict so get() can be run on it
@@ -147,14 +163,13 @@ class Ipam(object):
             return None
 
     def _guid_locater(self, product, domain):
-        if product == 'Vertigo':
+        product = product.lower() if product else ''
+        if product == 'vertigo':
             return self.vertigo_api.guid_query(domain)
-        elif product == 'Diablo':
-            result = self.diablo_api.guid_query(domain)
-            if result is not None:
-                return result
-        elif product == 'Angelo':
-            result = self.angelo_api.guid_query(domain)
-            if result is not None:
-                return result
+        elif product == 'diablo':
+            return self.diablo_api.guid_query(domain)
+        elif product == 'angelo':
+            return self.angelo_api.guid_query(domain)
+        elif product == 'wpass':
+            return self.mwp1_api.mwpone_locate(domain)
         return self.toolzilla_api.guid_query(domain)

@@ -179,9 +179,10 @@ class DomainQuery(graphene.ObjectType):
                      mwp_id=None, hosting_company_name=None, brand=None, hosting_abuse_email=None, created_date=None,
                      friendly_name=None, private_label_id=None)
 
+        shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
         whois.update(info.context.get('bd').get_hosting_info(self.domain))
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
-            host_info = info.context.get('ipam').get_properties_for_ip(self.domain)
+            host_info = info.context.get('ipam').get_properties_for_ip(self.domain, shopper_id)
             if type(host_info) is dict:
                 whois['data_center'] = host_info.get('data_center', None)
                 whois['created_date'] = host_info.get('created_date', None)
