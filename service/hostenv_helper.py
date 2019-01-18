@@ -104,13 +104,14 @@ class Ipam(object):
             # If not, fall back on the existing way to retrieve host details.
             subscription = self.subscriptions_api.has_hosting_subscription(shopper_id, domain)
             if subscription:
-                self._logger.info('Successfully retrieved subscriptions info for domain: {} and shopper: {}'.format(domain, shopper_id))
-                product_name = subscription.get('product', {}).get('namespace')
-                product_dict = self._guid_locater(product_name, domain)
+                self._logger.info('Successfully retrieved subscriptions info for domain: {}'.format(domain))
+                product_dict = self._guid_locater(subscription.get('product', {}).get('namespace'), domain)
                 if product_dict:
                     return {'hostname': ipam_hostname, 'data_center': None, 'os': product_dict.get('os'),
-                            'product': product_name, 'ip': ip, 'guid': product_dict.get('guid'),
-                            'shopper_id': product_dict.get('shopper_id'), 'created_date': product_dict.get('created_date'),
+                            'product': subscription.get('product', {}).get('product_name'),
+                            'ip': ip, 'guid': product_dict.get('guid'),
+                            'shopper_id': product_dict.get('shopper_id'),
+                            'created_date': product_dict.get('created_date'),
                             'friendly_name': product_dict.get('friendly_name'),
                             'private_label_id': product_dict.get('private_label_id')}
 

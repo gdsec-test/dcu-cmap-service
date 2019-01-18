@@ -23,7 +23,7 @@ class SubscriptionsAPI(object):
         """
         domain = domain.lower() if domain else None
         product_group_keys = ['hosting', 'websiteBuilder', 'servers', 'wordpress']
-        handled_hosting_products = {'diablo': 'Diablo', 'wpaas': 'wpaas', 'angelo': 'Angelo'}
+        handled_hosting_products = {'diablo': 'Diablo', 'wpaas': 'MWP 1.0', 'angelo': 'Angelo'}
 
         subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
 
@@ -32,7 +32,7 @@ class SubscriptionsAPI(object):
             if subscription.get('status') in self.VALID_SUBSCRIPTION_STATUSES and label == domain:
                 namespace = subscription.get('product', {}).get('namespace')
                 if namespace in handled_hosting_products:
-                    subscription.get('product', {}).update(namespace=handled_hosting_products[namespace])
+                    subscription.get('product', {}).update(product_name=handled_hosting_products[namespace])
                     return subscription
         return {}
 
