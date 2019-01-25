@@ -36,6 +36,24 @@ class SubscriptionsAPI(object):
                     return subscription
         return {}
 
+    def has_sucuri_subscription(self, shopper_id, domain):
+        """
+        This function's sole purpose is to use the available subscriptions api to determine if a shopper has
+        any sucuri subscription(s) associated with a domain name and, if so, what their labels are.
+        :param: shopper_id:
+        :param: domain:
+        :return: List with sucuri subscription info if there are any sucuri product(s) associated with the domain name
+        """
+        product_group_keys = ['websiteSecurity']
+        subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
+        security_subscription = []
+        for subscription in subscriptions:
+            label = subscription.get('label').lower() if subscription.get('label') else None
+            if subscription.get('status') in self.VALID_SUBSCRIPTION_STATUSES and label == domain \
+                    and subscription.get('product', {}).get('productGroupKey') == 'websiteSecurity':
+                security_subscription.append(subscription.get('product', {}).get('label'))
+        return security_subscription
+
     def _get_subscriptions(self, shopper_id, product_group_keys):
         """
         This function's sole purpose is to use the available subscriptions api to determine

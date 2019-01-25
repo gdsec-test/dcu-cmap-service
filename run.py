@@ -15,6 +15,7 @@ from service.hostenv_helper import Ipam
 from service.redis_cache import RedisCache
 from service.reg_db_api import RegDbAPI
 from service.shopper_api import ShopperAPI
+from service.subscriptions_api import SubscriptionsAPI
 from service.vip_clients import VipClients
 from service.whois_query import WhoisQuery
 from settings import config_by_name
@@ -53,7 +54,8 @@ ctx = {'crm': CrmClientApi(config, redis_obj),
        'regdb': RegDbAPI(config, redis_obj),
        'alexa': CallAwis(config),
        'whois': WhoisQuery(),
-       'bd': BrandDetectionHelper(config)
+       'bd': BrandDetectionHelper(config),
+       'subscriptions': SubscriptionsAPI(config)
        }
 
 

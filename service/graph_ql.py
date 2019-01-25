@@ -159,6 +159,10 @@ class ShopperByDomain(graphene.ObjectType, Shopper):
     pass
 
 
+class SecuritySubscription(graphene.ObjectType):
+    sucuri_product = graphene.List(graphene.String, description='Sucuri Product(s)')
+
+
 class DomainQuery(graphene.ObjectType):
     alexa_rank = graphene.Int(description='Alexa World Wide Rank for domain')
     api_reseller = graphene.Field(ApiResellerInfo, description='API Reseller Information for Provided Domain Name')
@@ -168,6 +172,7 @@ class DomainQuery(graphene.ObjectType):
     host = graphene.Field(HostInfo, description='Hosting Information for Provided Domain Name')
     registrar = graphene.Field(RegistrarInfo, description='Registrar Information for Provided Domain Name')
     shopper_info = graphene.Field(ShopperByDomain, description='Shopper Information for Provided Domain Name')
+    security_subscription = graphene.Field(SecuritySubscription, description='Security Product Information for Provided Domain Name')
 
     def resolve_host(self, info):
         # These default initializations are put in place to allow for upgrade to Graphql 2.0. A bug currently exists
@@ -245,6 +250,11 @@ class DomainQuery(graphene.ObjectType):
         domain = DomainStatusInfo()
         domain.domain = self.domain
         return domain
+
+    def resolve_security_subscription(self, info):
+        shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
+        sucuri_product = info.context.get('subscriptions').has_sucuri_subscription(shopper_id, self.domain)
+        return SecuritySubscription(**{'sucuri_product': sucuri_product})
 
 
 class Query(graphene.ObjectType):
