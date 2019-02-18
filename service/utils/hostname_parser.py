@@ -1,14 +1,15 @@
-def nutrition_label(hostname):
+def parse_hostname(hostname):
     hostname = hostname.lower()
+
     dc = hostname[:2]
     os = hostname[3]
     product = hostname[4:]
 
-    dc = dc_finder(dc)
+    dc = get_dc(dc)
 
     if dc == 'SG2':
         os = hostname[4]
-        os = os_finder(os)
+        os = get_os(os)
 
         if hostname[5] == '8':
             product = '4GH'
@@ -20,7 +21,7 @@ def nutrition_label(hostname):
         elif hostname[5:9] == 'cpnl' or hostname[5:8] == 'pcs':
             product = 'Diablo'
         else:
-            product = product_finder(product)
+            product = get_product(product)
 
     elif dc == 'P3' and hostname[4] == '8':
         os = 'Windows'
@@ -44,19 +45,19 @@ def nutrition_label(hostname):
         product = 'Not Hosting'
 
     else:
-        os = os_finder(os)
+        os = get_os(os)
 
         if hostname[4] == 'v':
             product = hostname[4:7]
-            product = product_finder(product)
+            product = get_product(product)
 
         else:
-            product = product_finder(product)
+            product = get_product(product)
 
     return dc, os, product
 
 
-def dc_finder(dc):
+def get_dc(dc):
     result = {
         'p3': 'P3',
         'n1': 'N1',
@@ -74,17 +75,15 @@ def dc_finder(dc):
     return result
 
 
-def os_finder(os):
-
+def get_os(os):
     if os == 'l':
         return 'Linux'
     elif os == 'w':
         return 'Windows'
-    else:
-        print 'Error locating OS'
+    return
 
 
-def product_finder(product):
+def get_product(product):
     if product[0] == 'h':
         if product[1] == 'g':
             return '4GH'

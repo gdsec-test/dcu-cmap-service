@@ -1,0 +1,54 @@
+import logging
+
+import requests
+
+
+class MWPOneAPI(object):
+    _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+    def __init__(self, settings):
+        self._logger = logging.getLogger(__name__)
+        self.url = settings.MWPONE_URL
+        self.auth = (settings.MWP_ONE_USER, settings.MWP_ONE_PASS)
+
+    def locate(self, domain):
+        """
+        This functions sole purpose is to locate all data for a MWP 1.0 account to be placed into the data
+        sub document of the incident's mongo document
+        :param domain:
+        :return:
+        """
+        response = {}
+
+        try:
+            r = requests.get(self.url + domain, auth=self.auth, headers=self._headers, verify=False)
+            response = r.json()
+        except Exception as e:
+            self._logger.error(e)
+
+        for entry in response.get('data', []):
+            if entry.get('statusId') != 1:
+                continue
+
+            return {
+                'guid': entry.get('accountUid'),
+                'accountid': entry.get('id'),
+                'shopper': entry.get('shopperId'),
+                'os': 'Linux',
+                'dc': self._dc_helper(entry.get('dataCenter', {}).get('description')),
+                'product': 'MWP 1.0',
+                'ip': entry.get('ipAddress'),
+                'hostname': 'MWP 1.0 does not return hostname',
+                'created_date': entry.get('dateCreated')
+            }
+        else:
+            self._logger.error('No active MWP 1.0 account ID found for {}'.format(domain))
+
+    def _dc_helper(self, dc):
+        if dc == 'Buckeye':
+            dc = 'P3'
+        elif dc == 'Ashburn':
+            dc = 'A2'
+        elif dc == 'Amsterdam':
+            dc = 'N1'
+        return dc

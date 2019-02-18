@@ -1,22 +1,22 @@
 import json
 import logging
-from urllib import urlencode
+from urllib.parse import urlencode
 
 import requests
 
 
 class SubscriptionsAPI(object):
-    VALID_SUBSCRIPTION_STATUSES = {'ACTIVE', 'TRIAL PERIOD', 'FREE'}
+    valid_subscription_statuses = {'ACTIVE', 'TRIAL PERIOD', 'FREE'}
 
-    def __init__(self, settings):
+    def __init__(self, config):
         self._logger = logging.getLogger(__name__)
-        self._url = settings.SUBSCRIPTIONS_URL
-        self._cert = (settings.SUBSCRIPTIONS_CERT, settings.SUBSCRIPTIONS_KEY)
+        self._url = config.SUBSCRIPTIONS_URL
+        self._cert = (config.SUBSCRIPTIONS_CERT, config.SUBSCRIPTIONS_KEY)
 
-    def has_hosting_subscription(self, shopper_id, domain):
+    def get_hosting_subscriptions(self, shopper_id, domain):
         """
-        This function's sole purpose is to use the available subscriptions api to determine if a shopper has
-        any hosting subscriptions associated with a domain name.
+        Uses the Subscriptions API to determine if a shopper has any hosting subscriptions associated with the
+        provided domain name.
         :param: shopper_id:
         :param: domain:
         :return: Dict with subscription info if a subscription is associated with the domain name
@@ -29,17 +29,17 @@ class SubscriptionsAPI(object):
 
         for subscription in subscriptions:
             label = subscription.get('label').lower() if subscription.get('label') else None
-            if subscription.get('status') in self.VALID_SUBSCRIPTION_STATUSES and label == domain:
+            if subscription.get('status') in self.valid_subscription_statuses and label == domain:
                 namespace = subscription.get('product', {}).get('namespace')
                 if namespace in handled_hosting_products:
                     subscription.get('product', {}).update(product_name=handled_hosting_products[namespace])
                     return subscription
         return {}
 
-    def has_sucuri_subscription(self, shopper_id, domain):
+    def get_sucuri_subscriptions(self, shopper_id, domain):
         """
-        This function's sole purpose is to use the available subscriptions api to determine if a shopper has
-        any sucuri subscription(s) associated with a domain name and, if so, what their labels are.
+        Uses the Subscriptions API to determine if the a shopper has any Sucuri Subscriptions associated with a
+        domain name that is registered within the same shopper and return the product labels.
         :param: shopper_id:
         :param: domain:
         :return: List with sucuri subscription info if there are any sucuri product(s) associated with the domain name
@@ -49,15 +49,15 @@ class SubscriptionsAPI(object):
         security_subscription = []
         for subscription in subscriptions:
             label = subscription.get('label').lower() if subscription.get('label') else None
-            if subscription.get('status') in self.VALID_SUBSCRIPTION_STATUSES and label == domain \
+            if subscription.get('status') in self.valid_subscription_statuses and label == domain \
                     and subscription.get('product', {}).get('productGroupKey') == 'websiteSecurity':
                 security_subscription.append(subscription.get('product', {}).get('label'))
         return security_subscription
 
     def _get_subscriptions(self, shopper_id, product_group_keys):
         """
-        This function's sole purpose is to use the available subscriptions api to determine
-        the subscriptions associated with a particular shopper and product groups.
+        Uses the Subscriptions API to retrieve the subscriptions associated with a particular shopper
+        and product groups.
         :param: shopper_id:
         :param: product_group_keys:
         :return: List with all the subscriptions that belong to the shopper.
@@ -127,5 +127,5 @@ class SubscriptionsAPI(object):
                     break
                 query_url = next_page
         except Exception as e:
-            self._logger.error("Exception thrown for {}: msg:{}.".format(shopper_id, e.message))
+            self._logger.error('Unable to retrieve subscriptions for {}: {}'.format(shopper_id, e))
         return subscriptions

@@ -1,5 +1,5 @@
 import os
-import urllib
+from urllib.parse import quote
 
 
 class AppConfig(object):
@@ -19,7 +19,7 @@ class AppConfig(object):
     MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts/?domain='
 
     def __init__(self):
-        self.DB_PASS = urllib.quote(os.getenv('DB_PASS', 'password'))
+        self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
         self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)
 
         self.CMAP_PROXY_USER = os.getenv('CMAP_PROXY_USER', 'cmap_proxy_user')

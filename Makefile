@@ -8,8 +8,8 @@ BUILD_BRANCH=origin/master
 all: env
 
 env:
-	pip install -r test_requirements.txt
-	pip install -r requirements.txt
+	pip3 install -r test_requirements.txt
+	pip3 install -r requirements.txt
 
 .PHONY: flake8
 flake8:

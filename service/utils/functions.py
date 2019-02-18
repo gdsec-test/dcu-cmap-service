@@ -31,7 +31,7 @@ def convert_string_date_to_mongo_format(old_date):
 
         if delimiter is not None:
             # We assume only dates yyyy/mm/dd or mm/dd/yyyy, using a delimiter of / or -
-            date_match_regex = r'(\d+' + delimiter + '\d+' + delimiter + '\d+)'
+            date_match_regex = r'(\d+' + delimiter + r'\d+' + delimiter + r'\d+)'
             match = re.search(date_match_regex, just_date)
 
             if match.group(1):
@@ -73,6 +73,9 @@ def return_expected_dict_due_to_exception(the_container, the_keys):
 
 
 def get_tld_by_domain_name(domain_name):
+    if isinstance(domain_name, bytes):
+        domain_name = domain_name.decode()
+
     # In the event that we were provided a sub-domain name as opposed to a tld
     if domain_name:
         try:
@@ -81,7 +84,7 @@ def get_tld_by_domain_name(domain_name):
             domain_object = tld.get_tld(domain_name, as_object=True)
             tld_domain = domain_object.tld
         except Exception as e:
-            _logger.warning("Error updating TLD file for domain {} : {}. Retrying".format(domain_name, e.message))
+            _logger.warning('Error updating TLD file for domain {} : {}. Retrying'.format(domain_name, e))
             tld.update_tld_names()
 
             # Clearing out the global tld_names variable from tld to force it to update
@@ -90,7 +93,7 @@ def get_tld_by_domain_name(domain_name):
             try:
                 tld_domain = tld.get_tld(domain_name)
             except Exception as e:
-                _logger.warning("Retry Error updating TLD file for domain {} : {}.".format(domain_name, e.message))
+                _logger.warning('Retry Error updating TLD file for domain {} : {}.'.format(domain_name, e))
                 return None
 
         return tld_domain

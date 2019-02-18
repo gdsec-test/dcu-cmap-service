@@ -1,7 +1,7 @@
 # CMAP Service
 #
 
-FROM alpine:3.5
+FROM alpine:3.6
 MAINTAINER DCU <DCUEng@godaddy.com>
 
 RUN addgroup -S dcu && adduser -H -S -G dcu dcu
@@ -11,10 +11,12 @@ RUN apk --no-cache add build-base \
     coreutils \
     bc \
     openssl-dev \
+    libffi-dev \
     linux-headers \
-    python-dev \
+    libxml2-dev \
+    libxslt-dev \
+    python3-dev \
     py-pip
-
 
 # Expose Flask port 5000
 EXPOSE 5000
@@ -25,7 +27,7 @@ COPY . /tmp
 RUN chown -R dcu:dcu /app
 
 COPY trusted_certs/* /usr/local/share/ca-certificates/
-RUN update-ca-certificates && pip install --compile /tmp && rm -rf /tmp/*
+RUN update-ca-certificates && pip3 install -U cffi && pip3 install --compile /tmp && rm -rf /tmp/*
 
 WORKDIR /app
 ENTRYPOINT ["/app/runserver.sh"]

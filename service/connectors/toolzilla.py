@@ -1,0 +1,82 @@
+import logging
+
+from suds.client import Client
+
+from service.soap.request_transport import RequestsTransport
+from service.utils.hostname_parser import parse_hostname
+
+
+class ToolzillaAPI(object):
+    _location = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService'
+    _wsdl = _location + '/WSDL'
+
+    def __init__(self, settings):
+        self._logger = logging.getLogger(__name__)
+
+        try:
+            self.client = Client(self._wsdl, location=self._location,
+                                 headers=RequestsTransport.get_soap_headers(),
+                                 transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                                             password=settings.CMAP_PROXY_PASS,
+                                                             cert=settings.CMAP_PROXY_CERT,
+                                                             key=settings.CMAP_PROXY_KEY))
+        except Exception as e:
+            self._logger.error('Unable to initialize WSDL to Toolzilla API: {}'.format(e))
+
+    def get_hostname_by_guid(self, guid):
+        """
+        Queries the Toolzilla API for a GUID for a domain name.
+        :param guid:
+        :return: hostname or None
+        """
+        hostname = None
+
+        try:
+            self._logger.info('Searching for hostname for guid {}'.format(guid))
+            data = self.client.service.getHostNameByGuid(guid)
+            if data:
+                hostname = data.split('.')[0]
+        except Exception as e:
+            self._logger.error('Unable to lookup hostname for {} : {}'.format(guid, e))
+            self._logger.error(self.client.last_received())
+        finally:
+            return hostname
+
+    def search_by_domain(self, domain):
+        """
+        For a given domain name, query Toolzilla to retrieve corresponding hosting guids, shopperIDs, and product.
+        :param domain:
+        :return:
+        """
+
+        try:
+            # If a client was not instantiated successfully, don't try running a query
+            if not hasattr(self, 'client'):
+                raise ValueError('ToolzillaAPI object has no attribute: client')
+
+            data = self.client.service.searchByDomain(domain)
+
+            # checks to make sure the returned data is not an error
+            if str(type(data)) != "<class 'suds.sax.text.Text'>":
+                entry = data[0][0]
+
+                guid = str(entry['AccountUid'][0])
+                shopper_id = str(entry['ShopperId'][0])
+                product = str(entry['ProductType'][0])
+
+                if product == 'wpaas':
+                    return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Linux',
+                            'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
+                elif product == 'dhs':
+                    return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Unable to locate',
+                            'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
+                else:
+                    hostname = self.get_hostname_by_guid(guid)
+                    dc, os, product = parse_hostname(hostname)
+                    return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': os,
+                            'hostname': hostname, 'data_center': dc}
+
+        except Exception as e:
+            self._logger.error('Failed Toolzilla Lookup: {}'.format(e))
+            if hasattr(self, 'client'):
+                self._logger.error(self.client.last_received())
