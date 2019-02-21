@@ -69,6 +69,9 @@ class DomainQuery(graphene.ObjectType):
                      friendly_name=None, private_label_id=None)
 
         shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
+        if hasattr(shopper_id, 'decode'):
+            shopper_id = shopper_id.decode()
+
         whois.update(info.context.get('bd').get_hosting_info(self.domain))
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
             host_info = info.context.get('ipam').get_properties_for_domain(self.domain, shopper_id)
@@ -106,11 +109,11 @@ class DomainQuery(graphene.ObjectType):
         return APIReseller(**parent_child)
 
     def resolve_shopper_info(self, info):
+        active_shopper = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
+        if hasattr(active_shopper, 'decode'):
+            active_shopper = active_shopper.decode()
+
         shopper_client = info.context.get('shopper')
-
-        client = info.context.get('regdb')
-        active_shopper = client.get_shopper_id_by_domain_name(self.domain)
-
         extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['shopper_create_date',
                                                                                'shopper_first_name',
                                                                                'shopper_email',
@@ -140,5 +143,8 @@ class DomainQuery(graphene.ObjectType):
 
     def resolve_security_subscription(self, info):
         shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
+        if hasattr(shopper_id, 'decode'):
+            shopper_id = shopper_id.decode()
+
         sucuri_product = info.context.get('subscriptions').get_sucuri_subscriptions(shopper_id, self.domain)
         return SecuritySubscription(**{'sucuri_product': sucuri_product})

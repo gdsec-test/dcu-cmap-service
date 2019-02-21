@@ -13,9 +13,8 @@ class ShopperAPI(object):
     _created_key = 'createdAt'  # Key into the Shopper Response for shopper create date.
     _params = {'includes': 'contact,preference'}
 
-    def __init__(self, settings, redis_obj):
+    def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
-        self._redis = redis_obj
         self._auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
         self._cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
 
@@ -66,5 +65,4 @@ class ShopperAPI(object):
         except Exception as e:
             self._logger.error('Error in getting the shopper info for {} : {}'.format(shopper_id, e))
             shopper_data = service.utils.functions.return_expected_dict_due_to_exception(shopper_data, fields)
-        finally:
-            return shopper_data
+        return shopper_data

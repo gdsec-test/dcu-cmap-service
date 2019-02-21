@@ -72,16 +72,15 @@ class RegDbAPI(object):
         try:
             query_value = self._redis.get(redis_key)
             if query_value is None:
-                domain_name = domain_name.encode('idna')
+                domain_name = domain_name.encode('idna').decode()
                 doc = ET.fromstring(self._client.service.GetParentChildShopperByDomainName(domain_name))
 
                 if doc.find('RECORDSET') is None or doc.find('RECORDSET').find('RECORD') is None:
                     query_value = dict(parent=None, child=None)
                 else:
                     doc_record = doc.find('RECORDSET').find('RECORD')
-
-                    query_value['parent'] = doc_record.find('PARENT_SHOPPER_ID').text
-                    query_value['child'] = doc_record.find('CHILD_SHOPPER_ID').text
+                    query_value = dict(parent=doc_record.find('PARENT_SHOPPER_ID').text,
+                                       child=doc_record.find('CHILD_SHOPPER_ID').text)
                 self._redis.set(redis_key, json.dumps({self._redis_key: query_value}))
             else:
                 query_value = json.loads(query_value).get(self._redis_key)
@@ -107,7 +106,7 @@ class RegDbAPI(object):
             query_value = self._redis.get(redis_key)
 
             if not query_value:
-                domain_name = domain_name.encode('idna')
+                domain_name = domain_name.encode('idna').decode()
                 doc = ET.fromstring(self._client.service.GetShopperIdByDomainName(domain_name))
 
                 if doc.find('RECORDSET') is None or \

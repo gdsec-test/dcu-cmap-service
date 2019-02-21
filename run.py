@@ -52,7 +52,7 @@ This makes these variables available to all resolvers that might need to call th
 ctx = {'crm': CRMClientAPI(config, redis_obj),
        'vip': VipClients(config, redis_obj),
        'redis': redis_obj,
-       'shopper': ShopperAPI(config, redis_obj),
+       'shopper': ShopperAPI(config),
        'ipam': HostingProductResolver(config),
        'regdb': RegDbAPI(config, redis_obj),
        'alexa': AlexaWebInformationService(config.ALEXA_ACCESS_ID, config.ALEXA_ACCESS_KEY),
