@@ -2,6 +2,7 @@ import json
 import logging
 from urllib.parse import urlencode
 
+import re
 import requests
 
 
@@ -28,7 +29,7 @@ class SubscriptionsAPI(object):
         subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
 
         for subscription in subscriptions:
-            label = subscription.get('label').lower() if subscription.get('label') else None
+            label = subscription.get('label').lower() if subscription.get('label') else ""
             if subscription.get('status') in self.valid_subscription_statuses and label == domain:
                 namespace = subscription.get('product', {}).get('namespace')
                 if namespace in handled_hosting_products:
@@ -48,11 +49,32 @@ class SubscriptionsAPI(object):
         subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
         security_subscription = []
         for subscription in subscriptions:
-            label = subscription.get('label').lower() if subscription.get('label') else None
+            label = subscription.get('label').lower() if subscription.get('label') else ""
             if subscription.get('status') in self.valid_subscription_statuses and label == domain \
                     and subscription.get('product', {}).get('productGroupKey') == 'websiteSecurity':
                 security_subscription.append(subscription.get('product', {}).get('label'))
         return security_subscription
+
+    def get_ssl_subscriptions(self, shopper_id, domain):
+        """
+        Uses the Subscriptions API to determine if the a shopper has any SSL Subscriptions associated with a
+        domain name that is registered within the same shopper and return the product labels, created & expire dates.
+        :param: shopper_id:
+        :param: domain:
+        :return: Dict of list(s) with ssl subscription info if there are any ssl product(s) associated with the domain
+        """
+        subscriptions = self._get_subscriptions(shopper_id, ['sslCerts'])
+        ssl_subscriptions = {}
+        for subscription in subscriptions:
+            label = subscription.get('label').lower() if subscription.get('label') else ""
+            if subscription.get('status') in self.valid_subscription_statuses and re.search(domain, label) \
+                    and subscription.get('product', {}).get('productGroupKey') == 'sslCerts':
+                ssl_subscriptions[label] = {
+                    'label': subscription.get('product').get('label'),
+                    'createdAt': subscription.get('createdAt'),
+                    'expiresAt': subscription.get('expiresAt')
+                }
+        return ssl_subscriptions
 
     def _get_subscriptions(self, shopper_id, product_group_keys):
         """

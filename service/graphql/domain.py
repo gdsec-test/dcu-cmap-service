@@ -7,6 +7,7 @@ from service.graphql.registrar import RegistrarInfo
 from service.graphql.shopper import (APIReseller, ShopperByDomain,
                                      ShopperProfile)
 from service.graphql.sucuri import SecuritySubscription
+from service.graphql.ssl import SSLSubscription
 from service.utils.functions import get_tld_by_domain_name
 
 
@@ -57,6 +58,7 @@ class DomainQuery(graphene.ObjectType):
     shopper_info = graphene.Field(ShopperByDomain, description='Shopper Information for Provided Domain Name')
     security_subscription = graphene.Field(SecuritySubscription,
                                            description='Security Product Information for Provided Domain Name')
+    ssl_subscription = graphene.Field(SSLSubscription, description='SSL Product Information for Provided Domain Name')
 
     def resolve_host(self, info):
         # These default initializations are put in place to allow for upgrade to Graphql 2.0. A bug currently exists
@@ -148,3 +150,11 @@ class DomainQuery(graphene.ObjectType):
 
         sucuri_product = info.context.get('subscriptions').get_sucuri_subscriptions(shopper_id, self.domain)
         return SecuritySubscription(**{'sucuri_product': sucuri_product})
+
+    def resolve_ssl_subscription(self, info):
+        shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
+        if hasattr(shopper_id, 'decode'):
+            shopper_id = shopper_id.decode()
+
+        ssl_product = info.context.get('subscriptions').get_ssl_subscriptions(shopper_id, self.domain)
+        return SSLSubscription(**{'ssl_product': ssl_product})
