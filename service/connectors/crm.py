@@ -20,6 +20,8 @@ class CRMClientAPI(object):
         wsdl = location + '?singleWsdl'
 
         try:
+            # The apiuser.cmap.int.godaddy.com cert is whitelisted for use with the CRM client api
+            # Bring issues to #crm-support
             self._client = Client(wsdl, location=location,
                                   headers=RequestsTransport.get_soap_headers(),
                                   transport=RequestsTransport(cert=settings.CMAP_API_CERT,
