@@ -1,8 +1,8 @@
 import json
 import logging
+import re
 from urllib.parse import urlencode
 
-import re
 import requests
 
 
@@ -61,19 +61,21 @@ class SubscriptionsAPI(object):
         domain name that is registered within the same shopper and return the product labels, created & expire dates.
         :param: shopper_id:
         :param: domain:
-        :return: Dict of list(s) with ssl subscription info if there are any ssl product(s) associated with the domain
+        :return: List of dicts(s) with ssl subscription info if there are any ssl product(s) associated with the domain
         """
         subscriptions = self._get_subscriptions(shopper_id, ['sslCerts'])
-        ssl_subscriptions = {}
+        ssl_subscriptions = []
         for subscription in subscriptions:
             label = subscription.get('label').lower() if subscription.get('label') else ""
             if subscription.get('status') in self.valid_subscription_statuses and re.search(domain, label) \
                     and subscription.get('product', {}).get('productGroupKey') == 'sslCerts':
-                ssl_subscriptions[label] = {
-                    'label': subscription.get('product').get('label'),
-                    'createdAt': subscription.get('createdAt'),
-                    'expiresAt': subscription.get('expiresAt')
+                ssl_subscription = {
+                    'cert_common_name': label,
+                    'cert_type': subscription.get('product').get('label'),
+                    'created_at': subscription.get('createdAt'),
+                    'expires_at': subscription.get('expiresAt')
                 }
+                ssl_subscriptions.append(ssl_subscription)
         return ssl_subscriptions
 
     def _get_subscriptions(self, shopper_id, product_group_keys):
