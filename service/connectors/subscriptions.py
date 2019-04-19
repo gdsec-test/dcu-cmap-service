@@ -12,7 +12,7 @@ class SubscriptionsAPI(object):
     def __init__(self, config):
         self._logger = logging.getLogger(__name__)
         self._url = config.SUBSCRIPTIONS_URL
-        self._cert = (config.SUBSCRIPTIONS_CERT, config.SUBSCRIPTIONS_KEY)
+        self._cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
 
     def get_hosting_subscriptions(self, shopper_id, domain):
         """

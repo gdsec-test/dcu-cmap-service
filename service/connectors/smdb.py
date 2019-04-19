@@ -1,6 +1,7 @@
 import logging
 
 from requests import Session
+
 from requests_ntlm import HttpNtlmAuth
 from zeep.client import Client
 from zeep.transports import Transport

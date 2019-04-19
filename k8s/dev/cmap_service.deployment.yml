@@ -57,10 +57,6 @@ spec:
               value: /apicerts/tls.crt
             - name: CMAP_API_KEY
               value: /apicerts/tls.key
-            - name: SUBSCRIPTIONS_CERT
-              value: /subscriptioncerts/tls.crt
-            - name: SUBSCRIPTIONS_KEY
-              value: /subscriptioncerts/tls.key
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
@@ -136,9 +132,6 @@ spec:
             - name: tls-files-service
               mountPath: /servicecerts
               readOnly: true
-            - name: tls-subscriptions-service
-              mountPath: /subscriptioncerts
-              readOnly: true
       volumes:
         - name: tls-files-proxy
           secret:
@@ -149,6 +142,3 @@ spec:
         - name: tls-files-service
           secret:
             secretName: tls-cmap-service
-        - name: tls-subscriptions-service
-          secret:
-            secretName: tls-subscriptions-api
