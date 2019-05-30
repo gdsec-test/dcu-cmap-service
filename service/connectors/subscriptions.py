@@ -26,22 +26,22 @@ class SubscriptionsAPI(object):
         :return: Dict with subscription info if a subscription is associated with the domain name
         """
         domain = domain.lower() if domain else None
-        product_group_keys = ['hosting', 'websiteBuilder', 'servers', 'wordpress']
-        handled_hosting_products = {'diablo': 'Diablo',        # hosting
-                                    'angelo': 'Angelo',        # hosting
-                                    'wpaas': 'MWP 1.0',        # wordpress
-                                    'mwp2': 'MWP 2.0',         # wordpress
-                                    'wsb': 'GoCentral',        # websiteBuilder
-                                    'wst': 'Website Tonight',  # websiteBuilder
-                                    'vps4': 'VPS4'             # servers
+        product_group_keys = ['hosting', 'websiteBuilder', 'wordpress']
+        handled_hosting_products = {'diablo': 'Diablo',       # hosting
+                                    'angelo': 'Angelo',       # hosting
+                                    'wpaas': 'MWP 1.0',       # wordpress
+                                    'mwp2': 'MWP 2.0',        # wordpress
+                                    'wsb': 'GoCentral',       # websiteBuilder
+                                    'wst': 'Website Tonight'  # websiteBuilder
                                     }
 
         subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
 
         for subscription in subscriptions:
             label = subscription.get('label').lower() if subscription.get('label') else ""
-            if subscription.get('status') in self.valid_subscription_statuses and label == domain:
-                namespace = subscription.get('product', {}).get('namespace')
+            namespace = subscription.get('product', {}).get('namespace')
+
+            if subscription.get('status') in self.valid_subscription_statuses and self._check_label(label, domain, namespace):
                 if namespace in handled_hosting_products:
                     subscription.get('product', {}).update(product_name=handled_hosting_products[namespace])
                     return subscription
@@ -163,3 +163,18 @@ class SubscriptionsAPI(object):
         except Exception as e:
             self._logger.error('Unable to retrieve subscriptions for {}: {}'.format(shopper_id, e))
         return subscriptions
+
+    def _check_label(self, label, domain, namespace):
+        """
+        Check whether or not the label stored in the Subscriptions information matches the domain we are looking for.
+
+        In some cases, it may be necessary to have specific logic for specific namespaces/products. One of these cases
+        is MWP 2.0. In this case, the label is a comma-separated list of all sites associated with a MWP 2.0 plan.
+        :param label:
+        :param domain:
+        :param namespace:
+        :return:
+        """
+        if namespace == 'mwp2':
+            return domain in label.split(',')
+        return domain == label
