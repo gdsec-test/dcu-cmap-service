@@ -62,20 +62,11 @@ class DomainQuery(graphene.ObjectType):
                                       description='List of SSL Product Information for Provided Domain Name')
 
     def resolve_host(self, info):
-        # These default initializations are put in place to allow for upgrade to Graphql 2.0. A bug currently exists
-        # that defaults all uninitialized fields as a `graphene.String object at X memory location` rather than null
-        # in Graphql 1.4.1. This fixes that bug until it is addressed. 8 Nov 2017 @nlemay.
-        vip = dict(blacklist=False, accountRepFirstName=None, accountRepLastName=None, accountRepEmail=None,
-                   portfolioType=None, shopper_id=None)
-        whois = dict(data_center=None, os=None, product=None, guid=None, shopper_id=None, hostname=None, ip=None,
-                     mwp_id=None, hosting_company_name=None, brand=None, hosting_abuse_email=None, created_date=None,
-                     friendly_name=None, private_label_id=None)
-
         shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
         if hasattr(shopper_id, 'decode'):
             shopper_id = shopper_id.decode()
 
-        whois.update(info.context.get('bd').get_hosting_info(self.domain))
+        whois = info.context.get('bd').get_hosting_info(self.domain)
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
             host_info = info.context.get('ipam').get_properties_for_domain(self.domain, shopper_id)
             if type(host_info) is dict:
@@ -91,6 +82,7 @@ class DomainQuery(graphene.ObjectType):
                 whois['mwp_id'] = host_info.get('accountid')
                 whois['private_label_id'] = host_info.get('private_label_id')
 
+        vip = {}
         shopper_id = whois.get('shopper_id')
         if shopper_id:
             vip.update(info.context.get('crm').get_shopper_portfolio_information(shopper_id))

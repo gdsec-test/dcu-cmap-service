@@ -11,7 +11,7 @@ class ShopperPortfolio:
     accountRepLastName = graphene.String(description='Account Rep Last Name')
     accountRepEmail = graphene.String(description='Account Rep Email Address')
     portfolioType = graphene.String(description='Shopper Portfolio Type')
-    blacklist = graphene.Boolean(description='Shopper Blacklist Status - Do Not Suspend!')
+    blacklist = graphene.Boolean(description='Shopper Blacklist Status - Do Not Suspend!', default_value=False)
     shopper_id = graphene.String(description='Shopper ID')
 
 
@@ -57,12 +57,7 @@ class Shopper:
         return client.get_domain_count_by_shopper_id(self.shopper_id)
 
     def resolve_vip(self, info):
-        # These default initializations are put in place to allow for upgrade to Graphql 2.0. A bug currently exists
-        # that defaults all uninitialized fields as a `graphene.String object at X memory location` rather than null
-        # in Graphql 1.4.1. This fixes that bug until it is addressed. 8 Nov 2017 @nlemay.
-        query_dict = dict(blacklist=False, accountRepFirstName=None, accountRepLastName=None, accountRepEmail=None,
-                          portfolioType=None, shopper_id=None)
-        query_dict.update(info.context.get('crm').get_shopper_portfolio_information(self.shopper_id))
+        query_dict = info.context.get('crm').get_shopper_portfolio_information(self.shopper_id)
         # Query the blacklist, whose entities never get suspended
         query_dict['blacklist'] = info.context.get('vip').is_blacklisted(self.shopper_id)
         return ShopperProfile(**query_dict)
