@@ -18,13 +18,23 @@ class SubscriptionsAPI(object):
         """
         Uses the Subscriptions API to determine if a shopper has any hosting subscriptions associated with the
         provided domain name.
+
+        At this time, the Subscriptions API _cannot_ be used to determine information about older Dedicated ,
+        Virtual Dedicated, or Virtual Private Hosting.
         :param: shopper_id:
         :param: domain:
         :return: Dict with subscription info if a subscription is associated with the domain name
         """
         domain = domain.lower() if domain else None
         product_group_keys = ['hosting', 'websiteBuilder', 'servers', 'wordpress']
-        handled_hosting_products = {'diablo': 'Diablo', 'wpaas': 'MWP 1.0', 'angelo': 'Angelo'}
+        handled_hosting_products = {'diablo': 'Diablo',        # hosting
+                                    'angelo': 'Angelo',        # hosting
+                                    'wpaas': 'MWP 1.0',        # wordpress
+                                    'mwp2': 'MWP 2.0',         # wordpress
+                                    'wsb': 'GoCentral',        # websiteBuilder
+                                    'wst': 'Website Tonight',  # websiteBuilder
+                                    'vps4': 'VPS4'             # servers
+                                    }
 
         subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
 
