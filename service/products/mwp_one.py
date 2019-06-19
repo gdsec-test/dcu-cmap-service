@@ -33,7 +33,7 @@ class MWPOneAPI(object):
             return {
                 'guid': entry.get('accountUid'),
                 'accountid': entry.get('id'),
-                'shopper': entry.get('shopperId'),
+                'shopper_id': entry.get('shopperId'),
                 'os': 'Linux',
                 'dc': self._dc_helper(entry.get('dataCenter', {}).get('description')),
                 'product': 'MWP 1.0',

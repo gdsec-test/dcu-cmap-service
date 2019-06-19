@@ -74,7 +74,7 @@ class HostingProductResolver(object):
                 else:
                     return {'dc': data.get('dc'), 'os': data.get('os'),
                             'product': data.get('product'),
-                            'ip': ip, 'guid': data.get('guid'), 'shopper': data.get('shopper'),
+                            'ip': ip, 'guid': data.get('guid'), 'shopper_id': data.get('shopper_id'),
                             'hostname': data.get('hostname'), 'created_date': data.get('created_date'),
                             'friendly_name': data.get('friendly_name')}
 
