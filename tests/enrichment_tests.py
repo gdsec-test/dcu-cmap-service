@@ -96,28 +96,28 @@ class TestNutritionLabel:
         assert_equals(os, 'Windows')
         assert_equals(product, '2GH')
 
-    def test_angelo_a2(self):
+    def test_plesk_a2(self):
         hostname = 'A2NWVPWEB100'
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'A2')
         assert_equals(os, 'Windows')
-        assert_equals(product, 'Angelo')
+        assert_equals(product, 'Plesk')
 
-    def test_angelo_n1(self):
+    def test_plesk_n1(self):
         hostname = 'N1NWVPWEB063'
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'N1')
         assert_equals(os, 'Windows')
-        assert_equals(product, 'Angelo')
+        assert_equals(product, 'Plesk')
 
-    def test_angelo_p3(self):
+    def test_plesk_p3(self):
         hostname = 'P3NWVPWEB082'
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'P3')
         assert_equals(os, 'Windows')
-        assert_equals(product, 'Angelo')
+        assert_equals(product, 'Plesk')
 
-    def test_angelo_sg2_called_plesk_why(self):
+    def test_plesk_sg2(self):
         hostname = 'SG2NWVPWEB022'
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'SG2')
@@ -129,20 +129,20 @@ class TestNutritionLabel:
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'N1')
         assert_equals(os, 'Linux')
-        assert_equals(product, 'VPS')
+        assert_equals(product, 'VPH')
 
     def test_vph_sg2(self):
         hostname = 'sg2plvph2-116'
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'SG2')
         assert_equals(os, 'Linux')
-        assert_equals(product, 'VPS')
+        assert_equals(product, 'VPH')
 
     def test_vertigo(self):
         hostname = 'vertigo-86545-primary'
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'vert')
-        assert_equals(os, '')
+        assert_is_none(os)
         assert_equals(product, 'Vertigo')
 
     def test_os_fail(self):
@@ -150,11 +150,60 @@ class TestNutritionLabel:
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'P3')
         assert_is_none(os)
-        assert_equals(product, '4GH')
+        assert_is_none(product)
 
     def test_vph(self):
         hostname = 'VPHL390c1390'
         dc, os, product = parse_hostname(hostname)
         assert_equals(dc, 'VPH')
-        assert_equals(os, '')
+        assert_is_none(os)
         assert_equals(product, 'VPH')
+
+    def test_mwp1(self):
+        hostname = 'ec2.3d3.myftpupload.com'
+        dc, os, product = parse_hostname(hostname)
+        assert_is_none(dc)
+        assert_equals(os, 'Linux')
+        assert_equals(product, 'MWP 1.0')
+
+    def test_gocentral(self):
+        hostname = 'A2MHLDPSWEB-01-VS'
+        dc, os, product = parse_hostname(hostname)
+        assert_equals(dc, 'A2')
+        assert_is_none(os)
+        assert_equals(product, 'GoCentral')
+
+    def test_openstack(self):
+        hostname = 'OpenStack floating IPs floating-iad-public-mah-public'
+        dc, os, product = parse_hostname(hostname)
+        assert_is_none(dc)
+        assert_is_none(os)
+        assert_equals(product, 'OpenStack')
+
+    def test_url_shortener1(self):
+        hostname = 'p3plshortapp-01-vs'
+        dc, os, product = parse_hostname(hostname)
+        assert_equals(dc, 'P3')
+        assert_is_none(os)
+        assert_equals(product, 'Shortener')
+
+    def test_url_shortener2(self):
+        hostname = 'url-shortenerfip01-vs'
+        dc, os, product = parse_hostname(hostname)
+        assert_is_none(dc)
+        assert_is_none(os)
+        assert_equals(product, 'Shortener')
+
+    def test_untruthy_hostname(self):
+        hostname = ''
+        dc, os, product = parse_hostname(hostname)
+        assert_is_none(dc)
+        assert_is_none(os)
+        assert_is_none(product)
+
+    def test_unstringy_hostname(self):
+        hostname = 8
+        dc, os, product = parse_hostname(hostname)
+        assert_is_none(dc)
+        assert_is_none(os)
+        assert_is_none(product)
