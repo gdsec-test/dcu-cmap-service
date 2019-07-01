@@ -18,12 +18,12 @@ class MWPTwoAPI(object):
         """
 
         try:
-            r = requests.get(self._url.format(domain=domain))
+            r = requests.get(self._url.format(domain=domain), timeout=5)
 
             if r.status_code == 200 and r.text.strip().upper() == 'OK':
-                return True
+                return {'product': 'MWP 2.0'}
             else:
                 self._logger.info('MWP 2.0 lookup failed for {}'.format(domain))
         except Exception as e:
             self._logger.error(e)
-        return False
+        return {}

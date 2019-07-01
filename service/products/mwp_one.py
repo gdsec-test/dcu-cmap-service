@@ -32,10 +32,10 @@ class MWPOneAPI(object):
 
             return {
                 'guid': entry.get('accountUid'),
-                'accountid': entry.get('id'),
+                'account_id': entry.get('id'),
                 'shopper_id': entry.get('shopperId'),
                 'os': 'Linux',
-                'dc': self._dc_helper(entry.get('dataCenter', {}).get('description')),
+                'data_center': self._dc_helper(entry.get('dataCenter', {}).get('description')),
                 'product': 'MWP 1.0',
                 'ip': entry.get('ipAddress'),
                 'hostname': 'MWP 1.0 does not return hostname',

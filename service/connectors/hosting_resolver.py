@@ -1,5 +1,6 @@
 import logging
 import socket
+from collections import OrderedDict
 
 from service.connectors.smdb import Ipam
 from service.connectors.subscriptions import SubscriptionsAPI
@@ -14,118 +15,116 @@ from service.utils.hostname_parser import parse_hostname
 
 
 class HostingProductResolver(object):
-    '''
+    """
     HostingProductResolver is responsible for determining any hosting products that might be associated
     with the provided domain name. It utilizes a variety of methods, subscriptions API, Toolzilla, etc. to achieve this.
-    '''
+    """
+    product_mappers = {
+        'diablo': 'Diablo',
+        'angelo': 'Angelo',
+        'wpaas': 'MWP 1.0',
+        'mwp2': 'MWP 2.0',
+        'wsb': 'GoCentral',
+        'wst': 'Website Tonight'
+    }
 
     def __init__(self, config):
         self._logger = logging.getLogger(__name__)
         self.ipam = Ipam(config.SMDB_URL, config.SMDB_USER, config.SMDB_PASS)
-        self.vertigo_api = VertigoAPI(config)
-        self.diablo_api = DiabloAPI(config)
-        self.angelo_api = AngeloAPI(config)
         self.toolzilla_api = ToolzillaAPI(config)
-        self.mwp1_api = MWPOneAPI(config)
-        self.mwp2_api = MWPTwoAPI()
-        self.gocentral_api = GoCentralAPI(config)
         self.subscriptions_api = SubscriptionsAPI(config)
 
+        """
+        Neither ToolZilla nor IPAM can search MWP 2.0 and GoCentral Products.
+        Hence, giving preference to MWP 2.0 and GoCentral in case we have to loop through the product locators.
+        """
+        self.product_locators = OrderedDict([
+            ('MWP 2.0', MWPTwoAPI()),
+            ('GoCentral', GoCentralAPI(config)),
+            ('Vertigo', VertigoAPI(config)),
+            ('Diablo', DiabloAPI(config)),
+            ('Angelo', AngeloAPI(config)),
+            ('MWP 1.0', MWPOneAPI(config))
+        ])
+
     def get_properties_for_domain(self, domain, shopper_id):
-        '''
+        """
         Given a domain name and a shopperID, attempt to determine all related hosted information, or none if the
         domain is not hosted with GoDaddy.
         :param domain:
         :param shopper_id:
         :return:
-        '''
-        try:
-            ip = socket.gethostbyname(domain)
-            ipam = self.ipam.get_properties_for_ip(ip)
+        """
+        dc = os = guid = hostname = created_date = data = host_shopper = None
+        ip = self._retrieve_ip(domain)
 
-        except Exception as e:
-            self._logger.error(e)
-            return None
-
-        if hasattr(ipam, 'HostName'):
-            ipam_hostname = getattr(ipam, 'HostName')
-            # First check if the host details can be retrieved using the subscriptions API
-            # If not, fall back on the existing way to retrieve host details.
+        # Extract the product information from Toolzilla, Subscriptions API, or IPAM
+        tz_data = self.toolzilla_api.search_by_domain(domain)
+        if tz_data:
+            product = self.product_mappers.get(tz_data.get('product'), tz_data.get('product'))
+            dc = tz_data.get('data_center')
+            os = tz_data.get('os')
+            guid = tz_data.get('guid')
+            hostname = tz_data.get('hostname')
+            host_shopper = tz_data.get('shopper_id')
+        else:
             subscription = self.subscriptions_api.get_hosting_subscriptions(shopper_id, domain)
             if subscription:
-                self._logger.info('Successfully retrieved subscriptions info for domain: {}'.format(domain))
-                product_dict = self._guid_locater(subscription.get('product', {}).get('namespace'), domain)
-                if product_dict:
-                    return {'hostname': ipam_hostname, 'data_center': None, 'os': product_dict.get('os'),
-                            'product': subscription.get('product', {}).get('product_name'),
-                            'ip': ip, 'guid': product_dict.get('guid'),
-                            'shopper_id': product_dict.get('shopper_id'),
-                            'created_date': product_dict.get('created_date'),
-                            'friendly_name': product_dict.get('friendly_name'),
-                            'private_label_id': product_dict.get('private_label_id')}
-
-            if ipam_hostname is None:
-                data = self.toolzilla_api.search_by_domain(domain)
-                # if data comes back as None, set it to a dict so get() can be run on it
-                if data is None:
-                    data = {}
-                if data.get('product') == 'wpaas':
-                    return self.mwp1_api.locate(domain)
-                else:
-                    return {'dc': data.get('dc'), 'os': data.get('os'),
-                            'product': data.get('product'),
-                            'ip': ip, 'guid': data.get('guid'), 'shopper_id': data.get('shopper_id'),
-                            'hostname': data.get('hostname'), 'created_date': data.get('created_date'),
-                            'friendly_name': data.get('friendly_name')}
-
+                namespace = subscription.get('product', {}).get('namespace')
+                product = self.product_mappers.get(namespace, namespace)
+                guid = subscription.get('externalId')
+                created_date = subscription.get('createdAt')
+                host_shopper = shopper_id
             else:
-                data = parse_hostname(ipam_hostname)
-                if len(data) < 3 or data[2] != 'Not Hosting':
-                    d = self._guid_locater(data[2], domain)
-                    gc_dict = self.gocentral_api.locate(domain)
-                    if d:
-                        return {'hostname': ipam_hostname, 'data_center': data[0], 'os': d.get('os'),
-                                'product': data[2], 'ip': ip, 'guid': d.get('guid'),
-                                'shopper_id': d.get('shopper_id'), 'created_date': d.get('created_date'),
-                                'friendly_name': d.get('friendly_name'),
-                                'private_label_id': d.get('private_label_id')}
+                ipam = self._query_ipam(ip)
+                hostname = getattr(ipam, 'HostName', None)
+                dc, os, product = parse_hostname(hostname)
 
-                    # Check if domain is hosted on MWP2.0 and if so sending back return with MWP2.0 as product
-                    elif self.mwp2_api.locate(domain):
-                        host_product = 'MWP 2.0'
+        if product in self.product_locators:
+            data = self.product_locators.get(product).locate(domain)
 
-                    # Check if domain is hosted on GoCentral and if so sending back return with GoCentral as product
-                    elif gc_dict:
-                        gc_dict.update({'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1],
-                                        'ip': ip, 'friendly_name': None})
-                        return gc_dict
+        if not data:
+            for product_locator in self.product_locators.values():
+                data = product_locator.locate(domain)
+                if data:
+                    break
 
-                    else:
-                        self._logger.error('_guid_locater failed on: {}'.format(domain))
-                        host_product = data[2]
+        response_dict = {'hostname': hostname, 'data_center': dc, 'os': os, 'product': product, 'ip': ip, 'guid': guid,
+                         'created_date': created_date, 'shopper_id': host_shopper}
 
-                    return {'hostname': ipam_hostname, 'data_center': data[0], 'os': data[1], 'product': host_product,
-                            'ip': ip, 'guid': None, 'shopper_id': None, 'created_date': None, 'friendly_name': None}
+        if data:
+            response_dict.update({
+                'data_center': data.get('data_center') or dc,
+                'os': data.get('os') or os,
+                'product': data.get('product') or product,
+                'guid': data.get('guid') or guid,
+                'shopper_id': data.get('shopper_id') or host_shopper,
+                'friendly_name': data.get('friendly_name'),
+                'created_date': data.get('created_date') or created_date,
+                'private_label_id': data.get('private_label_id'),
+                'account_id': data.get('account_id')
+            })
 
-                else:
-                    return 'No hosting product found'
+        return response_dict
 
-    def _guid_locater(self, product, domain):
-        '''
-        Based on a particular product, further query product specific domains to narrow down and enhance the
-        information that can be returned.
-        :param product:
+    def _retrieve_ip(self, domain):
+        """
+        Retrieve ip from domain
         :param domain:
         :return:
-        '''
-        if product == 'Vertigo':
-            return self.vertigo_api.locate(domain)
-        elif product == 'Diablo':
-            result = self.diablo_api.locate(domain)
-            if result is not None:
-                return result
-        elif product == 'Angelo':
-            result = self.angelo_api.locate(domain)
-            if result is not None:
-                return result
-        return self.toolzilla_api.search_by_domain(domain)
+        """
+        try:
+            return socket.gethostbyname(domain)
+        except Exception as e:
+            self._logger.error(e)
+
+    def _query_ipam(self, ip):
+        """
+        Query IPAM soap web service and retrive ip related information.
+        :param ip:
+        :return:
+        """
+        try:
+            return self.ipam.get_properties_for_ip(ip)
+        except Exception as e:
+            self._logger.error(e)
