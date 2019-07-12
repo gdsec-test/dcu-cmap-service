@@ -21,11 +21,12 @@ class HostingProductResolver(object):
     """
     product_mappers = {
         'diablo': 'Diablo',
-        'angelo': 'Angelo',
+        'angelo': 'Plesk',
         'wpaas': 'MWP 1.0',
         'mwp2': 'MWP 2.0',
         'wsb': 'GoCentral',
-        'wst': 'Website Tonight'
+        'wst': 'Website Tonight',
+        'plesk': 'Plesk'
     }
 
     def __init__(self, config):
@@ -43,7 +44,7 @@ class HostingProductResolver(object):
             ('GoCentral', GoCentralAPI(config)),
             ('Vertigo', VertigoAPI(config)),
             ('Diablo', DiabloAPI(config)),
-            ('Angelo', AngeloAPI(config)),
+            ('Plesk', AngeloAPI(config)),
             ('MWP 1.0', MWPOneAPI(config))
         ])
 
@@ -61,7 +62,7 @@ class HostingProductResolver(object):
         # Extract the product information from Toolzilla, Subscriptions API, or IPAM
         tz_data = self.toolzilla_api.search_by_domain(domain)
         if tz_data:
-            product = self.product_mappers.get(tz_data.get('product'), tz_data.get('product'))
+            product = self.product_mappers.get(tz_data.get('product', '').lower(), tz_data.get('product'))
             dc = tz_data.get('data_center')
             os = tz_data.get('os')
             guid = tz_data.get('guid')
@@ -70,8 +71,8 @@ class HostingProductResolver(object):
         else:
             subscription = self.subscriptions_api.get_hosting_subscriptions(shopper_id, domain)
             if subscription:
-                namespace = subscription.get('product', {}).get('namespace')
-                product = self.product_mappers.get(namespace, namespace)
+                namespace = subscription.get('product', {}).get('namespace', '')
+                product = self.product_mappers.get(namespace.lower(), namespace)
                 guid = subscription.get('externalId')
                 created_date = subscription.get('createdAt')
                 host_shopper = shopper_id
