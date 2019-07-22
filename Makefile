@@ -1,4 +1,4 @@
-REPONAME=infosec-dcu/cmap_service
+REPONAME=digital-crimes/cmap_service
 BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
 DOCKERREPO=docker-dcu-local.artifactory.secureserver.net/cmap_service
 DATE=$(shell date)

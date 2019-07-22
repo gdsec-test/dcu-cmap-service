@@ -16,7 +16,7 @@ setup(
     author_email='dcueng@godaddy.com',
     description='Provides enrichment for domain names and IP addresses',
     long_description=long_description,
-    url='https://github.secureserver.net/ITSecurity/cmap_service',
+    url='https://github.secureserver.net/digital-crimes/cmap_service',
     packages=find_packages(exclude=['tests', 'trusted_certs']),
     install_requires=install_reqs,
     tests_require=testing_reqs,

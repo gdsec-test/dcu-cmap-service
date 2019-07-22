@@ -8,7 +8,7 @@ CMAP Service is a GraphQL Service that retrieves a wide range of information abo
 ## Cloning
 To clone the repository via SSH perform the following
 ```
-git clone git@github.secureserver.net:ITSecurity/cmap_service.git
+git clone git@github.secureserver.net:digital-crimes/cmap_service.git
 ```
 
 It is recommended that you clone this project into a pyvirtualenv or equivalent virtual environment. For this project, be sure to create a virtual environment with Python 3.6.
