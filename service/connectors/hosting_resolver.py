@@ -62,7 +62,8 @@ class HostingProductResolver(object):
         # Extract the product information from Toolzilla, Subscriptions API, or IPAM
         tz_data = self.toolzilla_api.search_by_domain(domain)
         if tz_data:
-            product = self.product_mappers.get(tz_data.get('product', '').lower(), tz_data.get('product'))
+            product = tz_data.get('product', '')
+            product = self.product_mappers.get(product.lower() if product else '')
             dc = tz_data.get('data_center')
             os = tz_data.get('os')
             guid = tz_data.get('guid')
@@ -72,7 +73,7 @@ class HostingProductResolver(object):
             subscription = self.subscriptions_api.get_hosting_subscriptions(shopper_id, domain)
             if subscription:
                 namespace = subscription.get('product', {}).get('namespace', '')
-                product = self.product_mappers.get(namespace.lower(), namespace)
+                product = self.product_mappers.get(namespace.lower() if namespace else '')
                 guid = subscription.get('externalId')
                 created_date = subscription.get('createdAt')
                 host_shopper = shopper_id
