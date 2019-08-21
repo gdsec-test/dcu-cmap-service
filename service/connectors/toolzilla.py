@@ -3,7 +3,6 @@ import logging
 from suds.client import Client
 
 from service.soap.request_transport import RequestsTransport
-from service.utils.hostname_parser import parse_hostname
 
 
 class ToolzillaAPI(object):
@@ -70,11 +69,7 @@ class ToolzillaAPI(object):
                 elif product == 'dhs':
                     return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Unable to locate',
                             'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
-                else:
-                    hostname = self.get_hostname_by_guid(guid)
-                    dc, os, product = parse_hostname(hostname)
-                    return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': os,
-                            'hostname': hostname, 'data_center': dc}
+                return {'guid': guid, 'shopper_id': shopper_id, 'product': product}
 
         except Exception as e:
             self._logger.error('Failed Toolzilla Lookup: {}'.format(e))
