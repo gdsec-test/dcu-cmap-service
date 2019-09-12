@@ -29,7 +29,7 @@ set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), '/tmp/na
 tld.utils.PROJECT_DIR = lambda x: x
 
 # setup logging
-path = 'logging.yml'
+path = 'logging.yaml'
 value = os.getenv('LOG_CFG')
 if value:
     path = value

@@ -22,7 +22,7 @@ RUN apk --no-cache add build-base \
 EXPOSE 5000
 
 # Move files to new dir
-COPY ./logging.yml ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
+COPY ./logging.yaml ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
 COPY . /tmp
 RUN chown -R dcu:dcu /app
 

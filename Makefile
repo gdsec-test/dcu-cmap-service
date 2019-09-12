@@ -44,13 +44,13 @@ prep: tools test
 .PHONY: dev
 dev: prep
 	@echo "----- building $(REPONAME) dev -----"
-	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/dev/cmap_service.deployment.yml
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/dev/cmap_service.deployment.yaml
 	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
 
 .PHONY: ote
 ote: prep
 	@echo "----- building $(REPONAME) ote -----"
-	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/ote/cmap_service.deployment.yml
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/ote/cmap_service.deployment.yaml
 	docker build --no-cache=true -t $(DOCKERREPO):ote $(BUILDROOT)
 
 .PHONY: prod
@@ -61,8 +61,8 @@ prod: prep
 	if [[ `git status --porcelain | wc -l` -gt 0 ]] ; then echo "You must stash your changes before proceeding" ; exit 1 ; fi
 	git fetch && git checkout $(BUILD_BRANCH)
 	$(eval COMMIT:=$(shell git rev-parse --short HEAD))
-	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/' $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml
-	sed -ie 's/REPLACE_WITH_GIT_COMMIT/$(COMMIT)/' $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/' $(BUILDROOT)/k8s/prod/cmap_service.deployment.yaml
+	sed -ie 's/REPLACE_WITH_GIT_COMMIT/$(COMMIT)/' $(BUILDROOT)/k8s/prod/cmap_service.deployment.yaml
 	docker build -t $(DOCKERREPO):$(COMMIT) $(BUILDROOT)
 	git checkout -
 
@@ -70,19 +70,19 @@ prod: prep
 dev-deploy: dev
 	@echo "----- deploying $(REPONAME) dev -----"
 	docker push $(DOCKERREPO):dev
-	kubectl --context dev-dcu apply -f $(BUILDROOT)/k8s/dev/cmap_service.deployment.yml --record
+	kubectl --context dev-dcu apply -f $(BUILDROOT)/k8s/dev/cmap_service.deployment.yaml --record
 
 .PHONY: ote-deploy
 ote-deploy: ote
 	@echo "----- deploying $(REPONAME) ote -----"
 	docker push $(DOCKERREPO):ote
-	kubectl --context ote apply -f $(BUILDROOT)/k8s/ote/cmap_service.deployment.yml --record
+	kubectl --context ote apply -f $(BUILDROOT)/k8s/ote/cmap_service.deployment.yaml --record
 
 .PHONY: prod-deploy
 prod-deploy: prod
 	@echo "----- deploying $(REPONAME) prod -----"
 	docker push $(DOCKERREPO):$(COMMIT)
-	kubectl --context prod apply -f $(BUILDROOT)/k8s/prod/cmap_service.deployment.yml --record
+	kubectl --context prod apply -f $(BUILDROOT)/k8s/prod/cmap_service.deployment.yaml --record
 
 .PHONY: clean
 clean:
