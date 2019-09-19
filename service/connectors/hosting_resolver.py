@@ -6,6 +6,7 @@ from service.connectors.smdb import Ipam
 from service.connectors.subscriptions import SubscriptionsAPI
 from service.connectors.toolzilla import ToolzillaAPI
 from service.products.angelo import AngeloAPI
+from service.products.cndns import CNDNSAPI
 from service.products.diablo import DiabloAPI
 from service.products.go_central import GoCentralAPI
 from service.products.mwp_one import MWPOneAPI
@@ -40,6 +41,7 @@ class HostingProductResolver(object):
         Hence, giving preference to MWP 2.0 and GoCentral in case we have to loop through the product locators.
         """
         self.product_locators = OrderedDict([
+            ('CNDNS', CNDNSAPI(config)),
             ('MWP 2.0', MWPTwoAPI()),
             ('GoCentral', GoCentralAPI(config)),
             ('Vertigo', VertigoAPI(config)),
