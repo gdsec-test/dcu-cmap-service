@@ -19,6 +19,10 @@ class AppConfig(object):
     MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts/?domain='
     CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
 
+    CMAPSERVICE_APP = 'cmapservice.int'
+    WITHOUT_SSO = False
+    AD_GROUP = {'DCU-Phishstory'}
+
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
         self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)
@@ -60,6 +64,7 @@ class ProductionAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
+    CN_WHITELIST = ['cmapservice.int.godaddy.com']
 
     def __init__(self):
         super(ProductionAppConfig, self).__init__()
@@ -77,6 +82,7 @@ class OTEAppConfig(AppConfig):
     # Go Central OTE URL does not exist.  Using Test
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
+    CN_WHITELIST = ['cmapservice.int.ote-godaddy.com']
 
     def __init__(self):
         super(OTEAppConfig, self).__init__()
@@ -93,6 +99,7 @@ class DevelopmentAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.dev-godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
+    CN_WHITELIST = ['cmapservice.int.dev-godaddy.com']
 
     def __init__(self):
         super(DevelopmentAppConfig, self).__init__()
@@ -105,6 +112,11 @@ class LocalAppConfig(AppConfig):
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     SSO_URL = ''
+    SUBSCRIPTIONS_URL = ''
+    GOCENTRAL_URL = ''
+
+    WITHOUT_SSO = True
+    CN_WHITELIST = ['']
 
     def __init__(self):
         super(LocalAppConfig, self).__init__()

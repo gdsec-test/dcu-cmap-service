@@ -26,6 +26,12 @@ COPY ./logging.yaml ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.in
 COPY . /tmp
 RUN chown -R dcu:dcu /app
 
+# pip install private pips staged by Makefile
+RUN for entry in PyAuth; \
+    do \
+    pip3 install --compile "/tmp/private_pips/$entry"; \
+    done
+
 COPY trusted_certs/* /usr/local/share/ca-certificates/
 RUN update-ca-certificates && pip3 install -U cffi && pip3 install --compile /tmp && rm -rf /tmp/*
 

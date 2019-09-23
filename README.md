@@ -80,6 +80,7 @@ If you would like to run CMAP Service locally, you will need to specify the foll
 20. `ALEXA_ACCESS_KEY` (Access key for Alexa API)
 21. `CMAP_API_CERT` (Certificate for connecting to CRM SOAP API)
 22. `CMAP_API_KEY` (Key for connecting to CRM SOAP API)
+23. `WITHOUT_SSO` (flag is set to True for local environments. Defaults to False so as to avoid SSO redirect logic)
 
 CMAP Service can then be run locally by running `python run.py`
 

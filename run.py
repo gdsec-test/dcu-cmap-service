@@ -20,6 +20,7 @@ from service.connectors.subscriptions import SubscriptionsAPI
 from service.connectors.whois import WhoisQuery
 from service.graphql.schema import Query
 from service.persist.redis import RedisCache
+from service.utils.sso_helper import do_login
 from settings import config_by_name
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -44,6 +45,8 @@ config = config_by_name[os.getenv('sysenv', 'dev')]()
 
 redis_obj = RedisCache(config)
 app = Flask(__name__)
+# Set the secret key in Flask to be able to access the Session object
+app.config['SECRET_KEY'] = os.urandom(12).hex()
 
 '''
 Instantiate all of the helper classes that will be used by the resolves and pass them via the FlaskGraphQL context.
@@ -68,6 +71,7 @@ def health():
 
 
 @app.before_request
+@do_login
 def return_cached():
     if request.data:
         response = redis_obj.get(request.data)
@@ -77,7 +81,9 @@ def return_cached():
 
 @app.after_request
 def cache_response(response):
-    if request.data:
+    if response.status_code in [403, 401]:
+        return response
+    elif request.data:
         redis_obj.set(request.data, response.data)
     return response
 
