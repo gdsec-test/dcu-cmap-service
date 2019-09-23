@@ -76,6 +76,7 @@ class DomainQuery(graphene.ObjectType):
                 whois['os'] = host_info.get('os')
                 whois['product'] = host_info.get('product')
                 whois['guid'] = host_info.get('guid')
+                whois['container_id'] = host_info.get('container_id')
                 whois['shopper_id'] = host_info.get('shopper_id')
                 whois['hostname'] = host_info.get('hostname')
                 whois['ip'] = host_info.get('ip')

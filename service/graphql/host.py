@@ -8,6 +8,7 @@ class HostInfo(graphene.ObjectType):
     data_center = graphene.String(description='Name of DataCenter that our server is in')
     friendly_name = graphene.String(description='Friendly Name')
     guid = graphene.String(description='GUID for hosting account')
+    container_id = graphene.String(description='Container ID of hosting or server account, where applicable')
     brand = graphene.String(description='Hosting brand detected by Brand Detection')
     hosting_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
     hosting_company_name = graphene.String(description='Name of registrar or hosting provider')

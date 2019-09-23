@@ -62,6 +62,7 @@ class ToolzillaAPI(object):
                 guid = str(entry['AccountUid'][0])
                 shopper_id = str(entry['ShopperId'][0])
                 product = str(entry['ProductType'][0])
+                container_id = str(entry.get('containerId', [''])[0])
 
                 if product == 'wpaas':
                     return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Linux',
@@ -69,7 +70,7 @@ class ToolzillaAPI(object):
                 elif product == 'dhs':
                     return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Unable to locate',
                             'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
-                return {'guid': guid, 'shopper_id': shopper_id, 'product': product}
+                return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'container_id': container_id}
 
         except Exception as e:
             self._logger.error('Failed Toolzilla Lookup: {}'.format(e))

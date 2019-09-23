@@ -60,6 +60,7 @@ class HostingProductResolver(object):
         """
         dc = os = guid = hostname = created_date = data = host_shopper = None
         ip = self._retrieve_ip(domain)
+        container_id = ''
 
         # Extract the product information from Toolzilla, Subscriptions API, or IPAM
         tz_data = self.toolzilla_api.search_by_domain(domain)
@@ -94,7 +95,7 @@ class HostingProductResolver(object):
                     break
 
         response_dict = {'hostname': hostname, 'data_center': dc, 'os': os, 'product': product, 'ip': ip, 'guid': guid,
-                         'created_date': created_date, 'shopper_id': host_shopper}
+                         'container_id': container_id, 'created_date': created_date, 'shopper_id': host_shopper}
 
         if data:
             response_dict.update({
@@ -102,6 +103,7 @@ class HostingProductResolver(object):
                 'os': data.get('os') or os,
                 'product': data.get('product') or product,
                 'guid': data.get('guid') or guid,
+                'container_id': data.get('container_id') or container_id,
                 'shopper_id': data.get('shopper_id') or host_shopper,
                 'friendly_name': data.get('friendly_name'),
                 'created_date': data.get('created_date') or created_date,

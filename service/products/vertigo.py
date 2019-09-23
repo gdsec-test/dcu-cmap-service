@@ -25,6 +25,7 @@ class VertigoAPI(object):
 
                 return {
                     'guid': data.get('accountUid'),
+                    'container_id': data.get('id'),
                     'created_data': data.get('created'),
                     'friendly_name': data.get('friendlyName'),
                     'shopper_id': data.get('shopperId'),
