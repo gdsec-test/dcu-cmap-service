@@ -109,14 +109,14 @@ class LocalAppConfig(AppConfig):
     DB = 'local'
     DB_HOST = 'localhost'
 
+    SSO_URL = 'https://sso.godaddy.com'
+
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
-    SSO_URL = ''
-    SUBSCRIPTIONS_URL = ''
-    GOCENTRAL_URL = ''
-
-    WITHOUT_SSO = True
+    GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
+    SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['']
+    WITHOUT_SSO = True
 
     def __init__(self):
         super(LocalAppConfig, self).__init__()
