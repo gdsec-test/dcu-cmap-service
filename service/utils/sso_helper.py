@@ -4,8 +4,8 @@ from functools import wraps
 from urllib.parse import urlparse
 
 from flask import Response, redirect, request
-from gd_auth.token import AuthToken
 
+from gd_auth.token import AuthToken
 from settings import config_by_name
 
 # Creates logger settings
