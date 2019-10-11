@@ -2,15 +2,17 @@ import logging
 
 import requests
 
+from service.products.product_interface import Product
 
-class CNDNSAPI(object):
+
+class CNDNSAPI(Product):
     _headers = {'accept': 'application/json'}
 
     def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
         self._url = settings.CNDNS_URL
 
-    def locate(self, domain):
+    def locate(self, domain, **kwargs):
         """
         Given a domain, retrieve Orion related information in case of CNDNS domains.
         :param domain:

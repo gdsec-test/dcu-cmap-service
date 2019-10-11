@@ -2,8 +2,10 @@ import logging
 
 import requests
 
+from service.products.product_interface import Product
 
-class DiabloAPI(object):
+
+class DiabloAPI(Product):
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
@@ -11,10 +13,11 @@ class DiabloAPI(object):
         self.url = settings.DIABLO_URL
         self.auth = (settings.DIABLO_USER, settings.DIABLO_PASS)
 
-    def locate(self, domain):
+    def locate(self, domain, **kwargs):
         """
         Given a domain, retrieve the guid, shopperId, create date, IP address, etc. if associated with a Diablo product.
         :param domain:
+        :param kwargs:
         :return:
         """
         try:

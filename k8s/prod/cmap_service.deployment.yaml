@@ -77,6 +77,16 @@ spec:
                 secretKeyRef:
                   name: auth-alexa
                   key: username
+            - name: VPS4_USER
+              valueFrom:
+                secretKeyRef:
+                  name: auth-vps4-api
+                  key: vps4user
+            - name: VPS4_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: auth-vps4-api
+                  key: vps4pass
             - name: ANGELO_USER
               valueFrom:
                 secretKeyRef:

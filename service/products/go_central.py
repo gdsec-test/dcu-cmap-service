@@ -3,8 +3,10 @@ import logging
 
 import requests
 
+from service.products.product_interface import Product
 
-class GoCentralAPI(object):
+
+class GoCentralAPI(Product):
     _headers = {'Accept': 'application/json', 'Authorization': ''}
 
     def __init__(self, settings):
@@ -15,11 +17,12 @@ class GoCentralAPI(object):
         cert = (settings.CMAP_SERVICE_CERT, settings.CMAP_SERVICE_KEY)
         self._headers['Authorization'] = 'sso-jwt ' + self._get_jwt(cert)
 
-    def locate(self, domain):
+    def locate(self, domain, **kwargs):
         """
         This functions sole purpose use the available domains api to determine if a domain name is hosted with a
         gocentral hosting product.
-        :param: domain:
+        :param domain:
+        :param kwargs:
         :return: Dict with hosting info if hosted GoCentral, Or empty dict
         """
         '''

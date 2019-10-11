@@ -4,8 +4,10 @@ import socket
 
 import requests
 
+from service.products.product_interface import Product
 
-class AngeloAPI(object):
+
+class AngeloAPI(Product):
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
@@ -13,10 +15,11 @@ class AngeloAPI(object):
         self.url = settings.ANGELO_URL
         self.auth = (settings.ANGELO_USER, settings.ANGELO_PASS)
 
-    def locate(self, domain):
+    def locate(self, domain, **kwargs):
         """
         Given a domain, retrieve the guid, shopperId, and private label if associated with an Angelo product.
         :param domain:
+        :param kwargs:
         :return:
         """
 

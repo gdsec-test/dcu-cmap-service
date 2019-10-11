@@ -2,18 +2,21 @@ import logging
 
 import requests
 
+from service.products.product_interface import Product
 
-class MWPTwoAPI(object):
+
+class MWPTwoAPI(Product):
     _url = 'http://{domain}/__mwp2_check__'
 
     def __init__(self):
         self._logger = logging.getLogger(__name__)
 
-    def locate(self, domain):
+    def locate(self, domain, **kwargs):
         """
         This functions sole purpose use the available URL query to determine if a domain name is hosted with a MWP 2.0
         hosting product.  query url is http://example.com/__mwp2_check__
         :param domain:
+        :param kwargs:
         :return: True if hosted mwp 2.0, False if not, or if error
         """
 

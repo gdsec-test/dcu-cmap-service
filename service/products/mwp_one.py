@@ -2,8 +2,10 @@ import logging
 
 import requests
 
+from service.products.product_interface import Product
 
-class MWPOneAPI(object):
+
+class MWPOneAPI(Product):
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
@@ -11,11 +13,12 @@ class MWPOneAPI(object):
         self.url = settings.MWPONE_URL
         self.auth = (settings.MWP_ONE_USER, settings.MWP_ONE_PASS)
 
-    def locate(self, domain):
+    def locate(self, domain, **kwargs):
         """
         This functions sole purpose is to locate all data for a MWP 1.0 account to be placed into the data
         sub document of the incident's mongo document
         :param domain:
+        :param kwargs:
         :return:
         """
         response = {}

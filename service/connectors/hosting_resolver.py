@@ -12,6 +12,7 @@ from service.products.go_central import GoCentralAPI
 from service.products.mwp_one import MWPOneAPI
 from service.products.mwp_two import MWPTwoAPI
 from service.products.vertigo import VertigoAPI
+from service.products.vps4 import VPS4API
 from service.utils.hostname_parser import parse_hostname
 
 
@@ -47,7 +48,8 @@ class HostingProductResolver(object):
             ('Vertigo', VertigoAPI(config)),
             ('Diablo', DiabloAPI(config)),
             ('Plesk', AngeloAPI(config)),
-            ('MWP 1.0', MWPOneAPI(config))
+            ('MWP 1.0', MWPOneAPI(config)),
+            ('VPS4', VPS4API(config))
         ])
 
     def get_properties_for_domain(self, domain, shopper_id):
@@ -86,11 +88,11 @@ class HostingProductResolver(object):
                 dc, os, product = parse_hostname(hostname)
 
         if product in self.product_locators:
-            data = self.product_locators.get(product).locate(domain)
+            data = self.product_locators.get(product).locate(domain=domain, guid=guid, ip=ip)
 
         if not data:
             for product_locator in self.product_locators.values():
-                data = product_locator.locate(domain)
+                data = product_locator.locate(domain=domain, guid=guid, ip=ip)
                 if data:
                     break
 

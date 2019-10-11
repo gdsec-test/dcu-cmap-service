@@ -3,8 +3,10 @@ import socket
 
 import requests
 
+from service.products.product_interface import Product
 
-class VertigoAPI(object):
+
+class VertigoAPI(Product):
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
@@ -13,7 +15,8 @@ class VertigoAPI(object):
         self.auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
         self.cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
 
-    def locate(self, domain):
+    def locate(self, domain, **kwargs):
+
         try:
             ip = socket.gethostbyname(domain)
 

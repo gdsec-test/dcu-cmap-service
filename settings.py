@@ -22,6 +22,9 @@ class AppConfig(object):
     CMAPSERVICE_APP = 'cmapservice.int'
     WITHOUT_SSO = False
     AD_GROUP = {'DCU-Phishstory'}
+    VPS4_URLS = ['https://vps4.api.sin2.godaddy.com/api/vms',
+                 'https://vps4.api.ams3.godaddy.com/api/vms',
+                 'https://vps4.api.iad2.godaddy.com/api/vms']
 
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
@@ -45,6 +48,10 @@ class AppConfig(object):
         self.ANGELO_PASS = os.getenv('ANGELO_PASS', 'angelo_pass')
         self.MWP_ONE_USER = os.getenv('MWP_ONE_USER', 'mwp_one_user')
         self.MWP_ONE_PASS = os.getenv('MWP_ONE_PASS', 'mwp_one_pass')
+
+        # VPS4 User/Pass are creds for a DCU Service account in the DCU-PHISHSTORY AD Group
+        self.VPS4_USER = os.getenv('VPS4_USER', 'vps4user')
+        self.VPS4_PASS = os.getenv('VPS4_PASS', 'vps4pass')
 
         self.SMDB_USER = os.getenv('SMDB_USER', 'smdb_user')
         self.SMDB_PASS = os.getenv('SMDB_PASS', 'smdb_pass')
