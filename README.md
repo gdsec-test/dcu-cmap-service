@@ -104,13 +104,13 @@ Steps to run locally:
 
 ## Examples
 
-Curl basic hosting and registrar information
+Curl basic hosting and registrar information using CERT_JWT (view CN_WHITELIST in settings.py to obtain CN cert to use). Visit [this link](https://confluence.godaddy.com/display/ITSecurity/Accessing+Shopper+Locker+Service#AccessingShopperLockerService-ObtainaJWT) to view steps for requesting a cert JWT from a cert/key pair.
 ```
-curl -X POST -H 'Content-Type:application/graphql' 'https://cmapservice.int.godaddy.com/graphql' -d '{domainQuery(domain:"godaddy.com"){host{ hostingCompanyName ip } registrar{ registrarName domainCreateDate }}}'
+curl -X POST -H 'Content-Type:application/graphql' --header 'Accept: application/json' --header 'Authorization: sso-jwt CERT_JWT' 'https://cmapservice.int.godaddy.com/graphql' -d '{domainQuery(domain:"godaddy.com"){host{ hostingCompanyName ip } registrar{ registrarName domainCreateDate }}}'
 ```
 Output
 ```
-{"data":{"domainQuery":{"host":{"hostingCompanyName":"GoDaddy.com LLC","ip":"208.109.192.70"},"registrar":{"registrarName":"GoDaddy.com, LLC","domainCreateDate":"1999-03-02"}}}}
+{"data":{"domainQuery":{"host":{"hostingCompanyName":"GoDaddy.com LLC","ip":"208.109.192.70"},"registrar":{"registrarName":"GoDaddy.com LLC","domainCreateDate":"1999-03-02T00:00:00.000Z"}}}}
 ```
 
 Enter basic hosting and registrar query into web GUI
