@@ -86,43 +86,40 @@ class VPS4API(Product):
         ]
         '''
 
-        try:
-
-            query_dict = self._build_query_dict(ip, guid)
-
-            if query_dict.get('ipAddress') or query_dict.get('orionGuid'):
-
-                for datacenter_url in self._vps4_urls:
-                    datacenter_url = '{}?{}'.format(datacenter_url, urlencode(query_dict))
-                    dc_r = requests.get(datacenter_url, headers=self._headers)
+        query_dict = self._build_query_dict(ip, guid)
+        if query_dict.get('ipAddress') or query_dict.get('orionGuid'):
+            for dc, dc_url in self._vps4_urls.items():
+                try:
+                    dc_url = '{}?{}'.format(dc_url, urlencode(query_dict))
+                    dc_r = requests.get(dc_url, headers=self._headers)
                     if dc_r.status_code == 403 and dc_r.json().get('id') == 'MISSING_AUTHENTICATION':
-
                         fresh_jwt = self._get_jwt()
 
                         self._headers['Authorization'] = "sso-jwt " + fresh_jwt
-                        dc_r = requests.get(datacenter_url, headers=self._headers)
+                        dc_r = requests.get(dc_url, headers=self._headers)
 
                     dc_res = dc_r.json()
 
                     if not dc_res:
-                        self._logger.error('The details provided could not be found at {}'.format(datacenter_url))
+                        self._logger.error('The details provided could not be found at {}'.format(dc_url))
 
                     for vps_data in dc_res:
                         if (query_dict.get('ipAddress') == vps_data.get('primaryIpAddress', {}).get('ipAddress')) or \
                                 (query_dict.get('orionGuid') == vps_data.get('orionGuid')):
                             return {
                                 'product': 'VPS4',
+                                'data_center': dc,
                                 'guid': vps_data.get('orionGuid'),
                                 'created_date': vps_data.get('validOn'),
                                 'friendly_name': vps_data.get('name'),
                                 'os': vps_data.get('image').get('operatingSystem'),
                                 'ip': vps_data.get('primaryIpAddress').get('ipAddress')
                             }
-            else:
-                self._logger.error('Please provide a VPS4 IP Address or Guid')
 
-        except Exception as e:
-            self._logger.error('Failed VPS4 Lookup: {}'.format(e))
+                except Exception as e:
+                    self._logger.error('Failed VPS4 Lookup: {}'.format(e))
+        else:
+            self._logger.error('Please provide a VPS4 IP Address or Guid')
 
     def _get_jwt(self):
         """

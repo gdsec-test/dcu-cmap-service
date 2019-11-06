@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 from urllib.parse import quote
 
 
@@ -22,9 +23,10 @@ class AppConfig(object):
     CMAPSERVICE_APP = 'cmapservice.int'
     WITHOUT_SSO = False
     AD_GROUP = {'DCU-Phishstory'}
-    VPS4_URLS = ['https://vps4.api.sin2.godaddy.com/api/vms',
-                 'https://vps4.api.ams3.godaddy.com/api/vms',
-                 'https://vps4.api.iad2.godaddy.com/api/vms']
+
+    VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.iad2.godaddy.com/api/vms'),
+                             ('SIN2', 'https://vps4.api.sin2.godaddy.com/api/vms'),
+                             ('AMS3', 'https://vps4.api.ams3.godaddy.com/api/vms')])
 
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
