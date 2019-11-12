@@ -91,7 +91,6 @@ If you would like to run CMAP Service locally, you will need to specify the foll
 * `SMDB_PASS` (Password for SMDB WSDL)
 * `VERTIGO_USER` (User for Vertigo API)
 * `VERTIGO_PASS` (Password for Vertigo API)
-* `WITHOUT_SSO` (Set to `True` for local environments, so as to avoid SSO redirect logic. Defaults to `False`)
 
 Steps to run locally:
 1. Enter `docker-compose up` from a command line within the _cmap_service_ directory which contains the _docker-compose.yaml_ file
