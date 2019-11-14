@@ -67,7 +67,7 @@ class ToolzillaAPI(object):
                     return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'container_id': container_id}
                 elif product == 'wpaas':
                     return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Linux',
-                                'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
+                            'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
                 elif product == 'dhs':
                     return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Unable to locate',
                             'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
