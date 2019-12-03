@@ -65,7 +65,7 @@ class HostingProductResolver(object):
         container_id = ''
 
         # Extract the product information from Toolzilla, Subscriptions API, or IPAM
-        tz_data = self.toolzilla_api.search_by_domain(domain)
+        tz_data = self.toolzilla_api.search_by_domain(domain, ip)
         if tz_data:
             product = tz_data.get('product', '')
             product = self.product_mappers.get(product.lower() if product else '')

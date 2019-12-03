@@ -3,6 +3,7 @@ import logging
 from suds.client import Client
 
 from service.soap.request_transport import RequestsTransport
+from service.connectors.smdb import Ipam
 
 
 class ToolzillaAPI(object):
@@ -11,6 +12,7 @@ class ToolzillaAPI(object):
 
     def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
+        self._ipam = Ipam
 
         try:
             self.client = Client(self._wsdl, location=self._location,
@@ -22,7 +24,7 @@ class ToolzillaAPI(object):
         except Exception as e:
             self._logger.error('Unable to initialize WSDL to Toolzilla API: {}'.format(e))
 
-    def get_hostname_by_guid(self, guid):
+    def _get_hostname_by_guid(self, guid):
         """
         Queries the Toolzilla API for a GUID for a domain name.
         :param guid:
@@ -41,10 +43,11 @@ class ToolzillaAPI(object):
         finally:
             return hostname
 
-    def search_by_domain(self, domain):
+    def search_by_domain(self, domain, a_record):
         """
         For a given domain name, query Toolzilla to retrieve corresponding hosting guids, shopperIDs, and product.
-        :param domain:
+        :param domain: Domain being searched for, coolexample.com
+        :param a_record: A record of the domain being searched for, socket.gethostbyname(domain) completed in hosting_resolver
         :return:
         """
 
@@ -62,9 +65,11 @@ class ToolzillaAPI(object):
                 guid = str(entry['AccountUid'][0])
                 shopper_id = str(entry['ShopperId'][0])
                 product = str(entry['ProductType'][0])
-                if hasattr(entry, 'containerId'):
-                    container_id = str(entry['containerId'][0])
-                    return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'container_id': container_id}
+                hostname = self._get_hostname_by_guid(guid)
+                ips = self._ipam.get_ips_by_hostname(hostname)
+
+                if a_record not in ips:
+                    return None
                 elif product == 'wpaas':
                     return {'guid': guid, 'shopper_id': shopper_id, 'product': product, 'os': 'Linux',
                             'hostname': 'Unable to locate', 'data_center': 'Unable to locate'}
