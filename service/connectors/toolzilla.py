@@ -2,8 +2,8 @@ import logging
 
 from suds.client import Client
 
-from service.soap.request_transport import RequestsTransport
 from service.connectors.smdb import Ipam
+from service.soap.request_transport import RequestsTransport
 
 
 class ToolzillaAPI(object):
