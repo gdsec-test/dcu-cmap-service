@@ -18,18 +18,23 @@ class CNDNSAPI(Product):
         :param domain:
         :return:
         """
-
+        failure_msg = 'Failed CNDNS Lookup.'
         try:
             cnds_domains_url = self._url + 'domains/{}/account'.format(domain)
             r = requests.get(cnds_domains_url, headers=self._headers)
-            response = r.json()
-            for record in response.get('records'):
-                if record.get('orionGuid'):
-                    return {
-                        'guid': record.get('orionGuid'),
-                        'shopper_id': record.get('shopperId'),
-                        'product': 'WSBD'
-                    }
+            # To avoid running json() on a 404 response
+            if r.status_code == 200:
+                response = r.json()
+                for record in response.get('records'):
+                    if record.get('orionGuid'):
+                        return {
+                            'guid': record.get('orionGuid'),
+                            'shopper_id': record.get('shopperId'),
+                            'product': 'WSBD'
+                        }
+                self._logger.error('{} orionGuid not found'.format(failure_msg))
+            else:
+                self._logger.error('{} Call to API returned status code {}'.format(failure_msg, r.status_code))
 
         except Exception as e:
-            self._logger.error('Failed CNDNS Lookup. Details: {}'.format(e))
+            self._logger.error('{} Details: {}'.format(failure_msg, e))

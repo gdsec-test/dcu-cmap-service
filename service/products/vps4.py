@@ -9,6 +9,8 @@ from service.products.product_interface import Product
 
 class VPS4API(Product):
     _headers = {'Accept': 'application/json', 'Authorization': ''}
+    IP_STR = 'ipAddress'
+    GUID_STR = 'orionGuid'
 
     def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
@@ -23,16 +25,16 @@ class VPS4API(Product):
         query_dict = {'type': 'ACTIVE'}
 
         if ip:
-            query_dict['ipAddress'] = ip
+            query_dict[self.IP_STR] = ip
         if guid:
-            query_dict['orionGuid'] = guid
+            query_dict[self.GUID_STR] = guid
 
         return query_dict
 
     def locate(self, ip, guid, **kwargs):
         """
-        This function's sole purpose is to use the method's accepted parameters to determine if an IP, GUID, ServerID or
-        shopperID is hosted on a VPS4 product. IP or guid pulled from kwargs
+        This function's sole purpose is to use the method's accepted parameters to determine if an IP or GUID is
+            hosted on a VPS4 product. No values are pulled from kwargs
         :param ip:
         :param guid:
         :param kwargs:
@@ -44,9 +46,9 @@ class VPS4API(Product):
 
         [
           {
-            "vmId": "efbd1eec-23f4-5af6-a78b-901a2b300e5e",
+            "vmId": "a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0",
             "hfsVmId": 12345,
-            "orionGuid": "1f234ed5-6b78-99e0-1122-3445ebe60eb6",
+            "orionGuid": "a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0",
             "projectId": 1234,
             "spec": {
                 "serverType": {
@@ -68,8 +70,8 @@ class VPS4API(Product):
             },
             "primaryIpAddress": {
                 "ipAddressId": 12345,
-                "vmId": "efbd1eec-23f4-5af0-a67b-890a1b200e3e",
-                "ipAddress": "123.45.678.90",
+                "vmId": "a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0",
+                "ipAddress": "0.0.0.0",
                 "ipAddressType": "PRIMARY",
                 "pingCheckId": null,
                 "validOn": "2019-04-30T13:21:06.688121Z",
@@ -78,16 +80,16 @@ class VPS4API(Product):
             "validOn": "2019-04-30T13:20:25.262804Z",
             "canceled": "+292278994-08-16T23:00:00Z",
             "validUntil": "+292278994-08-16T23:00:00Z",
-            "hostname": "s123-45-678-90.secureserver.net",
+            "hostname": "a0a0-00-000-00.secureserver.net",
             "managedLevel": 0,
-            "backupJobId": "0f1d34c4-ff5c-67d-b89a-0d1234250d67",
+            "backupJobId": "a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0",
             "fullyManaged": false
             }
         ]
         '''
 
         query_dict = self._build_query_dict(ip, guid)
-        if query_dict.get('ipAddress') or query_dict.get('orionGuid'):
+        if query_dict.get(self.IP_STR) or query_dict.get(self.GUID_STR):
             for dc, dc_url in self._vps4_urls.items():
                 try:
                     dc_url = '{}?{}'.format(dc_url, urlencode(query_dict))
@@ -104,22 +106,25 @@ class VPS4API(Product):
                         self._logger.error('The details provided could not be found at {}'.format(dc_url))
 
                     for vps_data in dc_res:
-                        if (query_dict.get('ipAddress') == vps_data.get('primaryIpAddress', {}).get('ipAddress')) or \
-                                (query_dict.get('orionGuid') == vps_data.get('orionGuid')):
+                        # If vps_data isn't a dictionary, it causes the error: 'str' object has no attribute 'get'
+                        if not isinstance(vps_data, dict):
+                            continue
+                        if (query_dict.get(self.IP_STR) == vps_data.get('primaryIpAddress', {}).get(self.IP_STR)) or \
+                                (query_dict.get(self.GUID_STR) == vps_data.get(self.GUID_STR)):
                             return {
                                 'product': 'VPS4',
                                 'data_center': dc,
-                                'guid': vps_data.get('orionGuid'),
+                                'guid': vps_data.get(self.GUID_STR),
                                 'created_date': vps_data.get('validOn'),
                                 'friendly_name': vps_data.get('name'),
                                 'os': vps_data.get('image').get('operatingSystem'),
-                                'ip': vps_data.get('primaryIpAddress').get('ipAddress')
+                                'ip': vps_data.get('primaryIpAddress').get(self.IP_STR)
                             }
-
                 except Exception as e:
                     self._logger.error('Failed VPS4 Lookup: {}'.format(e))
+            self._logger.info('Not a VPS4 product')
         else:
-            self._logger.error('Please provide a VPS4 IP Address or Guid')
+            self._logger.error('A required VPS4 IP Address or Guid was NOT provided')
 
     def _get_jwt(self):
         """
@@ -127,7 +132,8 @@ class VPS4API(Product):
         :return:
         """
         try:
-            response = requests.post(self._sso_endpoint, data={'username': self._vps4_user, 'password': self._vps4_pass, 'realm': 'jomax'})
+            response = requests.post(self._sso_endpoint, data={'username': self._vps4_user,
+                                                               'password': self._vps4_pass, 'realm': 'jomax'})
             response.raise_for_status()
 
             body = json.loads(response.text)

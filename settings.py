@@ -76,7 +76,7 @@ class ProductionAppConfig(AppConfig):
     CN_WHITELIST = ['cmapservice.int.godaddy.com']
 
     def __init__(self):
-        super(ProductionAppConfig, self).__init__()
+        super().__init__()
 
 
 class OTEAppConfig(AppConfig):
@@ -94,7 +94,7 @@ class OTEAppConfig(AppConfig):
     CN_WHITELIST = ['cmapservice.int.ote-godaddy.com']
 
     def __init__(self):
-        super(OTEAppConfig, self).__init__()
+        super().__init__()
 
 
 class DevelopmentAppConfig(AppConfig):
@@ -111,7 +111,7 @@ class DevelopmentAppConfig(AppConfig):
     CN_WHITELIST = ['cmapservice.int.dev-godaddy.com']
 
     def __init__(self):
-        super(DevelopmentAppConfig, self).__init__()
+        super().__init__()
 
 
 class LocalAppConfig(AppConfig):
@@ -128,7 +128,7 @@ class LocalAppConfig(AppConfig):
     WITHOUT_SSO = True
 
     def __init__(self):
-        super(LocalAppConfig, self).__init__()
+        super().__init__()
         self.DBURL = 'mongodb://{}/{}'.format(self.DB_HOST, self.DB)
 
 

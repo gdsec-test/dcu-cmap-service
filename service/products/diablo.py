@@ -24,7 +24,7 @@ class DiabloAPI(Product):
             r = requests.get(self.url + domain, auth=self.auth, headers=self._headers, verify=False)
             returned_json = r.json()
 
-            if returned_json.get('data', []):
+            if returned_json.get('data'):
                 entry = returned_json.get('data', [{}])[0]
 
                 return {
@@ -35,7 +35,7 @@ class DiabloAPI(Product):
                     'os': 'Linux'
                 }
             else:
-                self._logger.error('Failed Diablo Lookup')
+                self._logger.error('No data value received from Diablo request')
 
         except Exception as e:
             self._logger.error('Failed Diablo Lookup: {}'.format(e))
