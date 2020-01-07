@@ -34,7 +34,7 @@ class HostingProductResolver(object):
     def __init__(self, config):
         self._logger = logging.getLogger(__name__)
         self.ipam = Ipam(config.SMDB_URL, config.SMDB_USER, config.SMDB_PASS)
-        self.toolzilla_api = ToolzillaAPI(config)
+        self.toolzilla_api = ToolzillaAPI(config, self.ipam)
         self.subscriptions_api = SubscriptionsAPI(config)
 
         """
