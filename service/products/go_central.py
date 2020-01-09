@@ -29,20 +29,23 @@ class GoCentralAPI(Product):
         Sample of partial GoCentral API Return.  More data is returned that could possibly be used in the future.
         Api Spec at https://websites.api.dev-godaddy.com/v2/docs/#/ for GET /v2/domains/{domain}/website
 
-        {'id': '9edafb08-0d94-45a6-a33b-e27c54993fe6',
-        'domainName': 'lorzio45.godaddysites.com',
-        'accountId': '32f811b3-af51-11e8-814e-3417ebe72595', # This is the GUID
+        {'id': 'a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0',
+        'domainName': 'a0a0a0a0.godaddysites.com',
+        'accountId': 'a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0', # This is the GUID
         'accountSource': 'orion',
         'shopperId': '123456789',
         'resellerId': 1,
         'type': 'gocentral',
-        'homepageId': '28e6dc92-3bec-438c-8d0d-75c251def48c',
+        'homepageId': 'a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0',
         'createDate': '2018-09-03T08:13:14.124Z',
         'updateDate': '2018-09-03T08:33:04.020Z',
         'status': 'active',
         ... ...
 
         '''
+
+        # To test in DEV/OTE, you'll need to return a hardcoded prod JWT from _get_jwt() and change the URL
+        #  to a production one
         try:
             r = requests.get(self._url.format(domain=domain), headers=self._headers)
             res = json.loads(r.text)
@@ -51,7 +54,7 @@ class GoCentralAPI(Product):
                             created_date=res.get('createDate'))
 
             else:
-                self._logger.debug('GoCentral API determined that {} is not a GoCentral domain'.format(domain))
+                self._logger.info('GoCentral API determined that {} is not a GoCentral domain'.format(domain))
 
         except Exception as e:
             self._logger.error('GoCentral API Exception for {}: msg:{}.'.format(domain, e))

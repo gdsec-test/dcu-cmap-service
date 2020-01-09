@@ -87,8 +87,8 @@ class ToolzillaAPI(object):
                     # If no guid was determined, then there is no useful information to return, so bail
                     return None
 
-                # If we're unable to determine any IPs for a host, then we will still return any values obtained, but
-                #  if the IPs are determined, the provided a_record must be contained within it, or return None
+                # If the call to get_ips_by_hostname() raised Exception, then we will still return any values obtained,
+                #  but if the IPs are determined, the provided a_record must be contained within it, or return None
                 if ips and a_record not in ips:
                     return None
                 elif payload.get('product') == 'wpaas':

@@ -101,6 +101,9 @@ class VPS4API(Product):
                         dc_r = requests.get(dc_url, headers=self._headers)
 
                     dc_res = dc_r.json()
+                    # dc_res will be {'id': 'INTERNAL_ERROR', 'message': 'An internal error occurred'} if
+                    #  you're not in a production env, as JWT's created on DEV/OTE wont work with a prod VPS endpoint.
+                    # In order to test VPS4 in dev or ote, you'll need to return a hardcoded prod JWT from _get_jwt
 
                     if not dc_res:
                         self._logger.error('The details provided could not be found at {}'.format(dc_url))
@@ -122,7 +125,7 @@ class VPS4API(Product):
                             }
                 except Exception as e:
                     self._logger.error('Failed VPS4 Lookup: {}'.format(e))
-            self._logger.info('Not a VPS4 product')
+            self._logger.info('Not determined to be a VPS4 product')
         else:
             self._logger.error('A required VPS4 IP Address or Guid was NOT provided')
 
