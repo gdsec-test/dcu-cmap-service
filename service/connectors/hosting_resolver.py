@@ -28,7 +28,8 @@ class HostingProductResolver(object):
         'mwp2': 'MWP 2.0',
         'wsb': 'GoCentral',
         'wst': 'Website Tonight',
-        'plesk': 'Plesk'
+        'plesk': 'Plesk',
+        'sharedhosting': '4GH'
     }
 
     def __init__(self, config):
@@ -60,9 +61,8 @@ class HostingProductResolver(object):
         :param shopper_id:
         :return:
         """
-        dc = os = guid = hostname = created_date = data = host_shopper = None
+        created_date = data = dc = guid = hostname = host_shopper = os = product = None
         ip = self._retrieve_ip(domain)
-        container_id = ''
 
         # Extract the product information from Toolzilla, Subscriptions API, or IPAM
         tz_data = self.toolzilla_api.search_by_domain(domain, ip)
@@ -85,7 +85,11 @@ class HostingProductResolver(object):
             else:
                 ipam = self._query_ipam(ip)
                 hostname = getattr(ipam, 'HostName', None)
-                dc, os, product = parse_hostname(hostname)
+                if hostname:
+                    dc, os, product = parse_hostname(hostname)
+                else:
+                    # Useful for parked pages: "PHX3 - ParkWeb PodA - Server Loopbacks"
+                    hostname = getattr(ipam, 'Description', None)
 
         if product in self.product_locators:
             data = self.product_locators.get(product).locate(domain=domain, guid=guid, ip=ip)
@@ -97,18 +101,18 @@ class HostingProductResolver(object):
                     break
 
         response_dict = {'hostname': hostname, 'data_center': dc, 'os': os, 'product': product, 'ip': ip, 'guid': guid,
-                         'container_id': container_id, 'created_date': created_date, 'shopper_id': host_shopper}
+                         'created_date': created_date, 'shopper_id': host_shopper}
 
-        if data:
+        if data and isinstance(data, dict):
             response_dict.update({
-                'data_center': data.get('data_center') or dc,
-                'os': data.get('os') or os,
-                'product': data.get('product') or product,
-                'guid': data.get('guid') or guid,
-                'container_id': data.get('container_id') or container_id,
-                'shopper_id': data.get('shopper_id') or host_shopper,
+                'data_center': data.get('data_center', dc),
+                'os': data.get('os', os),
+                'product': data.get('product', product),
+                'guid': data.get('guid', guid),
+                'container_id': data.get('container_id'),
+                'shopper_id': data.get('shopper_id', host_shopper),
                 'friendly_name': data.get('friendly_name'),
-                'created_date': data.get('created_date') or created_date,
+                'created_date': data.get('created_date', created_date),
                 'private_label_id': data.get('private_label_id'),
                 'account_id': data.get('account_id')
             })
