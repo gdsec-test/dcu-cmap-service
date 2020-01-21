@@ -1,5 +1,5 @@
 ---
-apiVersion: "extensions/v1beta1"
+apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
   name: "cmap-service-redis"
@@ -8,6 +8,9 @@ metadata:
     app: "cmap-service-redis"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: "cmap-service-redis"
   template:
     metadata:
       labels:
