@@ -20,6 +20,10 @@ spec:
       imagePullSecrets:
         -
           name: "dcu-artifactory-creds"
+      hostAliases:
+        - ip: "10.33.199.15"
+          hostnames:
+            - "crmclient-api.prod.phx3.int.godaddy.com"
       containers:
         -
           name: "cmap-service"
