@@ -84,13 +84,13 @@ def get_tld_by_domain_name(domain_name):
             domain_object = tld.get_tld(domain_name, as_object=True)
             tld_domain = domain_object.tld
         except Exception as e:
-            _logger.warning('Error updating TLD file for domain {} : {}. Retrying'.format(domain_name, e))
-            tld.update_tld_names()
-
-            # Clearing out the global tld_names variable from tld to force it to update
-            tld.utils.tld_names = []
             # Try again
             try:
+                _logger.warning('Error updating TLD file for domain {} : {}. Retrying'.format(domain_name, e))
+                tld.update_tld_names()
+
+                # Clearing out the global tld_names variable from tld to force it to update
+                tld.utils.tld_names = []
                 tld_domain = tld.get_tld(domain_name)
             except Exception as e:
                 _logger.warning('Retry Error updating TLD file for domain {} : {}.'.format(domain_name, e))

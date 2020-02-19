@@ -44,6 +44,8 @@ class CRMClientAPI(object):
             if not shopper_id:
                 raise ValueError('Blank shopper id was provided')
 
+            self._logger.info('Retrieving shopper portfolio from CRM for {}'.format(shopper_id))
+            
             redis_record_key = '{}-portfolio_info'.format(shopper_id)
             query_dict = self._redis.get(redis_record_key)
 

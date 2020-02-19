@@ -96,6 +96,8 @@ class RegDbAPI(object):
         :return:
         '''
 
+        self._logger.info('Retrieving shopper id from RegDB for {}'.format(domain_name_as_provided))
+
         # In the event that we were provided a sub-domain name as opposed to a tld
         domain_name = get_tld_by_domain_name(domain_name_as_provided)
 
