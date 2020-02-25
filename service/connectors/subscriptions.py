@@ -137,6 +137,10 @@ class SubscriptionsAPI(object):
         ......
 
         '''
+        subscriptions = []
+        if not shopper_id:
+            return subscriptions
+
         # Page size represents the number of subscriptions that are to be retrieved in one call.
         page_size = 1000
         headers = {'content-type': 'application/json', 'X-Shopper-Id': shopper_id}
@@ -149,7 +153,6 @@ class SubscriptionsAPI(object):
         '''
         query_url = '{}?{}'.format(self._url, urlencode(query_params, doseq=True))
 
-        subscriptions = []
         try:
             while True:
                 r = requests.get(query_url, headers=headers, cert=self._cert)

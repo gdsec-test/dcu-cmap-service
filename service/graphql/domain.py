@@ -52,6 +52,7 @@ class DomainQuery(graphene.ObjectType):
     api_reseller = graphene.Field(APIReseller, description='API Reseller Information for Provided Domain Name')
     blacklist = graphene.Boolean(description='Domain Name Blacklist Status - Do Not Suspend!')
     domain = graphene.String(description='Domain Name from DomainQuery')
+    shopper_id = graphene.String(description='Shopper ID from DomainQuery')
     domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
     host = graphene.Field(HostInfo, description='Hosting Information for Provided Domain Name')
     registrar = graphene.Field(RegistrarInfo, description='Registrar Information for Provided Domain Name')
@@ -62,13 +63,12 @@ class DomainQuery(graphene.ObjectType):
                                       description='List of SSL Product Information for Provided Domain Name')
 
     def resolve_host(self, info):
-        shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
-        if hasattr(shopper_id, 'decode'):
-            shopper_id = shopper_id.decode()
+        if hasattr(self.shopper_id, 'decode'):
+            self.shopper_id = self.shopper_id.decode()
 
         whois = info.context.get('bd').get_hosting_info(self.domain)
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
-            host_info = info.context.get('ipam').get_properties_for_domain(self.domain, shopper_id)
+            host_info = info.context.get('ipam').get_properties_for_domain(self.domain, self.shopper_id)
             if type(host_info) is dict:
                 whois['data_center'] = host_info.get('data_center')
                 whois['created_date'] = host_info.get('created_date')
@@ -84,11 +84,11 @@ class DomainQuery(graphene.ObjectType):
                 whois['private_label_id'] = host_info.get('private_label_id')
 
         vip = {}
-        shopper_id = whois.get('shopper_id')
-        if shopper_id:
-            vip.update(info.context.get('crm').get_shopper_portfolio_information(shopper_id))
+        host_shopper = whois.get('shopper_id')
+        if host_shopper:
+            vip.update(info.context.get('crm').get_shopper_portfolio_information(host_shopper))
             # Query the blacklist, whose entities never get suspended
-            vip['blacklist'] = info.context.get('vip').is_blacklisted(shopper_id)
+            vip['blacklist'] = info.context.get('vip').is_blacklisted(host_shopper)
 
         host_obj = HostInfo(**whois)
         host_obj.vip = ShopperProfile(**vip)
@@ -105,26 +105,25 @@ class DomainQuery(graphene.ObjectType):
         return APIReseller(**parent_child)
 
     def resolve_shopper_info(self, info):
-        active_shopper = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
-        if hasattr(active_shopper, 'decode'):
-            active_shopper = active_shopper.decode()
+        if hasattr(self.shopper_id, 'decode'):
+            self.shopper_id = self.shopper_id.decode()
 
         shopper_client = info.context.get('shopper')
-        extra_data = shopper_client.get_shopper_by_shopper_id(active_shopper, ['shopper_create_date',
-                                                                               'shopper_first_name',
-                                                                               'shopper_email',
-                                                                               'shopper_last_name',
-                                                                               'shopper_phone_work',
-                                                                               'shopper_phone_work_ext',
-                                                                               'shopper_phone_home',
-                                                                               'shopper_phone_mobile',
-                                                                               'shopper_address_1',
-                                                                               'shopper_address_2',
-                                                                               'shopper_city',
-                                                                               'shopper_state',
-                                                                               'shopper_postal_code',
-                                                                               'shopper_country'])
-        return ShopperByDomain(shopper_id=active_shopper, **extra_data)
+        extra_data = shopper_client.get_shopper_by_shopper_id(self.shopper_id, ['shopper_create_date',
+                                                                                'shopper_first_name',
+                                                                                'shopper_email',
+                                                                                'shopper_last_name',
+                                                                                'shopper_phone_work',
+                                                                                'shopper_phone_work_ext',
+                                                                                'shopper_phone_home',
+                                                                                'shopper_phone_mobile',
+                                                                                'shopper_address_1',
+                                                                                'shopper_address_2',
+                                                                                'shopper_city',
+                                                                                'shopper_state',
+                                                                                'shopper_postal_code',
+                                                                                'shopper_country'])
+        return ShopperByDomain(shopper_id=self.shopper_id, **extra_data)
 
     def resolve_blacklist(self, info):
         return info.context.get('vip').is_blacklisted(self.domain)
@@ -138,19 +137,17 @@ class DomainQuery(graphene.ObjectType):
         return domain
 
     def resolve_security_subscription(self, info):
-        shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
-        if hasattr(shopper_id, 'decode'):
-            shopper_id = shopper_id.decode()
+        if hasattr(self.shopper_id, 'decode'):
+            self.shopper_id = self.shopper_id.decode()
 
-        sucuri_product = info.context.get('subscriptions').get_sucuri_subscriptions(shopper_id, self.domain)
+        sucuri_product = info.context.get('subscriptions').get_sucuri_subscriptions(self.shopper_id, self.domain)
         return SecuritySubscription(**{'sucuri_product': sucuri_product})
 
     def resolve_ssl_subscriptions(self, info):
-        shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(self.domain)
-        if hasattr(shopper_id, 'decode'):
-            shopper_id = shopper_id.decode()
+        if hasattr(self.shopper_id, 'decode'):
+            self.shopper_id = self.shopper_id.decode()
 
-        ssl_subscriptions = info.context.get('subscriptions').get_ssl_subscriptions(shopper_id, self.domain)
+        ssl_subscriptions = info.context.get('subscriptions').get_ssl_subscriptions(self.shopper_id, self.domain)
         return [SSLSubscription(**{'cert_common_name': ssl_subscription.get('cert_common_name'),
                                    'cert_type': ssl_subscription.get('cert_type'),
                                    'created_at': ssl_subscription.get('created_at'),

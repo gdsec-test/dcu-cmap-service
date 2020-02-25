@@ -36,8 +36,12 @@ class RegDbAPI(object):
         :param shopper_id:
         :return:
         '''
+        self._logger.info('Retrieving domain count from RegDB for shopper {}'.format(shopper_id))
         redis_key = '{}-domain_count'.format(shopper_id)
         query_value = None
+
+        if not shopper_id:
+            return query_value
 
         try:
             query_value = self._redis.get(redis_key)
@@ -62,12 +66,17 @@ class RegDbAPI(object):
         :param domain_name_as_provided:
         :return:
         '''
+        self._logger.info('Retrieving parent child info from RegDB for {}'.format(domain_name_as_provided))
+
         # In the event that we were provided a sub-domain name as opposed to a tld
         domain_name = get_tld_by_domain_name(domain_name_as_provided)
-
         # Check redis cache for parent/child api reseller info
         redis_key = '{}-reseller_parent_child'.format(domain_name)
+
         query_value = dict(parent=None, child=None)
+
+        if not domain_name:
+            return query_value
 
         try:
             query_value = self._redis.get(redis_key)
@@ -95,14 +104,15 @@ class RegDbAPI(object):
         :param domain_name_as_provided:
         :return:
         '''
-
         self._logger.info('Retrieving shopper id from RegDB for {}'.format(domain_name_as_provided))
 
         # In the event that we were provided a sub-domain name as opposed to a tld
         domain_name = get_tld_by_domain_name(domain_name_as_provided)
-
         redis_key = '{}-shopper_id_by_domain'.format(domain_name)
         query_value = None
+
+        if not domain_name:
+            return query_value
 
         try:
             query_value = self._redis.get(redis_key)
@@ -134,6 +144,9 @@ class RegDbAPI(object):
         '''
         redis_key = '{}-domain_list_by_shopper'.format(shopper_id)
         query_value = None
+
+        if not shopper_id:
+            return query_value
 
         try:
             query_value = self._redis.get(redis_key).decode()

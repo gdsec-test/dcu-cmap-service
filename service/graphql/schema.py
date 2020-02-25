@@ -20,7 +20,9 @@ class Query(graphene.ObjectType):
             raise ValueError('Invalid domain string provided')
         if whois.is_ip(domain):
             domain = whois.get_domain_from_ip(domain)
-        return DomainQuery(domain=domain)
+
+        shopper_id = info.context.get('regdb').get_shopper_id_by_domain_name(domain)
+        return DomainQuery(domain=domain, shopper_id=shopper_id)
 
     def resolve_shopper_query(self, info, id):
         if id is None or len(id) < 1:
