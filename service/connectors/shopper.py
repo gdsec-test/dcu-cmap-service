@@ -32,6 +32,7 @@ class ShopperAPI(object):
             if not shopper_id:
                 raise ValueError('Blank shopper id was provided')
 
+            self._logger.info('Retrieving additional info for shopper {} from Shopper API'.format(shopper_id))
             req_val = requests.get(self._url.format(shopper_id), params=self._params, auth=self._auth, cert=self._cert)
 
             if type(req_val) is not Response:
@@ -42,6 +43,7 @@ class ShopperAPI(object):
                 raise ValueError('Response from cmap proxy: {}'.format(req_val.content))
 
             shopper_data = json.loads(req_val.text)
+            self._logger.info('Successfully retrieved shopper data for shopper {} from Shopper API'.format(shopper_id))
 
             if self._created_key in shopper_data:
                 # Change the format of the date string
