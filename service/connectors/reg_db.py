@@ -12,7 +12,7 @@ class RegDbAPI(object):
     with GoDaddy. Functions include getting domain counts, determining API Reseller, finding shoppers associated with
     a given domain name, etc.
     '''
-    _location = 'https://dsweb.cmap.proxy.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
+    _location = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     _wsdl = _location + '?Handler=GenRegDBWebSvcWSDL'
     _redis_key = 'result'
 
@@ -23,10 +23,7 @@ class RegDbAPI(object):
         try:
             self._client = Client(self._wsdl, location=self._location,
                                   headers=RequestsTransport.get_soap_headers(),
-                                  transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
-                                                              password=settings.CMAP_PROXY_PASS,
-                                                              cert=settings.CMAP_PROXY_CERT,
-                                                              key=settings.CMAP_PROXY_KEY))
+                                  transport=RequestsTransport())
         except Exception as e:
             self._logger.error('Failed REG DB Client Init: {}'.format(e))
 
