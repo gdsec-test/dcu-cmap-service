@@ -43,7 +43,6 @@ class ShopperAPI(object):
                 raise ValueError('Response from cmap proxy: {}'.format(req_val.content))
 
             shopper_data = json.loads(req_val.text)
-            self._logger.info('Successfully retrieved shopper data for shopper {} from Shopper API'.format(shopper_id))
 
             if self._created_key in shopper_data:
                 # Change the format of the date string

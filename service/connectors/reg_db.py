@@ -48,7 +48,6 @@ class RegDbAPI(object):
                 if doc.find('.//*[@domaincount]') is not None:
                     query_value = doc.find('.//*[@domaincount]').get('domaincount')
 
-                self._logger.info('Successfully retrieved domain count : {} for shopper {}'.format(query_value, shopper_id))
                 self._redis.set(redis_key, query_value)
             else:
                 query_value = query_value.decode()
@@ -89,7 +88,6 @@ class RegDbAPI(object):
                     query_value = dict(parent=doc_record.find('PARENT_SHOPPER_ID').text,
                                        child=doc_record.find('CHILD_SHOPPER_ID').text)
 
-                self._logger.info('Successfully retrieved parent child info : {} for domain {}'.format(query_value, domain_name))
                 self._redis.set(redis_key, json.dumps({self._redis_key: query_value}))
             else:
                 query_value = json.loads(query_value).get(self._redis_key)
@@ -127,8 +125,6 @@ class RegDbAPI(object):
                     return None
 
                 query_value = doc.find('RECORDSET').find('RECORD').find('SHOPPER_ID').text
-
-                self._logger.info('Successfully retrieved shopperId : {} for domain {}'.format(query_value, domain_name))
                 self._redis.set(redis_key, query_value)
             else:
                 query_value = query_value.decode()

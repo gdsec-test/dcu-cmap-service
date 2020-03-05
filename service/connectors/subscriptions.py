@@ -13,6 +13,7 @@ class SubscriptionsAPI(object):
         self._logger = logging.getLogger(__name__)
         self._url = config.SUBSCRIPTIONS_URL
         self._cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
+        self._blacklist = config.SUBSCRIPTIONS_BLACKLIST
 
     def get_hosting_subscriptions(self, shopper_id, domain):
         """
@@ -72,8 +73,16 @@ class SubscriptionsAPI(object):
         :param: domain:
         :return: List of dicts(s) with ssl subscription info if there are any ssl product(s) associated with the domain
         """
-        subscriptions = self._get_subscriptions(shopper_id, ['sslCerts'])
         ssl_subscriptions = []
+        '''
+        Check to ensure that the call to retrieve ssl certs from the Subscriptions API is
+        bypassed in case of blacklisted shoppers.
+        '''
+        if shopper_id in self._blacklist:
+            self._logger.info('Bypassing Subscriptions API call to retrieve ssl certs for blacklisted shopper: {}'.format(shopper_id))
+            return ssl_subscriptions
+
+        subscriptions = self._get_subscriptions(shopper_id, ['sslCerts'])
         for subscription in subscriptions:
             label = subscription.get('label').lower() if subscription.get('label') else ""
             if subscription.get('status') in self.valid_subscription_statuses and re.search(domain, label) \
@@ -142,7 +151,7 @@ class SubscriptionsAPI(object):
             return subscriptions
 
         # Page size represents the number of subscriptions that are to be retrieved in one call.
-        page_size = 1000
+        page_size = 2000
         headers = {'content-type': 'application/json', 'X-Shopper-Id': shopper_id}
         query_params = {'productGroupKeys': product_group_keys, 'offset': 0, 'limit': page_size}
 

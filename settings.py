@@ -28,6 +28,8 @@ class AppConfig(object):
                              ('SIN2', 'https://vps4.api.sin2.godaddy.com/api/vms'),
                              ('AMS3', 'https://vps4.api.ams3.godaddy.com/api/vms')])
 
+    SUBSCRIPTIONS_BLACKLIST = {'102704532'}
+
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
         self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)
