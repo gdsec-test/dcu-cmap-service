@@ -35,5 +35,8 @@ RUN for entry in PyAuth; \
 COPY trusted_certs/* /usr/local/share/ca-certificates/
 RUN update-ca-certificates && pip3 install -U cffi && pip3 install --compile /tmp && rm -rf /tmp/*
 
+# Chown Public Suffix list so we can update it
+RUN chown -R dcu:dcu /usr/lib/python3.6/site-packages/tld/res
+
 WORKDIR /app
 ENTRYPOINT ["/app/runserver.sh"]
