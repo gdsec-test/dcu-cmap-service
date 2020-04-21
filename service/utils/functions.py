@@ -72,7 +72,13 @@ def return_expected_dict_due_to_exception(the_container, the_keys):
     return the_container
 
 
-def get_tld_by_domain_name(domain_name):
+def get_fld_by_domain_name(domain_name):
+    """
+    Returns the free level domain given a domain name or subdomain name.
+    ie: example.com will return example.com AND subdomain.example.co.uk will return example.co.uk
+    :param domain_name: string representing domain or subdomain
+    :return: string representing the free level domain
+    """
     if isinstance(domain_name, bytes):
         domain_name = domain_name.decode()
 
@@ -81,8 +87,7 @@ def get_tld_by_domain_name(domain_name):
         try:
             # TLD expects to work on a domain name starting with http://
             domain_name = 'http://' + domain_name if domain_name[:7] != 'http://' else domain_name
-            domain_object = tld.get_tld(domain_name, as_object=True)
-            tld_domain = domain_object.tld
+            fld = tld.get_tld(domain_name, as_object=True).fld
         except Exception as e:
             # Try again
             try:
@@ -90,10 +95,10 @@ def get_tld_by_domain_name(domain_name):
                 tld.update_tld_names()
 
                 # Clearing out the global tld_names variable from tld to force it to update
-                tld.utils.tld_names = []
-                tld_domain = tld.get_tld(domain_name)
+                tld.utils.tld_names = {}
+                fld = tld.get_tld(domain_name).fld
             except Exception as e:
                 _logger.warning('Retry Error updating TLD file for domain {} : {}.'.format(domain_name, e))
                 return None
 
-        return tld_domain
+        return fld

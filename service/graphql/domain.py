@@ -8,7 +8,7 @@ from service.graphql.shopper import (APIReseller, ShopperByDomain,
                                      ShopperProfile)
 from service.graphql.ssl import SSLSubscription
 from service.graphql.sucuri import SecuritySubscription
-from service.utils.functions import get_tld_by_domain_name
+from service.utils.functions import get_fld_by_domain_name
 
 
 class StatusInfo(graphene.Interface):
@@ -96,7 +96,7 @@ class DomainQuery(graphene.ObjectType):
 
     def resolve_registrar(self, info):
         # If we were given a domain with a subdomain, request registrar information for just the domain.tld
-        domain = get_tld_by_domain_name(self.domain)
+        domain = get_fld_by_domain_name(self.domain)
         whois = info.context.get('bd').get_registrar_info(domain)
         return RegistrarInfo(**whois)
 

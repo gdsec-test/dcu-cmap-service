@@ -53,15 +53,15 @@ class TestConvertStringDateToMongoFormat:
 class TestGetTLDbyDomainName:
     def test_get_tld_by_domain_name_protocol(self):
         domain_name = 'http://this.should.pass.com'
-        response = service.utils.functions.get_tld_by_domain_name(domain_name)
+        response = service.utils.functions.get_fld_by_domain_name(domain_name)
         assert_equals(response, 'pass.com')
 
     def test_get_tld_by_domain_name_no_protocol(self):
-        domain_name = 'another.test.com'
-        response = service.utils.functions.get_tld_by_domain_name(domain_name)
-        assert_equals(response, 'test.com')
+        domain_name = 'this.should.pass.com'
+        response = service.utils.functions.get_fld_by_domain_name(domain_name)
+        assert_equals(response, 'pass.com')
 
     def test_get_tld_by_domain_name_bad(self):
         domain_name = 'fake.tld.ccc'
-        response = service.utils.functions.get_tld_by_domain_name(domain_name)
+        response = service.utils.functions.get_fld_by_domain_name(domain_name)
         assert_is_none(response)

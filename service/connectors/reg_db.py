@@ -3,7 +3,7 @@ import logging
 import xml.etree.ElementTree as ET
 
 from service.soap.request_transport import RequestsTransport
-from service.utils.functions import get_tld_by_domain_name
+from service.utils.functions import get_fld_by_domain_name
 
 
 class RegDbAPI(object):
@@ -66,7 +66,7 @@ class RegDbAPI(object):
         self._logger.info('Retrieving parent child info from RegDB for {}'.format(domain_name_as_provided))
 
         # In the event that we were provided a sub-domain name as opposed to a tld
-        domain_name = get_tld_by_domain_name(domain_name_as_provided)
+        domain_name = get_fld_by_domain_name(domain_name_as_provided)
         # Check redis cache for parent/child api reseller info
         redis_key = '{}-reseller_parent_child'.format(domain_name)
 
@@ -105,7 +105,7 @@ class RegDbAPI(object):
         self._logger.info('Retrieving shopper id from RegDB for {}'.format(domain_name_as_provided))
 
         # In the event that we were provided a sub-domain name as opposed to a tld
-        domain_name = get_tld_by_domain_name(domain_name_as_provided)
+        domain_name = get_fld_by_domain_name(domain_name_as_provided)
         redis_key = '{}-shopper_id_by_domain'.format(domain_name)
         query_value = None
 
