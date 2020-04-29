@@ -36,13 +36,14 @@ class SubscriptionsAPI(object):
                                     'wst'           # websiteBuilder
                                     }
 
-        subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
+        subscriptions = self._get_subscriptions(shopper_id, product_group_keys, domain)
 
         for subscription in subscriptions:
             label = subscription.get('label').lower() if subscription.get('label') else ""
             namespace = subscription.get('product', {}).get('namespace')
 
-            if subscription.get('status') in self.valid_subscription_statuses and self._check_label(label, domain, namespace):
+            if subscription.get('status') in self.valid_subscription_statuses and self._check_label(label, domain,
+                                                                                                    namespace):
                 if namespace in handled_hosting_products:
                     return subscription
         return {}
@@ -56,12 +57,11 @@ class SubscriptionsAPI(object):
         :return: List with sucuri subscription info if there are any sucuri product(s) associated with the domain name
         """
         product_group_keys = ['websiteSecurity']
-        subscriptions = self._get_subscriptions(shopper_id, product_group_keys)
+        subscriptions = self._get_subscriptions(shopper_id, product_group_keys, domain)
         security_subscription = []
         for subscription in subscriptions:
-            label = subscription.get('label').lower() if subscription.get('label') else ""
-            if subscription.get('status') in self.valid_subscription_statuses and label == domain \
-                    and subscription.get('product', {}).get('productGroupKey') == 'websiteSecurity':
+            if subscription.get('status') in self.valid_subscription_statuses and subscription.get('product', {}).get(
+                    'productGroupKey') == 'websiteSecurity':
                 security_subscription.append(subscription.get('product', {}).get('label'))
         return security_subscription
 
@@ -73,22 +73,23 @@ class SubscriptionsAPI(object):
         :param: domain:
         :return: List of dicts(s) with ssl subscription info if there are any ssl product(s) associated with the domain
         """
+        product_group_keys = ['sslCerts']
         ssl_subscriptions = []
         '''
         Check to ensure that the call to retrieve ssl certs from the Subscriptions API is
         bypassed in case of blacklisted shoppers.
         '''
         if shopper_id in self._blacklist:
-            self._logger.info('Bypassing Subscriptions API call to retrieve ssl certs for blacklisted shopper: {}'.format(shopper_id))
+            self._logger.info(
+                'Bypassing Subscriptions API call to retrieve ssl certs for blacklisted shopper: {}'.format(shopper_id))
             return ssl_subscriptions
 
-        subscriptions = self._get_subscriptions(shopper_id, ['sslCerts'])
+        subscriptions = self._get_subscriptions(shopper_id, product_group_keys, domain)
         for subscription in subscriptions:
-            label = subscription.get('label').lower() if subscription.get('label') else ""
-            if subscription.get('status') in self.valid_subscription_statuses and re.search(domain, label) \
-                    and subscription.get('product', {}).get('productGroupKey') == 'sslCerts':
+            if subscription.get('status') in self.valid_subscription_statuses and subscription.get('product', {}).get(
+                    'productGroupKey') == 'sslCerts':
                 ssl_subscription = {
-                    'cert_common_name': label,
+                    'cert_common_name': domain,
                     'cert_type': subscription.get('product').get('label'),
                     'created_at': subscription.get('createdAt'),
                     'expires_at': subscription.get('expiresAt')
@@ -96,12 +97,13 @@ class SubscriptionsAPI(object):
                 ssl_subscriptions.append(ssl_subscription)
         return ssl_subscriptions
 
-    def _get_subscriptions(self, shopper_id, product_group_keys):
+    def _get_subscriptions(self, shopper_id, product_group_keys, domain):
         """
         Uses the Subscriptions API to retrieve the subscriptions associated with a particular shopper
         and product groups.
         :param: shopper_id:
         :param: product_group_keys:
+        :param: domain:
         :return: List with all the subscriptions that belong to the shopper.
         """
         '''
@@ -153,7 +155,7 @@ class SubscriptionsAPI(object):
         # Page size represents the number of subscriptions that are to be retrieved in one call.
         page_size = 2000
         headers = {'content-type': 'application/json', 'X-Shopper-Id': shopper_id}
-        query_params = {'productGroupKeys': product_group_keys, 'offset': 0, 'limit': page_size}
+        query_params = {'productGroupKeys': product_group_keys, 'label': domain, 'offset': 0, 'limit': page_size}
 
         '''
         The doseq parameter in urlencode, when True, converts each sequence element in a sequence (list)
