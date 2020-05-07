@@ -35,7 +35,7 @@ class DiabloAPI(Product):
                     'os': 'Linux'
                 }
             else:
-                self._logger.error('No data value received from Diablo request')
+                self._logger.info('No data value received from Diablo request')
 
         except Exception as e:
             self._logger.error('Failed Diablo Lookup: {}'.format(e))

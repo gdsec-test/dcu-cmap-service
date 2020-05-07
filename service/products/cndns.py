@@ -32,9 +32,9 @@ class CNDNSAPI(Product):
                             'shopper_id': record.get('shopperId'),
                             'product': 'WSBD'
                         }
-                self._logger.error('{} orionGuid not found'.format(failure_msg))
+                self._logger.info('{} orionGuid not found'.format(failure_msg))
             else:
-                self._logger.error('{} Call to API returned status code {}'.format(failure_msg, r.status_code))
+                self._logger.info('{} Call to API returned status code {}'.format(failure_msg, r.status_code))
 
         except Exception as e:
             self._logger.error('{} Details: {}'.format(failure_msg, e))

@@ -106,7 +106,7 @@ class VPS4API(Product):
                     # In order to test VPS4 in dev or ote, you'll need to return a hardcoded prod JWT from _get_jwt
 
                     if not dc_res:
-                        self._logger.error('The details provided could not be found at {}'.format(dc_url))
+                        self._logger.info('The details provided could not be found at {}'.format(dc_url))
 
                     for vps_data in dc_res:
                         # If vps_data isn't a dictionary, it causes the error: 'str' object has no attribute 'get'
@@ -127,7 +127,7 @@ class VPS4API(Product):
                     self._logger.error('Failed VPS4 Lookup: {}'.format(e))
             self._logger.info('Not determined to be a VPS4 product')
         else:
-            self._logger.error('A required VPS4 IP Address or Guid was NOT provided')
+            self._logger.info('A required VPS4 IP Address or Guid was NOT provided')
 
     def _get_jwt(self):
         """

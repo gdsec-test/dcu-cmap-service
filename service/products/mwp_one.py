@@ -45,7 +45,7 @@ class MWPOneAPI(Product):
                 'created_date': entry.get('dateCreated')
             }
         else:
-            self._logger.error('No active MWP 1.0 account ID found for {}'.format(domain))
+            self._logger.info('No active MWP 1.0 account ID found for {}'.format(domain))
 
     def _dc_helper(self, dc):
         if dc == 'Buckeye':

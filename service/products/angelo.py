@@ -40,6 +40,6 @@ class AngeloAPI(Product):
                 t = ast.literal_eval(r.text)
                 self._logger.info(t)
 
-            self._logger.error('Failed Angelo Lookup')
+            self._logger.info('Failed Angelo Lookup')
         except Exception as e:
             self._logger.error('Failed Angelo Lookup: {}'.format(e))
