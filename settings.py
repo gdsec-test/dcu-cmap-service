@@ -75,7 +75,7 @@ class ProductionAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
-    CN_WHITELIST = ['cmapservice.int.godaddy.com']
+    CN_WHITELIST = ['cmapservice.int.godaddy.com', 'cmap.threatapi.godaddy.com']
 
     def __init__(self):
         super().__init__()
@@ -110,7 +110,7 @@ class DevelopmentAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.dev-godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
-    CN_WHITELIST = ['cmapservice.int.dev-godaddy.com']
+    CN_WHITELIST = ['cmapservice.int.dev-godaddy.com', 'cmap.threatapi.dev-godaddy.com']
 
     def __init__(self):
         super().__init__()
