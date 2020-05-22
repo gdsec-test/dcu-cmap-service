@@ -8,15 +8,13 @@ import service.utils.functions
 
 
 class ShopperAPI(object):
-    _url = 'https://shopper.cmap.proxy.int.godaddy.com/v1/shoppers/{}?auditClientIp=cmap.proxy.int.godaddy.com'
-
+    _url = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
     _created_key = 'createdAt'  # Key into the Shopper Response for shopper create date.
-    _params = {'includes': 'contact,preference'}
+    _params = {'includes': 'contact,preference', 'auditClientIp': 'cmap.service.int.godaddy.com'}
 
     def __init__(self, settings):
         self._logger = logging.getLogger(__name__)
-        self._auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
-        self._cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
+        self._cert = (settings.CMAP_API_CERT, settings.CMAP_API_KEY)
 
     def get_shopper_by_shopper_id(self, shopper_id, fields):
         """
@@ -33,7 +31,7 @@ class ShopperAPI(object):
                 raise ValueError('Blank shopper id was provided')
 
             self._logger.info('Retrieving additional info for shopper {} from Shopper API'.format(shopper_id))
-            req_val = requests.get(self._url.format(shopper_id), params=self._params, auth=self._auth, cert=self._cert)
+            req_val = requests.get(self._url.format(shopper_id), params=self._params, cert=self._cert)
 
             if type(req_val) is not Response:
                 raise ValueError('Response from cmap proxy was garbled')
