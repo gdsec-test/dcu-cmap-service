@@ -60,6 +60,9 @@ def parse_hostname(hostname):
         os = 'Linux'
         product = '2GH'
 
+    elif re.search('park', hostname, re.IGNORECASE):
+        product = 'Parked'
+
     return dc, os, product
 
 

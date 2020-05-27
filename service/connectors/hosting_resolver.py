@@ -84,12 +84,10 @@ class HostingProductResolver(object):
                 host_shopper = shopper_id
             else:
                 ipam = self._query_ipam(ip)
-                hostname = getattr(ipam, 'HostName', None)
+                hostname = getattr(ipam, 'HostName') if getattr(ipam, 'HostName', None) else getattr(ipam, 'Description', None)
+                # IPAM description Useful for parked pages: "PHX3 - ParkWeb PodA - Server Loopbacks"
                 if hostname:
                     dc, os, product = parse_hostname(hostname)
-                else:
-                    # Useful for parked pages: "PHX3 - ParkWeb PodA - Server Loopbacks"
-                    hostname = getattr(ipam, 'Description', None)
 
         if product in self.product_locators:
             data = self.product_locators.get(product).locate(domain=domain, guid=guid, ip=ip)
