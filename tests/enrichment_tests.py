@@ -12,6 +12,12 @@ class TestNutritionLabel:
         assert_equals(os, 'Linux')
         assert_equals(product, 'Diablo')
 
+    def test_5gh(self):
+        hostname = 'PHX3 ARS2 SHR 5GH'
+        dc, os, product = parse_hostname(hostname)
+        assert_equals(os, 'Linux')
+        assert_equals(product, 'Diablo')
+
     def test_bh_n3(self):
         hostname = 'n3plvcpnl165093'
         dc, os, product = parse_hostname(hostname)
@@ -167,11 +173,21 @@ class TestNutritionLabel:
         assert_equals(product, 'MWP 1.0')
 
     def test_gocentral(self):
-        hostname = 'A2MHLDPSWEB-01-VS'
-        dc, os, product = parse_hostname(hostname)
-        assert_equals(dc, 'A2')
-        assert_is_none(os)
-        assert_equals(product, 'GoCentral')
+        hostname1 = 'A2MHLDPSWEB-01-VS'
+        hostname2 = 'A2STARKGATE-01-VS'
+        hostname3 = 'P3PWSSWEB-01-VS'
+        dc1, os1, product1 = parse_hostname(hostname1)
+        dc2, os2, product2 = parse_hostname(hostname2)
+        dc3, os3, product3 = parse_hostname(hostname3)
+        assert_equals(dc1, 'A2')
+        assert_is_none(os1)
+        assert_equals(product1, 'GoCentral')
+        assert_equals(dc2, 'A2')
+        assert_is_none(os2)
+        assert_equals(product2, 'GoCentral')
+        assert_equals(dc3, 'P3')
+        assert_is_none(os3)
+        assert_equals(product3, 'GoCentral')
 
     def test_openstack(self):
         hostname = 'OpenStack floating IPs floating-iad-public-mah-public'
@@ -214,3 +230,22 @@ class TestNutritionLabel:
         assert_equals(dc, 'P3')
         assert_is_none(os)
         assert_equals(product, 'Parked')
+
+    def test_gem(self):
+        hostname1 = 'P3PLGEMWBEB01'
+        hostname2 = 'P3PLWBEOUTDB01'
+        dc1, os1, product1 = parse_hostname(hostname1)
+        dc2, os2, product2 = parse_hostname(hostname2)
+        assert_equals(dc1, 'P3')
+        assert_is_none(os1)
+        assert_equals(product1, 'GEM')
+        assert_equals(dc2, 'P3')
+        assert_is_none(os2)
+        assert_equals(product2, 'GEM')
+
+    def test_redir(self):
+        hostname = 'P3REDIRB01'
+        dc, os, product = parse_hostname(hostname)
+        assert_equals(dc, 'P3')
+        assert_is_none(os)
+        assert_equals(product, 'EOL')

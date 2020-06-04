@@ -9,7 +9,7 @@ def parse_hostname(hostname):
     hostname = str(hostname).lower()
     dc = get_dc(hostname[:2])
 
-    if re.search('\\dpl(v?)cpnl\\d|\\dplpcs\\d', hostname):
+    if re.search('\\dpl(v?)cpnl\\d|\\dplpcs\\d|5gh', hostname):
         os = 'Linux'
         product = 'Diablo'
 
@@ -32,7 +32,7 @@ def parse_hostname(hostname):
         os = 'Linux'
         product = 'MWP 1.0'
 
-    elif re.search('\\dmhldpsweb', hostname):
+    elif re.search('dpsweb|starkgate|p3pwssweb', hostname):
         product = 'GoCentral'
 
     elif re.search('openstack', hostname):
@@ -62,6 +62,12 @@ def parse_hostname(hostname):
 
     elif re.search('park', hostname, re.IGNORECASE):
         product = 'Parked'
+
+    elif re.search('gemwbe|wbeout', hostname):
+        product = 'GEM'
+
+    elif re.search('redir', hostname):
+        product = 'EOL'
 
     return dc, os, product
 
