@@ -1,6 +1,6 @@
 import requests
 from mock import MagicMock, patch
-from nose.tools import assert_equal, assert_is_none, assert_raises
+from nose.tools import assert_equal, assert_raises
 
 from service.products.vps4 import VPS4API
 from settings import DevelopmentAppConfig
