@@ -24,9 +24,9 @@ class AppConfig(object):
     WITHOUT_SSO = False
     AD_GROUP = {'DCU-Phishstory'}
 
-    VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.iad2.godaddy.com/api/vms'),
-                             ('SIN2', 'https://vps4.api.sin2.godaddy.com/api/vms'),
-                             ('AMS3', 'https://vps4.api.ams3.godaddy.com/api/vms')])
+    VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.iad2.godaddy.com/api/'),
+                             ('SIN2', 'https://vps4.api.sin2.godaddy.com/api/'),
+                             ('AMS3', 'https://vps4.api.ams3.godaddy.com/api/')])
 
     SUBSCRIPTIONS_BLACKLIST = {'102704532'}
 

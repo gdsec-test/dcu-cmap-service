@@ -20,11 +20,13 @@ class TestVPS4API:
     IP = '0.0.0.0'
     JUNK_INT = 0
     JUNK_STR = 'junk'
+    JUNK_BOOL = False
     JWT = 'JWT_STRING'
     OS = 'LINUX'
+    SHOPPER_ID = '123'
 
     # Actual format of VPS API call
-    vps_api_return = [
+    vps4_api_vms_return = [
         {
             "vmId": JUNK_STR,
             "hfsVmId": JUNK_INT,
@@ -79,6 +81,32 @@ class TestVPS4API:
         }
     ]
 
+    # Actual format of VPS4 API return of credits
+    vps4_api_credits_return = {'orionGuid': JUNK_STR,
+                               'tier': JUNK_INT,
+                               'managedLevel': JUNK_INT,
+                               'operatingSystem': JUNK_STR,
+                               'controlPanel': JUNK_STR,
+                               'provisionDate': JUNK_STR,
+                               'shopperId': SHOPPER_ID,
+                               'monitoring': JUNK_INT,
+                               'accountStatus': JUNK_STR,
+                               'dataCenter': {
+                                   'dataCenterId': JUNK_INT,
+                                   'dataCenterName': JUNK_STR
+                               },
+                               'productId': JUNK_STR,
+                               'fullyManagedEmailSent': JUNK_BOOL,
+                               'resellerId': '1',
+                               'planChangePending': JUNK_BOOL,
+                               'pfid': JUNK_INT,
+                               'managed': JUNK_BOOL,
+                               'billingSuspendedFlagSet': JUNK_BOOL,
+                               'abuseSuspendedFlagSet': JUNK_BOOL,
+                               'ded4': JUNK_BOOL,
+                               'hasMonitoring': JUNK_BOOL
+                               }
+
     expected_value = {
         'product': 'VPS4',
         'data_center': 'IAD2',
@@ -86,7 +114,8 @@ class TestVPS4API:
         'created_date': CREATED,
         'friendly_name': FRIENDLY,
         'os': OS,
-        'ip': IP
+        'ip': IP,
+        'shopper_id': SHOPPER_ID
     }
 
     # When a valid get request is made without a SSO token
@@ -96,7 +125,7 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=403)
             mocked_get.return_value.json.return_value = {'id': 'MISSING_AUTHENTICATION'}
-            assert_is_none(vps_api.locate(self.IP, self.GUID))
+            assert_equal(vps_api.locate(self.IP, self.GUID), dict())
 
     # When no guid is provided and the ip doesnt match any VPS4 products
     @patch.object(requests, 'get')
@@ -105,7 +134,7 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = []
-            assert_is_none(vps_api.locate(self.IP, None))
+            assert_equal(vps_api.locate(self.IP, None), dict())
 
     # When no ip is provided and the guid doesnt match any VPS4 products
     @patch.object(requests, 'get')
@@ -114,15 +143,17 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = []
-            assert_is_none(vps_api.locate(None, self.GUID))
+            assert_equal(vps_api.locate(None, self.GUID), dict())
 
     # When the ip OR guid match a VPS4 product
+    @patch.object(VPS4API, '_get_shopper_from_credits')
     @patch.object(requests, 'get')
-    def test_locate_guid_and_ip_success(self, mocked_get):
+    def test_locate_guid_and_ip_success(self, mocked_get, mocked_credits):
         with patch.object(VPS4API, "_get_jwt", lambda x: self.JWT):
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
-            mocked_get.return_value.json.return_value = self.vps_api_return
+            mocked_get.return_value.json.return_value = self.vps4_api_vms_return
+            mocked_credits.return_value = self.SHOPPER_ID
             assert_equal(self.expected_value, vps_api.locate(self.IP, self.GUID))
 
     # When neither an ip nor guid is provided, should raise TypeError exception as either is required
@@ -130,3 +161,12 @@ class TestVPS4API:
         with patch.object(VPS4API, "_get_jwt", lambda x: self.JWT):
             vps_api = VPS4API(DevelopmentAppConfig())
             assert_raises(TypeError, vps_api.locate(None, None))
+
+    # When valid ORION GUID provides credits details
+    @patch.object(requests, 'get')
+    def test_get_shopper_from_credits(self, mocked_get):
+        with patch.object(VPS4API, "_get_jwt", lambda x: self.JWT):
+            vps_api = VPS4API(DevelopmentAppConfig())
+            mocked_get.return_value = MagicMock(status_code=200)
+            mocked_get.return_value.json.return_value = self.vps4_api_credits_return
+            assert_equal(self.SHOPPER_ID, vps_api._get_shopper_from_credits(self.GUID))
