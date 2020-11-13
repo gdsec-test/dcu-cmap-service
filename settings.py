@@ -105,7 +105,7 @@ class OTEAppConfig(AppConfig):
 
 class DevelopmentAppConfig(AppConfig):
     DB = 'devphishstory'
-    DB_HOST = '10.22.188.208'
+    DB_HOST = '10.36.156.188'
     DB_USER = 'devuser'
 
     SSO_URL = 'https://sso.dev-godaddy.com'
