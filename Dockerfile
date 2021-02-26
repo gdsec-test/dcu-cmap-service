@@ -10,13 +10,15 @@ RUN apk --no-cache add build-base \
     ca-certificates \
     coreutils \
     bc \
-    openssl-dev \
     libffi-dev \
     linux-headers \
     libxml2-dev \
     libxslt-dev \
     python3-dev \
-    py-pip
+    py3-pip \
+    gcc \
+    musl-dev \
+    libressl-dev
 
 # Expose Flask port 5000
 EXPOSE 5000
@@ -29,7 +31,7 @@ RUN chown -R dcu:dcu /app
 # pip install private pips staged by Makefile
 RUN for entry in PyAuth; \
     do \
-    pip3 install --compile "/tmp/private_pips/$entry"; \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 pip3 install --compile "/tmp/private_pips/$entry"; \
     done
 
 COPY trusted_certs/* /usr/local/share/ca-certificates/

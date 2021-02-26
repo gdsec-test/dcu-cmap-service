@@ -53,6 +53,7 @@ class ShopperAPI(object):
                         shopper_phone_home=shopper_data.get('contact', {}).get('phoneHome'),
                         shopper_phone_mobile=shopper_data.get('contact', {}).get('phoneMobile'),
                         shopper_email=shopper_data.get('email'),
+                        shopper_plid=shopper_data.get('privateLabelId'),
                         shopper_address_1=shopper_data.get('contact', {}).get('address', {}).get('address1'),
                         shopper_address_2=shopper_data.get('contact', {}).get('address', {}).get('address2'),
                         shopper_city=shopper_data.get('contact', {}).get('address', {}).get('city'),

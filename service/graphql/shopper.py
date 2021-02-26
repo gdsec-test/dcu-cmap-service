@@ -38,6 +38,7 @@ class Shopper:
     # domain_search = graphene.Field(DomainSearch, regex=graphene.String(required=True))
     shopper_create_date = graphene.String(description='The create data of the shopper')
     shopper_email = graphene.String(description='Email Address for Shopper')
+    shopper_plid = graphene.String(description='Private Label ID for Shopper')
     shopper_first_name = graphene.String(description='First Name for Shopper')
     shopper_last_name = graphene.String(description='Last Name for Shopper')
     shopper_address_1 = graphene.String(description='Address 1 for Shopper')

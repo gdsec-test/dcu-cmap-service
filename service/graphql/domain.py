@@ -112,6 +112,7 @@ class DomainQuery(graphene.ObjectType):
         extra_data = shopper_client.get_shopper_by_shopper_id(self.shopper_id, ['shopper_create_date',
                                                                                 'shopper_first_name',
                                                                                 'shopper_email',
+                                                                                'shopper_plid',
                                                                                 'shopper_last_name',
                                                                                 'shopper_phone_work',
                                                                                 'shopper_phone_work_ext',

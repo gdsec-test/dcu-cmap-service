@@ -1,5 +1,5 @@
 from mock import patch
-from nose.tools import assert_equal, assert_raises
+from nose.tools import assert_equal, assert_is_none
 
 from service.connectors.toolzilla import ToolzillaAPI
 from settings import DevelopmentAppConfig
@@ -100,16 +100,16 @@ class TestToolzillaAPI:
     def test_search_by_domain_no_domain(self, mock_client):
         mock_client.return_value = self.mock_client_obj
         tz_api = ToolzillaAPI(DevelopmentAppConfig(), self.mock_ipam_obj)
-        assert_raises(TypeError, tz_api.search_by_domain(None, A_RECORD))
+        assert_is_none(tz_api.search_by_domain(None, A_RECORD))
 
     # When an a_record isn't provided, should raise TypeError exception as it is required
     @patch(TZ_CLIENT)
     def test_search_by_domain_no_arecord(self, mock_client):
         mock_client.return_value = self.mock_client_obj
         tz_api = ToolzillaAPI(DevelopmentAppConfig(), self.mock_ipam_obj)
-        assert_raises(TypeError, tz_api.search_by_domain(DIABLO, None))
+        assert_is_none(tz_api.search_by_domain(DIABLO, None))
 
     # Failure when soap client can't be instantiated
     def test_search_by_domain_client_not_instantiated(self):
         tz_api = ToolzillaAPI(DevelopmentAppConfig(), self.mock_ipam_obj)
-        assert_raises(ValueError, tz_api.search_by_domain(None, None))
+        assert_is_none(tz_api.search_by_domain(DIABLO, A_RECORD))
