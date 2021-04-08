@@ -78,6 +78,7 @@ class ProductionAppConfig(AppConfig):
     CN_WHITELIST = ['cmapservice.int.godaddy.com',
                     'cmap.threatapi.godaddy.com',
                     'kelvinservice.int.godaddy.com']
+    DB_WEB_SVC_URL = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
 
     def __init__(self):
         super().__init__()
@@ -98,6 +99,7 @@ class OTEAppConfig(AppConfig):
     CNDNS_URL = 'http://abuse.partners.int.test-godaddy.com/v1/'
     CN_WHITELIST = ['cmapservice.int.ote-godaddy.com',
                     'kelvinservice.int.ote-godaddy.com']
+    DB_WEB_SVC_URL = 'https://dsweb.ote.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll'
 
     def __init__(self):
         super().__init__()
@@ -118,6 +120,7 @@ class DevelopmentAppConfig(AppConfig):
     CN_WHITELIST = ['cmapservice.int.dev-godaddy.com',
                     'cmap.threatapi.dev-godaddy.com',
                     'kelvinservice.int.dev-godaddy.com']
+    DB_WEB_SVC_URL = 'https://dsweb.int.dev-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
 
     def __init__(self):
         super().__init__()
@@ -135,6 +138,7 @@ class LocalAppConfig(AppConfig):
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['']
     WITHOUT_SSO = True
+    DB_WEB_SVC_URL = 'https://dsweb.int.dev-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
 
     def __init__(self):
         super().__init__()

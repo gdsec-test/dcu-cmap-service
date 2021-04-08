@@ -12,11 +12,11 @@ class RegDbAPI(object):
     with GoDaddy. Functions include getting domain counts, determining API Reseller, finding shoppers associated with
     a given domain name, etc.
     '''
-    _location = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
-    _wsdl = _location + '?Handler=GenRegDBWebSvcWSDL'
     _redis_key = 'result'
 
     def __init__(self, settings, redis_obj):
+        self._location = settings.DB_WEB_SVC_URL
+        self._wsdl = self._location + '?Handler=GenRegDBWebSvcWSDL'
         self._logger = logging.getLogger(__name__)
         self._redis = redis_obj
         from suds.client import Client
