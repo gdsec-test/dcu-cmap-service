@@ -35,7 +35,7 @@ class WhoisQuery(object):
         dnsresolver.lifetime = 1
 
         try:
-            return dnsresolver.query(addr, 'PTR')[0].to_text().rstrip('.').encode('idna')
+            return dnsresolver.query(addr, 'PTR')[0].to_text().rstrip('.').encode('idna').decode()
         except Exception as e:
             self._logger.error('Unable to get domain for {} : {}'.format(ip, e))
             return ''
