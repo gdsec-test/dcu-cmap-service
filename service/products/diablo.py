@@ -32,7 +32,8 @@ class DiabloAPI(Product):
                     'shopper_id': entry.get('shopper_id'),
                     'created_date': entry.get('created_at'),
                     'ip': entry.get('shared_ip_address'),
-                    'os': 'Linux'
+                    'os': 'Linux',
+                    'product': 'Diablo'
                 }
             else:
                 self._logger.info('No data value received from Diablo request')
