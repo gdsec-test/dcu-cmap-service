@@ -1,6 +1,5 @@
-import logging
-
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.products.product_interface import Product
 
@@ -9,7 +8,7 @@ class MWPOneAPI(Product):
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self.url = settings.MWPONE_URL
         self.auth = (settings.MWP_ONE_USER, settings.MWP_ONE_PASS)
 

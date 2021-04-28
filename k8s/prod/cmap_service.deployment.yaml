@@ -37,6 +37,8 @@ spec:
             periodSeconds: 120
             failureThreshold: 1
           env:
+            - name: LOGLEVEL
+              value: INFO
             - name: LIVENESS_TTL
               value: "7200"
             - name: LIVENESS_FACTOR

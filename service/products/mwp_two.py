@@ -1,6 +1,5 @@
-import logging
-
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.products.product_interface import Product
 
@@ -9,7 +8,7 @@ class MWPTwoAPI(Product):
     _url = 'http://{domain}/__mwp2_check__'
 
     def __init__(self):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
 
     def locate(self, domain, **kwargs):
         """

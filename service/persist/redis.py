@@ -1,11 +1,10 @@
-import logging
-
+from dcustructuredloggingflask.flasklogger import get_logging
 from redis import Redis
 
 
 class RedisCache(object):
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         try:
             self.redis = Redis(settings.REDIS)
             self.redis_ttl = settings.REDIS_TTL

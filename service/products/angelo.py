@@ -1,8 +1,8 @@
 import ast
-import logging
 import socket
 
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.products.product_interface import Product
 
@@ -11,7 +11,7 @@ class AngeloAPI(Product):
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self.url = settings.ANGELO_URL
         self.auth = (settings.ANGELO_USER, settings.ANGELO_PASS)
 

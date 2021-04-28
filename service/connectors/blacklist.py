@@ -1,5 +1,4 @@
-import logging
-
+from dcustructuredloggingflask.flasklogger import get_logging
 from pymongo import MongoClient
 
 
@@ -7,7 +6,7 @@ class VipClients(object):
     _blacklist_mongo_key = 'entity'  # The key used in the mongodb blacklist record
 
     def __init__(self, settings, redis_obj):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         client = MongoClient(settings.DBURL)
         db = client[settings.DB]
         self._collection = db[settings.COLLECTION]

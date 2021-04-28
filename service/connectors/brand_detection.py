@@ -1,8 +1,8 @@
 import json
-import logging
 import os
 
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from settings import config_by_name
 
@@ -16,7 +16,7 @@ class BrandDetectionHelper(object):
     '''
 
     def __init__(self, url):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
 
         self._hosting_endpoint = '{}/hosting?domain={{}}'.format(url)
         self._registrar_endpoint = '{}/registrar?domain={{}}'.format(url)

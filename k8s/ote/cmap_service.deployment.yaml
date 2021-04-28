@@ -36,6 +36,8 @@ spec:
             initialDelaySeconds: 120
             periodSeconds: 10
           env:
+            - name: LOGLEVEL
+              value: INFO
             - name: BUILD_DATE
               value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
             - name: sysenv

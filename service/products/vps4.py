@@ -1,8 +1,8 @@
 import json
-import logging
 from urllib.parse import urlencode
 
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.products.product_interface import Product
 
@@ -13,7 +13,7 @@ class VPS4API(Product):
     GUID_STR = 'orionGuid'
 
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._vps4_urls = settings.VPS4_URLS
         self._vps4_user = settings.VPS4_USER
         self._vps4_pass = settings.VPS4_PASS

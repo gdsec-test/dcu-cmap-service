@@ -1,6 +1,5 @@
-import logging
-
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.products.product_interface import Product
 
@@ -15,7 +14,7 @@ class CNDNSAPI(Product):
     _partner_product_map = {'duda': 'WSBA', 'wopop': 'WSBD'}
 
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._url = settings.CNDNS_URL
         self._cert = (settings.CMAP_SERVICE_CERT, settings.CMAP_SERVICE_KEY)
 

@@ -1,15 +1,15 @@
 import json
-import logging
 from urllib.parse import urlencode
 
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 
 class SubscriptionsAPI(object):
     valid_subscription_statuses = {'ACTIVE', 'TRIAL PERIOD', 'FREE'}
 
     def __init__(self, config):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._url = config.SUBSCRIPTIONS_URL
         self._cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
         self._blacklist = config.SUBSCRIPTIONS_BLACKLIST

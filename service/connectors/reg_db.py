@@ -1,6 +1,7 @@
 import json
-import logging
 import xml.etree.ElementTree as ET
+
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.soap.request_transport import RequestsTransport
 from service.utils.functions import get_fld_by_domain_name
@@ -17,7 +18,7 @@ class RegDbAPI(object):
     def __init__(self, settings, redis_obj):
         self._location = settings.DB_WEB_SVC_URL
         self._wsdl = self._location + '?Handler=GenRegDBWebSvcWSDL'
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._redis = redis_obj
         from suds.client import Client
         try:

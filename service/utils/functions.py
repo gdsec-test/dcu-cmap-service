@@ -1,9 +1,9 @@
-import logging
 import re
 
 import tld
+from dcustructuredloggingflask.flasklogger import get_logging
 
-_logger = logging.getLogger(__name__)
+_logger = get_logging()
 
 
 # Functions to convert random date strings into a mongo date format

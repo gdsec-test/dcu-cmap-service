@@ -1,44 +1,36 @@
-# CMAP Service
-#
+FROM python:3.7.10-slim as base
 
-FROM alpine:3.6
-MAINTAINER DCU <DCUEng@godaddy.com>
+LABEL DCUENG <dcueng@godaddy.com>
 
-RUN addgroup -S dcu && adduser -H -S -G dcu dcu
-# apk installs
-RUN apk --no-cache add build-base \
-    ca-certificates \
-    coreutils \
-    bc \
-    libffi-dev \
-    linux-headers \
-    libxml2-dev \
-    libxslt-dev \
-    python3-dev \
-    py3-pip \
-    gcc \
-    musl-dev \
-    libressl-dev
+RUN apt-get update && apt-get install gcc -y
+RUN pip3 install -U pip
+COPY requirements.txt .
+COPY ./private_pips /tmp/private_pips
 
-# Expose Flask port 5000
-EXPOSE 5000
+RUN pip3 install --compile /tmp/private_pips/PyAuth
+RUN pip3 install --compile /tmp/private_pips/dcu-structured-logging-flask
+RUN pip3 install -r requirements.txt
+RUN rm requirements.txt
+RUN rm -rf /tmp/private_pips
+
+FROM base as deliverable
 
 # Move files to new dir
-COPY ./logging.yaml ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
-COPY . /tmp
-RUN chown -R dcu:dcu /app
+COPY ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
 
-# pip install private pips staged by Makefile
-RUN for entry in PyAuth; \
-    do \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1 pip3 install --compile "/tmp/private_pips/$entry"; \
-    done
+# Compile the Flask API
+RUN mkdir /tmp/build
+COPY . /tmp/build
+RUN pip3 install --compile /tmp/build
+RUN rm -rf /tmp/build
 
-COPY trusted_certs/* /usr/local/share/ca-certificates/
-RUN update-ca-certificates && pip3 install -U cffi && pip3 install --compile /tmp && rm -rf /tmp/*
+# Fix permissions.
+RUN addgroup dcu && adduser --disabled-password --disabled-login --no-create-home --ingroup dcu --system dcu
+RUN chown -R dcu:dcu /usr/local/lib/python3.7/site-packages/tld/res
+RUN chown dcu:dcu -R /app
 
-# Chown Public Suffix list so we can update it
-RUN chown -R dcu:dcu /usr/lib/python3.6/site-packages/tld/res
+# Configure container level settings.
+ENV prometheus_multiproc_dir /tmp
+EXPOSE 5000
 
-WORKDIR /app
 ENTRYPOINT ["/app/runserver.sh"]

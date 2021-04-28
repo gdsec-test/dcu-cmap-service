@@ -1,7 +1,7 @@
 import json
-import logging
 
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 from requests.models import Response
 
 import service.utils.functions
@@ -13,7 +13,7 @@ class ShopperAPI(object):
     _params = {'includes': 'contact,preference', 'auditClientIp': 'cmap.service.int.godaddy.com'}
 
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._cert = (settings.CMAP_API_CERT, settings.CMAP_API_KEY)
 
     def get_shopper_by_shopper_id(self, shopper_id, fields):

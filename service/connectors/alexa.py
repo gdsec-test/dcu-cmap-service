@@ -1,10 +1,10 @@
 import datetime
 import hashlib
 import hmac
-import logging
 import xml.etree.ElementTree as ET
 
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 
 class AlexaWebInformationService(object):
@@ -29,7 +29,7 @@ class AlexaWebInformationService(object):
     def __init__(self, id, key):
         self._access_key = id
         self._secret_key = key
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
 
     @staticmethod
     def _sign(key, msg):

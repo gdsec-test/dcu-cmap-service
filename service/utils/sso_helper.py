@@ -1,15 +1,15 @@
-import logging
 import os
 from functools import wraps
 from urllib.parse import urlparse
 
+from dcustructuredloggingflask.flasklogger import get_logging
 from flask import Response, redirect, request
 from gd_auth.token import AuthToken
 
 from settings import config_by_name
 
 # Creates logger settings
-logger = logging.getLogger(__name__)
+logger = get_logging()
 config = config_by_name[os.getenv('sysenv', 'dev')]()
 
 

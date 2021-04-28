@@ -1,7 +1,7 @@
 import json
-import logging
 import xml.etree.ElementTree as ET
 
+from dcustructuredloggingflask.flasklogger import get_logging
 from suds.client import Client
 
 from service.soap.request_transport import RequestsTransport
@@ -13,7 +13,7 @@ class CRMClientAPI(object):
     _redis_key = 'result'
 
     def __init__(self, settings, redis_obj):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._redis = redis_obj
 
         location = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'

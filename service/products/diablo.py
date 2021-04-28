@@ -1,6 +1,5 @@
-import logging
-
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.products.product_interface import Product
 
@@ -9,7 +8,7 @@ class DiabloAPI(Product):
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self.url = settings.DIABLO_URL
         self.auth = (settings.DIABLO_USER, settings.DIABLO_PASS)
 

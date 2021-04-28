@@ -1,6 +1,7 @@
-import logging
 import socket
 from collections import OrderedDict
+
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.connectors.smdb import Ipam
 from service.connectors.subscriptions import SubscriptionsAPI
@@ -33,7 +34,7 @@ class HostingProductResolver(object):
     }
 
     def __init__(self, config):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self.ipam = Ipam(config.SMDB_URL, config.SMDB_USER, config.SMDB_PASS)
         self.toolzilla_api = ToolzillaAPI(config, self.ipam)
         self.subscriptions_api = SubscriptionsAPI(config)

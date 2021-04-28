@@ -1,7 +1,7 @@
 import json
-import logging
 
 import requests
+from dcustructuredloggingflask.flasklogger import get_logging
 
 from service.products.product_interface import Product
 
@@ -10,7 +10,7 @@ class GoCentralAPI(Product):
     _headers = {'Accept': 'application/json', 'Authorization': ''}
 
     def __init__(self, settings):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._url = settings.GOCENTRAL_URL
         self._sso_endpoint = settings.SSO_URL + '/v1/secure/api/token'
 

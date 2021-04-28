@@ -1,5 +1,4 @@
-import logging
-
+from dcustructuredloggingflask.flasklogger import get_logging
 from suds.client import Client
 
 from service.soap.request_transport import RequestsTransport
@@ -10,7 +9,7 @@ class ToolzillaAPI(object):
     _wsdl = _location + '/WSDL'
 
     def __init__(self, settings, ipam_obj):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
         self._ipam = ipam_obj
 
         try:

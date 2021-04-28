@@ -1,10 +1,9 @@
-import logging.config
 import os
 
 import graphene
 import tld
 import urllib3
-import yaml
+from dcustructuredloggingflask.flasklogger import add_request_logging
 from flask import Flask, Response, request
 from flask_graphql import GraphQLView
 from tld.conf import set_setting
@@ -29,22 +28,16 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 set_setting('NAMES_LOCAL_PATH', os.path.join(os.path.dirname(__file__), '/tmp/names.dat'))
 tld.utils.PROJECT_DIR = lambda x: x
 
-# setup logging
-path = 'logging.yaml'
-value = os.getenv('LOG_CFG')
-if value:
-    path = value
-if os.path.exists(path):
-    with open(path, 'rt') as f:
-        lconfig = yaml.safe_load(f.read())
-    logging.config.dictConfig(lconfig)
-else:
-    logging.basicConfig(level=logging.INFO)
-
 config = config_by_name[os.getenv('sysenv', 'dev')]()
 
 redis_obj = RedisCache(config)
 app = Flask(__name__)
+
+add_request_logging(app, 'cmap_service', sso=config.SSO_URL[8:], excluded_paths=[
+    '/doc/',
+    '/health'
+])
+
 # Set the secret key in Flask to be able to access the Session object
 app.config['SECRET_KEY'] = os.urandom(12).hex()
 

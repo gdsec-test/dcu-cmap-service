@@ -1,5 +1,4 @@
-import logging
-
+from dcustructuredloggingflask.flasklogger import get_logging
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
 from zeep.client import Client
@@ -12,7 +11,7 @@ class Ipam(object):
     """
 
     def __init__(self, url, user, password):
-        self._logger = logging.getLogger(__name__)
+        self._logger = get_logging()
 
         session = Session()
         session.verify = False
