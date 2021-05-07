@@ -89,6 +89,7 @@ If you would like to run CMAP Service locally, you will need to specify the foll
 * `MWP_ONE_PASS` (Password for Managed Wordpress API)
 * `SMDB_USER` (User for SMDB WSDL)
 * `SMDB_PASS` (Password for SMDB WSDL)
+* `VALUATION_KEY` (Access key for Valuation API)
 * `VERTIGO_USER` (User for Vertigo API)
 * `VERTIGO_PASS` (Password for Vertigo API)
 

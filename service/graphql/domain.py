@@ -61,6 +61,7 @@ class DomainQuery(graphene.ObjectType):
                                            description='Security Product Information for Provided Domain Name')
     ssl_subscriptions = graphene.List(SSLSubscription,
                                       description='List of SSL Product Information for Provided Domain Name')
+    is_domain_high_value = graphene.String(description='Valuation API Information for Provided Domain Name')
 
     def resolve_host(self, info):
         if hasattr(self.shopper_id, 'decode'):
@@ -154,3 +155,6 @@ class DomainQuery(graphene.ObjectType):
                                    'created_at': ssl_subscription.get('created_at'),
                                    'expires_at': ssl_subscription.get('expires_at')})
                 for ssl_subscription in ssl_subscriptions]
+
+    def resolve_is_domain_high_value(self, info):
+        return info.context.get('valuation').get_valuation_by_domain(self.domain)

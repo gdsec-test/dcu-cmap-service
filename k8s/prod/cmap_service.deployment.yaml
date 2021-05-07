@@ -146,6 +146,11 @@ spec:
                 secretKeyRef:
                   name: auth-smdb
                   key: password
+            - name: VALUATION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: valuation-api
+                  key: password
           volumeMounts:
             - name: tls-files-proxy
               mountPath: /proxycerts

@@ -62,6 +62,8 @@ class AppConfig(object):
         self.ALEXA_ACCESS_ID = os.getenv('ALEXA_ACCESS_ID', 'alexa_access_id')
         self.ALEXA_ACCESS_KEY = os.getenv('ALEXA_ACCESS_KEY', 'secret_access_key')
 
+        self.VALUATION_KEY = os.getenv('VALUATION_KEY', 'valuation_key')
+
 
 class ProductionAppConfig(AppConfig):
     DB = 'phishstory'

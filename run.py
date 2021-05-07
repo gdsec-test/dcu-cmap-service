@@ -16,6 +16,7 @@ from service.connectors.hosting_resolver import HostingProductResolver
 from service.connectors.reg_db import RegDbAPI
 from service.connectors.shopper import ShopperAPI
 from service.connectors.subscriptions import SubscriptionsAPI
+from service.connectors.valuation import ValuationAPI
 from service.connectors.whois import WhoisQuery
 from service.graphql.schema import Query
 from service.persist.redis import RedisCache
@@ -54,7 +55,8 @@ ctx = {'crm': CRMClientAPI(config, redis_obj),
        'alexa': AlexaWebInformationService(config.ALEXA_ACCESS_ID, config.ALEXA_ACCESS_KEY),
        'whois': WhoisQuery(),
        'bd': BrandDetectionHelper(config.BRAND_DETECTION_URL),
-       'subscriptions': SubscriptionsAPI(config)
+       'subscriptions': SubscriptionsAPI(config),
+       'valuation': ValuationAPI(config)
        }
 
 
