@@ -16,6 +16,9 @@ spec:
     metadata:
       labels:
         app: "cmap-service"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9200"
     spec:
       imagePullSecrets:
         -
@@ -36,6 +39,8 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
           env:
+            - name: METRICS_PORT
+              value: '9200'
             - name: LOGLEVEL
               value: INFO
             - name: BUILD_DATE

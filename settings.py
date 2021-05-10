@@ -28,6 +28,7 @@ class AppConfig(object):
                              ('AMS3', 'https://vps4.api.ams3.godaddy.com/api/')])
 
     SUBSCRIPTIONS_BLACKLIST = {'102704532'}
+    METRICS_PORT = int(os.getenv("METRICS_PORT", "9200"))
 
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))

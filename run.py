@@ -6,6 +6,8 @@ import urllib3
 from dcustructuredloggingflask.flasklogger import add_request_logging
 from flask import Flask, Response, request
 from flask_graphql import GraphQLView
+from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_flask_exporter.multiprocess import UWsgiPrometheusMetrics
 from tld.conf import set_setting
 
 from service.connectors.alexa import AlexaWebInformationService
@@ -90,6 +92,15 @@ app.add_url_rule('/graphql',
                                                graphiql=True,
                                                get_context=lambda: ctx)
                  )
+
+# Need to use the special server for multiprocess apps. This only works
+# when spawned within a UWSGI env. Otherwise use the default interface
+# for local development.
+if 'prometheus_multiproc_dir' in os.environ:
+    metrics = UWsgiPrometheusMetrics(app, group_by='url_rule')
+else:
+    metrics = PrometheusMetrics(app, group_by='url_rule')
+metrics.start_http_server(config.METRICS_PORT)
 
 if __name__ == '__main__':
     app.run()

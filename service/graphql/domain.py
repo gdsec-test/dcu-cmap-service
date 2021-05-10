@@ -1,4 +1,5 @@
 import re
+from asyncio import run
 
 import graphene
 
@@ -69,7 +70,7 @@ class DomainQuery(graphene.ObjectType):
 
         whois = info.context.get('bd').get_hosting_info(self.domain)
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
-            host_info = info.context.get('ipam').get_properties_for_domain(self.domain, self.shopper_id)
+            host_info = run(info.context.get('ipam').get_properties_for_domain(self.domain, self.shopper_id))
             if type(host_info) is dict:
                 whois['data_center'] = host_info.get('data_center')
                 whois['created_date'] = host_info.get('created_date')
