@@ -131,6 +131,7 @@ class HostingProductResolver(object):
         tz_params = await tool_task
         sub_params = await sub_task
         ipam_params = await ipam_task
+        dc = os = product = None
         if tz_params:
             product = tz_params[0]
             dc = tz_params[1]
@@ -144,7 +145,7 @@ class HostingProductResolver(object):
             guid = sub_guid = sub_params[1]
             created_date = sub_params[2]
             host_shopper = shopper_id
-        else:
+        elif ipam_params:
             dc, os, product = ipam_params
         data = self.__locate_product(domain=domain, guid=guid, ip=ip, product=product)
 

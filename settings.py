@@ -139,6 +139,7 @@ class LocalAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
+    CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
     CN_WHITELIST = ['']
     WITHOUT_SSO = True
     DB_WEB_SVC_URL = 'https://dsweb.int.dev-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
