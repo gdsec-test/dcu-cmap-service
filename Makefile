@@ -42,7 +42,7 @@ testcov:
 
 
 .PHONY: prep
-prep: tools test
+prep: test
 	@echo "----- preparing $(REPONAME) build -----"
 	# stage pips we will need to install in Docker build
 	mkdir -p $(BUILDROOT)/private_pips && rm -rf $(BUILDROOT)/private_pips/*

@@ -1,6 +1,6 @@
 import requests
 from mock import patch
-from nose.tools import assert_equal, assert_false, assert_true
+from nose.tools import assert_equal, assert_false
 
 from service.connectors.subscriptions import SubscriptionsAPI
 from settings import DevelopmentAppConfig
@@ -15,15 +15,15 @@ class TestSubscriptionsAPI:
     @classmethod
     def setup(cls):
         cls._subscriptions_api = SubscriptionsAPI(DevelopmentAppConfig())
-        common = dict(subscriptionId='1', status='ACTIVE', label='*.test1.com', createdAt='2019-04-15T20:48:58.340Z',
+        common = dict(subscriptionId='1', status='ACTIVE', createdAt='2019-04-15T20:48:58.340Z',
                       expiresAt='2021-04-15T07:00:00.000Z')
         commontwo = dict(subscriptionId='1', status='ACTIVE', label='test2.com', createdAt='2019-04-15T20:48:58.340Z',
                          expiresAt='2021-04-15T07:00:00.000Z')
-        cls._mock_ssl_sub_response = [dict(product={'productGroupKey': 'sslCerts'}, **common)]
-        cls._mock_hosting_sub_response = [dict(product={'namespace': 'diablo'}, **common)]
+        cls._mock_ssl_sub_response = [dict(product={'productGroupKey': 'sslCerts'}, label='*.test1.com', **common)]
+        cls._mock_hosting_sub_response = [dict(product={'namespace': 'diablo'}, label='test1.com', **common)]
         cls._mock_hosting_sub_response_mwptwo = [dict(product={'namespace': 'mwp2'}, **commontwo)]
         cls._mock_sucuri_sub_response = [dict(product={'productGroupKey': 'websiteSecurity', 'label': 'test'},
-                                              **common)]
+                                              label='test1.com', **common)]
 
     """
     get_hosting_subscriptions tests
