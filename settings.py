@@ -30,6 +30,8 @@ class AppConfig(object):
     SUBSCRIPTIONS_BLACKLIST = {'102704532'}
     METRICS_PORT = int(os.getenv("METRICS_PORT", "9200"))
 
+    PARKED_IPS = ['34.102.136.180', '34.98.99.30']
+
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
         self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)

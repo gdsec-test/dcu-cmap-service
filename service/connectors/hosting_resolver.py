@@ -1,6 +1,7 @@
 import socket
 from asyncio import create_task
 from collections import OrderedDict
+from typing import Union
 
 from dcustructuredloggingflask.flasklogger import get_logging
 from prometheus_client import Counter
@@ -16,6 +17,7 @@ from service.products.mwp_one import MWPOneAPI
 from service.products.mwp_two import MWPTwoAPI
 from service.products.vertigo import VertigoAPI
 from service.products.vps4 import VPS4API
+from service.utils.functions import ip_is_parked
 from service.utils.hostname_parser import parse_hostname
 
 toolzilla_successes = Counter('toolzilla_successes', 'Number of successful calls to toolzilla')
@@ -91,7 +93,12 @@ class HostingProductResolver(object):
         subscription_failure.inc()
         return None
 
-    async def __get_ipam_properties(self, ip: str) -> tuple:
+    async def __get_ipam_properties(self, ip: str) -> Union[tuple, None]:
+        # check for parking IP first
+        if ip_is_parked(ip):
+            return None, None, 'Parked'
+
+        # fallback to ipam if not parked
         ipam = self._query_ipam(ip)
         hostname = getattr(ipam, 'HostName') if getattr(ipam, 'HostName', None) else getattr(ipam, 'Description', None)
         # IPAM description Useful for parked pages: "PHX3 - ParkWeb PodA - Server Loopbacks"

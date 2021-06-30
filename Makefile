@@ -25,20 +25,20 @@ flake8:
 .PHONY: isort
 isort:
 	@echo "----- Optimizing imports -----"
-	isort -rc --atomic .
+	isort --atomic .
 
 .PHONY: tools
 tools: flake8 isort
 
 .PHONY: test
-test:
+test: tools
 	@echo "----- Running tests -----"
 	nosetests tests
 
 .PHONY: testcov
 testcov:
 	@echo "----- Running tests with coverage -----"
-	nosetests tests --with-coverage --cover-erase --cover-package=service
+	nosetests tests --with-coverage --cover-erase --cover-package=service --cover-xml
 
 
 .PHONY: prep

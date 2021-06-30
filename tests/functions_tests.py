@@ -1,4 +1,4 @@
-from nose.tools import assert_equals, assert_is_none
+from nose.tools import assert_equals, assert_false, assert_is_none, assert_true
 
 import service.utils.functions
 
@@ -65,3 +65,14 @@ class TestGetTLDbyDomainName:
         domain_name = 'fake.tld.ccc'
         response = service.utils.functions.get_fld_by_domain_name(domain_name)
         assert_is_none(response)
+
+
+class TestIpIsParked:
+    def test_ip_is_parked_gd(self):
+        assert_true(service.utils.functions.ip_is_parked('34.102.136.180'))
+
+    def test_ip_is_parked_reseller(self):
+        assert_true(service.utils.functions.ip_is_parked('34.98.99.30'))
+
+    def test_ip_is_parked_not(self):
+        assert_false(service.utils.functions.ip_is_parked('76.76.21.21'))

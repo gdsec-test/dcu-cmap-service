@@ -224,13 +224,6 @@ class TestNutritionLabel:
         assert_is_none(os)
         assert_is_none(product)
 
-    def test_parked(self):
-        hostname = 'P3PLPARKDB01'
-        dc, os, product = parse_hostname(hostname)
-        assert_equals(dc, 'P3')
-        assert_is_none(os)
-        assert_equals(product, 'Parked')
-
     def test_gem(self):
         hostname1 = 'P3PLGEMWBEB01'
         hostname2 = 'P3PLWBEOUTDB01'

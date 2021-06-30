@@ -1,9 +1,13 @@
+import os
 import re
 
 import tld
 from dcustructuredloggingflask.flasklogger import get_logging
 
+from settings import config_by_name
+
 _logger = get_logging()
+config = config_by_name[os.getenv('sysenv', 'dev')]()
 
 
 # Functions to convert random date strings into a mongo date format
@@ -102,3 +106,7 @@ def get_fld_by_domain_name(domain_name):
                 return None
 
         return fld
+
+
+def ip_is_parked(ip: str) -> bool:
+    return ip in config.PARKED_IPS
