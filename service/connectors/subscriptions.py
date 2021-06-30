@@ -88,7 +88,7 @@ class SubscriptionsAPI(object):
             if subscription.get('status') in self.valid_subscription_statuses and subscription.get('product', {}).get(
                     'productGroupKey') == 'sslCerts':
                 ssl_subscription = {
-                    'cert_common_name': domain,
+                    'cert_common_name': subscription.get('label'),
                     'cert_type': subscription.get('product').get('label'),
                     'created_at': subscription.get('createdAt'),
                     'expires_at': subscription.get('expiresAt')

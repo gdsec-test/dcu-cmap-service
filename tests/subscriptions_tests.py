@@ -15,7 +15,7 @@ class TestSubscriptionsAPI:
     @classmethod
     def setup(cls):
         cls._subscriptions_api = SubscriptionsAPI(DevelopmentAppConfig())
-        common = dict(subscriptionId='1', status='ACTIVE', label='test1.com', createdAt='2019-04-15T20:48:58.340Z',
+        common = dict(subscriptionId='1', status='ACTIVE', label='*.test1.com', createdAt='2019-04-15T20:48:58.340Z',
                       expiresAt='2021-04-15T07:00:00.000Z')
         commontwo = dict(subscriptionId='1', status='ACTIVE', label='test2.com', createdAt='2019-04-15T20:48:58.340Z',
                          expiresAt='2021-04-15T07:00:00.000Z')
@@ -66,7 +66,11 @@ class TestSubscriptionsAPI:
     @patch.object(SubscriptionsAPI, '_get_subscriptions')
     def test_get_ssl_subscriptions_success(self, mocked_subs_api):
         mocked_subs_api.return_value = self._mock_ssl_sub_response
-        assert_true(self._subscriptions_api.get_ssl_subscriptions('100', 'test1.com'))
+        result = self._subscriptions_api.get_ssl_subscriptions('100', 'test1.com')[0]
+        assert_equal('*.test1.com', result['cert_common_name'])
+        assert_equal(None, result['cert_type'])
+        assert_equal('2019-04-15T20:48:58.340Z', result['created_at'])
+        assert_equal('2021-04-15T07:00:00.000Z', result['expires_at'])
 
     @patch.object(SubscriptionsAPI, '_get_subscriptions')
     def test_get_ssl_subscriptions_failure(self, mocked_subs_api):
