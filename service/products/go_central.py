@@ -14,8 +14,8 @@ class GoCentralAPI(Product):
         self._url = settings.GOCENTRAL_URL
         self._sso_endpoint = settings.SSO_URL + '/v1/secure/api/token'
 
-        cert = (settings.CMAP_SERVICE_CERT, settings.CMAP_SERVICE_KEY)
-        self._headers['Authorization'] = 'sso-jwt ' + self._get_jwt(cert)
+        self._cert = (settings.CMAP_SERVICE_CERT, settings.CMAP_SERVICE_KEY)
+        self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
 
     def locate(self, domain, **kwargs):
         """
@@ -48,6 +48,9 @@ class GoCentralAPI(Product):
         #  to a production one
         try:
             r = requests.get(self._url.format(domain=domain), headers=self._headers)
+            if r.status_code in [401, 403]:
+                self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
+                r = requests.get(self._url.format(domain=domain), headers=self._headers)
             res = json.loads(r.text)
             if res.get('type', '').lower() == 'gocentral':
                 return dict(product='GoCentral', guid=res.get('accountId'), shopper_id=res.get('shopperId'),

@@ -18,8 +18,7 @@ class VPS4API(Product):
         self._vps4_user = settings.VPS4_USER
         self._vps4_pass = settings.VPS4_PASS
         self._sso_endpoint = settings.SSO_URL + '/v1/api/token'
-
-        self._headers['Authorization'] = 'sso-jwt {}'.format(self._get_jwt())
+        self._headers['Authorization'] = f'sso-jwt {self._get_jwt()}'
 
     def _build_query_dict(self, ip=None, guid=None):
         query_dict = {'type': 'ACTIVE'}
@@ -191,9 +190,7 @@ class VPS4API(Product):
 
     def _query(self, url):
         r = requests.get(url, headers=self._headers)
-        if r.status_code == 403 and r.json().get('id') == 'MISSING_AUTHENTICATION':
-            fresh_jwt = self._get_jwt()
-
-            self._headers['Authorization'] = "sso-jwt " + fresh_jwt
+        if r.status_code in [401, 403]:
+            self._headers['Authorization'] = f'sso-jwt {self._get_jwt()}'
             r = requests.get(url, headers=self._headers)
         return r

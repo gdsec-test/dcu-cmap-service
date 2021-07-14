@@ -22,8 +22,8 @@ class BrandDetectionHelper(object):
         self._registrar_endpoint = '{}/registrar?domain={{}}'.format(url)
 
         self._sso_endpoint = config.SSO_URL + '/v1/secure/api/token'
-        cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
-        self._headers = {'Content-Type': 'application/json', 'Authorization': 'sso-jwt {}'.format(self._get_jwt(cert))}
+        self._cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
+        self._headers = {'Content-Type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt(self._cert)}'}
 
     def get_hosting_info(self, domain):
         """
@@ -34,7 +34,11 @@ class BrandDetectionHelper(object):
         self._logger.info('Fetching hosting information for {}'.format(domain))
 
         try:
-            return requests.get(self._hosting_endpoint.format(domain), headers=self._headers).json()
+            r = requests.get(self._hosting_endpoint.format(domain), headers=self._headers)
+            if r.status_code in [401, 403]:
+                self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
+                r = requests.get(self._hosting_endpoint.format(domain), headers=self._headers)
+            return r.json()
         except Exception as e:
             self._logger.error('Unable to query Brand Detection service for {} : {}'.format(domain, e))
             return {'brand': None, 'hosting_company_name': None, 'hosting_abuse_email': None, 'ip': None}
@@ -48,7 +52,11 @@ class BrandDetectionHelper(object):
         self._logger.info('Fetching registrar information for {}'.format(domain))
 
         try:
-            return requests.get(self._registrar_endpoint.format(domain), headers=self._headers).json()
+            r = requests.get(self._registrar_endpoint.format(domain), headers=self._headers)
+            if r.status_code in [401, 403]:
+                self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
+                r = requests.get(self._registrar_endpoint.format(domain), headers=self._headers)
+            return r.json()
         except Exception as e:
             self._logger.error('Unable to query Brand Detection service for {} : {}'.format(domain, e))
             return {'brand': None, 'registrar_name': None, 'registrar_abuse_email': None, 'domain_create_date': None,

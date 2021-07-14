@@ -39,7 +39,7 @@ app = Flask(__name__)
 add_request_logging(app, 'cmap_service', sso=config.SSO_URL[8:], excluded_paths=[
     '/doc/',
     '/health'
-])
+], min_status_code=300)
 
 # Set the secret key in Flask to be able to access the Session object
 app.config['SECRET_KEY'] = os.urandom(12).hex()
