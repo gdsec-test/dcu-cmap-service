@@ -4,14 +4,6 @@ LABEL DCUENG <dcueng@godaddy.com>
 
 RUN apt-get update && apt-get install gcc -y
 RUN pip3 install -U pip
-COPY requirements.txt .
-COPY ./private_pips /tmp/private_pips
-
-RUN pip3 install --compile /tmp/private_pips/PyAuth
-RUN pip3 install --compile /tmp/private_pips/dcu-structured-logging-flask
-RUN pip3 install -r requirements.txt
-RUN rm requirements.txt
-RUN rm -rf /tmp/private_pips
 
 FROM base as deliverable
 
@@ -21,7 +13,7 @@ COPY ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
 # Compile the Flask API
 RUN mkdir /tmp/build
 COPY . /tmp/build
-RUN pip3 install --compile /tmp/build
+RUN PIP_CONFIG_FILE=/tmp/build/pip_config/pip.conf pip3 install --compile /tmp/build
 RUN rm -rf /tmp/build
 
 # Fix permissions.
