@@ -190,7 +190,7 @@ class VPS4API(Product):
 
     def _query(self, url):
         r = requests.get(url, headers=self._headers)
-        if r.status_code in [401, 403]:
+        if r.status_code in [401, 403, 500]:
             self._headers['Authorization'] = f'sso-jwt {self._get_jwt()}'
             r = requests.get(url, headers=self._headers)
         return r
