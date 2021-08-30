@@ -92,6 +92,9 @@ class DomainQuery(graphene.ObjectType):
             # Query the blacklist, whose entities never get suspended
             vip['blacklist'] = info.context.get('vip').is_blacklisted(host_shopper)
 
+            shopper_data = self.resolve_shopper_info(info, host_shopper)
+            whois['shopper_create_date'] = shopper_data.shopper_create_date
+
         host_obj = HostInfo(**whois)
         host_obj.vip = ShopperProfile(**vip)
         return host_obj
@@ -106,27 +109,30 @@ class DomainQuery(graphene.ObjectType):
         parent_child = info.context.get('regdb').get_parent_child_shopper_by_domain_name(self.domain)
         return APIReseller(**parent_child)
 
-    def resolve_shopper_info(self, info):
+    def resolve_shopper_info(self, info, shopper_id=None):
         if hasattr(self.shopper_id, 'decode'):
             self.shopper_id = self.shopper_id.decode()
 
+        if not shopper_id:
+            shopper_id = self.shopper_id
+
         shopper_client = info.context.get('shopper')
-        extra_data = shopper_client.get_shopper_by_shopper_id(self.shopper_id, ['shopper_create_date',
-                                                                                'shopper_first_name',
-                                                                                'shopper_email',
-                                                                                'shopper_plid',
-                                                                                'shopper_last_name',
-                                                                                'shopper_phone_work',
-                                                                                'shopper_phone_work_ext',
-                                                                                'shopper_phone_home',
-                                                                                'shopper_phone_mobile',
-                                                                                'shopper_address_1',
-                                                                                'shopper_address_2',
-                                                                                'shopper_city',
-                                                                                'shopper_state',
-                                                                                'shopper_postal_code',
-                                                                                'shopper_country'])
-        return ShopperByDomain(shopper_id=self.shopper_id, **extra_data)
+        extra_data = shopper_client.get_shopper_by_shopper_id(shopper_id, ['shopper_create_date',
+                                                                           'shopper_first_name',
+                                                                           'shopper_email',
+                                                                           'shopper_plid',
+                                                                           'shopper_last_name',
+                                                                           'shopper_phone_work',
+                                                                           'shopper_phone_work_ext',
+                                                                           'shopper_phone_home',
+                                                                           'shopper_phone_mobile',
+                                                                           'shopper_address_1',
+                                                                           'shopper_address_2',
+                                                                           'shopper_city',
+                                                                           'shopper_state',
+                                                                           'shopper_postal_code',
+                                                                           'shopper_country'])
+        return ShopperByDomain(shopper_id=shopper_id, **extra_data)
 
     def resolve_blacklist(self, info):
         return info.context.get('vip').is_blacklisted(self.domain)

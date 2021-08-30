@@ -48,7 +48,7 @@ six==1.15.0
 # We use Suds for Toolzilla SOAP API
 suds-py3==1.4.4.1
 tld==0.12.5
-urllib3==1.26.4
+urllib3==1.26.5
 uWSGI==2.0.19.1
 Werkzeug==1.0.1
 # We use Zeep for contacting IPAM SOAP API
