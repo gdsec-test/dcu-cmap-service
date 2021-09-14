@@ -74,7 +74,7 @@ spec:
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: db-cmap-service
+                  name: db-phishstory-v2
                   key: password
             - name: ALEXA_ACCESS_KEY
               valueFrom:
