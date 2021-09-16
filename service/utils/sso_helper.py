@@ -4,7 +4,8 @@ from urllib.parse import urlparse
 
 from dcustructuredloggingflask.flasklogger import get_logging
 from flask import Response, redirect, request
-from gd_auth.token import AuthToken
+from gd_auth.exceptions import TokenExpiredException
+from gd_auth.token import AuthToken, TokenBusinessLevel
 
 from settings import config_by_name
 
@@ -66,6 +67,12 @@ def validate_auth(token, token_authority, auth_groups, cn_whitelist):
         payload = AuthToken.payload(token)
         typ = payload.get('typ')
         parsed = AuthToken.parse(token, token_authority, 'CMAP Service', typ=typ)
+
+        try:
+            parsed.is_expired(TokenBusinessLevel.LOW)
+        except TokenExpiredException:
+            return Response('Expired JWT provided. Unauthorized. Please verify your token \n ', status=401)
+
         if typ == 'jomax':
             user_groups = set(parsed.payload.get('groups', []))
             logger.debug('{} trying to access CMAP with AD groups {}'.format(parsed.accountname, user_groups))
