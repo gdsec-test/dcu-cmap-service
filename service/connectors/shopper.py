@@ -5,24 +5,22 @@ from dcustructuredloggingflask.flasklogger import get_logging
 from requests.models import Response
 
 import service.utils.functions
+from settings import AppConfig
 
 
 class ShopperAPI(object):
-    _url = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
     _created_key = 'createdAt'  # Key into the Shopper Response for shopper create date.
     _params = {'includes': 'contact,preference', 'auditClientIp': 'cmap.service.int.godaddy.com'}
 
-    def __init__(self, settings):
+    def __init__(self, settings: AppConfig):
         self._logger = get_logging()
         self._cert = (settings.CMAP_API_CERT, settings.CMAP_API_KEY)
+        self._url = settings.SHOPPER_API_URL
 
-    def get_shopper_by_shopper_id(self, shopper_id, fields):
+    def get_shopper_by_shopper_id(self, shopper_id: str, fields: list) -> dict:
         """
         Given a ShopperID, retrieve additional information about that shopper, such as the shopper creation date,
         their email address, etc.
-        :param shopper_id:
-        :param fields:
-        :return:
         """
         shopper_data = {}
 

@@ -107,7 +107,7 @@ class HostingProductResolver(object):
             return dc, os, product
         return None
 
-    def __locate_product(self, domain: str, guid: str, ip: str, product: str = None) -> dict:
+    def locate_product(self, domain: str, guid: str, ip: str, product: str = None) -> dict:
         if product and product in self.product_locators:
             pl_data = self.product_locators.get(product).locate(domain=domain, guid=guid, ip=ip)
             if pl_data:
@@ -154,7 +154,7 @@ class HostingProductResolver(object):
             host_shopper = shopper_id
         elif ipam_params:
             dc, os, product = ipam_params
-        data = self.__locate_product(domain=domain, guid=guid, ip=ip, product=product)
+        data = self.locate_product(domain=domain, guid=guid, ip=ip, product=product)
 
         if tz_params:
             tz_guid = tz_params[2]

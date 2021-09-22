@@ -31,6 +31,8 @@ class AppConfig(object):
     METRICS_PORT = int(os.getenv("METRICS_PORT", "9200"))
 
     PARKED_IPS = ['34.102.136.180', '34.98.99.30']
+    CRM_CLIENT_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
+    SHOPPER_API_URL = 'https://shopper.api.int.dev-godaddy.com/v1/shoppers/{}'
 
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
@@ -84,6 +86,8 @@ class ProductionAppConfig(AppConfig):
                     'cmap.threatapi.godaddy.com',
                     'kelvinservice.int.godaddy.com']
     DB_WEB_SVC_URL = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
+    CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
+    SHOPPER_API_URL = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
 
     def __init__(self):
         super().__init__()
@@ -105,6 +109,8 @@ class OTEAppConfig(AppConfig):
     CN_WHITELIST = ['cmapservice.int.ote-godaddy.com',
                     'kelvinservice.int.ote-godaddy.com']
     DB_WEB_SVC_URL = 'https://dsweb.ote.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll'
+    CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
+    SHOPPER_API_URL = 'https://shopper.api.int.ote-godaddy.com/v1/shoppers/{}'
 
     def __init__(self):
         super().__init__()

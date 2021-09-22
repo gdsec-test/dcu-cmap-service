@@ -1,3 +1,4 @@
+import json
 import os
 
 import graphene
@@ -83,6 +84,51 @@ def cache_response(response):
     elif request.data:
         redis_obj.set(request.data, response.data)
     return response
+
+
+@app.route('/v1/hosted/lookup', methods=['POST'])
+def lookup_product():
+    data = request.get_json()
+    domain = data.get('domain', None)
+    guid = data.get('guid', None)
+    ip = data.get('ip', None)
+    product = data.get('product', None)
+    if domain is None or guid is None or ip is None or product is None:
+        return '{"message": "Invalid parameters"}', 400
+
+    resolver: HostingProductResolver = ctx['ipam']
+    result = resolver.locate_product(domain, guid, ip, product)
+    return json.dumps(result), 200
+
+
+@app.route('/v1/shopper/lookup', methods=['POST'])
+def lookup_shopper():
+    data = request.get_json()
+    shopper_id = data.get('shopper_id', None)
+    if shopper_id is None:
+        return '{"message": "Invalid parameters"}', 400
+
+    crm: CRMClientAPI = ctx['crm']
+    vip_client: VipClients = ctx['vip']
+    shopper_client: ShopperAPI = ctx['shopper']
+
+    shopper_data = {}
+    extra_data = shopper_client.get_shopper_by_shopper_id(shopper_id, ['shopper_create_date'])
+    shopper_data['shopper_create_date'] = extra_data.get('shopper_create_date')
+
+    if shopper_data['shopper_create_date']:
+        shopper_data['shopperId'] = shopper_id
+        shopper_data['vip'] = crm.get_shopper_portfolio_information(shopper_id)
+        shopper_data['vip']['blacklist'] = vip_client.is_blacklisted(shopper_id)
+    else:
+        shopper_data['shopperId'] = None
+        shopper_data['vip'] = {
+            'blacklist': False,
+            'portfolioType': None,
+            'shopperId': None
+        }
+
+    return json.dumps(shopper_data), 200
 
 
 schema = graphene.Schema(query=Query)

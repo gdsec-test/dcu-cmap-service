@@ -6,17 +6,18 @@ from suds.client import Client
 
 from service.soap.request_transport import RequestsTransport
 from service.utils.functions import return_expected_dict_due_to_exception
+from settings import AppConfig
 
 
 class CRMClientAPI(object):
     _factory = '{http://schemas.datacontract.org/2004/07/GoDaddy.CRM.ClientAPI.DataContracts}ShopperPortfolioInformationRequest'
     _redis_key = 'result'
 
-    def __init__(self, settings, redis_obj):
+    def __init__(self, settings: AppConfig, redis_obj):
         self._logger = get_logging()
         self._redis = redis_obj
 
-        location = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
+        location = settings.CRM_CLIENT_API_URL
         wsdl = location + '?singleWsdl'
 
         try:
@@ -30,12 +31,10 @@ class CRMClientAPI(object):
         except Exception as e:
             self._logger.error('Failed CRM Client Init: {}'.format(e))
 
-    def get_shopper_portfolio_information(self, shopper_id):
+    def get_shopper_portfolio_information(self, shopper_id: str) -> dict:
         '''
         Determine a given shopper's PortfolioInformation based on their ShopperID. This may include information
         such as what GoDaddy Representative managers their account, the Rep's email, etc.
-        :param shopper_id:
-        :return:
         '''
 
         query_dict = {}
