@@ -12,6 +12,7 @@ from service.connectors.toolzilla import ToolzillaAPI
 from service.products.angelo import AngeloAPI
 from service.products.cndns import CNDNSAPI
 from service.products.diablo import DiabloAPI
+from service.products.diablo_whmcs import DiabloAPIWHMCS
 from service.products.go_central import GoCentralAPI
 from service.products.mwp_one import MWPOneAPI
 from service.products.mwp_two import MWPTwoAPI
@@ -59,6 +60,7 @@ class HostingProductResolver(object):
             ('GoCentral', GoCentralAPI(config)),
             ('Vertigo', VertigoAPI(config)),
             ('Diablo', DiabloAPI(config)),
+            ('Diablo WHMCS', DiabloAPIWHMCS(config)),
             ('Plesk', AngeloAPI(config)),
             ('MWP 1.0', MWPOneAPI(config)),
             ('VPS4', VPS4API(config))

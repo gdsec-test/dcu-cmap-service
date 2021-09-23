@@ -13,6 +13,10 @@ def parse_hostname(hostname):
         os = 'Linux'
         product = 'Diablo'
 
+    if re.search('\\dplvwcpnl', hostname):
+        os = 'Linux'
+        product = 'Diablo WHMCS'
+
     if re.search('\\dnwvpweb\\d', hostname):
         os = 'Windows'
         product = 'Plesk'
