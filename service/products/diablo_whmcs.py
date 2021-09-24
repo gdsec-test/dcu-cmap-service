@@ -12,7 +12,7 @@ class DiabloAPIWHMCS(Product):
         self.url = settings.DIABLO_WHMCS_URL
         self.auth = (settings.DIABLO_USER, settings.DIABLO_PASS)
 
-    def locate(self, ip: str) -> dict:
+    def locate(self, ip: str, **kwargs) -> dict:
         """
         Given an IP, retrieve account details when associated with a Diablo WHMCS product.
         NOTE: Although this endpoint is meant to be specific to the WHMCS product, it *sometimes* returns info
