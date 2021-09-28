@@ -20,7 +20,7 @@ class DiabloAPIWHMCS(Product):
         """
         result = {}
         try:
-            r = requests.get(f'{self.url}{ip}/list_whmcs_accounts_info', auth=self.auth, headers=self._headers)
+            r = requests.get(f'{self.url}{ip}/list_whmcs_accounts_info', auth=self.auth, headers=self._headers, timeout=10)
             returned_json = r.json()
 
             if isinstance(returned_json, dict):
