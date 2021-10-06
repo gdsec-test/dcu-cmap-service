@@ -18,7 +18,8 @@ class ToolzillaAPI(object):
                                  transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
                                                              password=settings.CMAP_PROXY_PASS,
                                                              cert=settings.CMAP_PROXY_CERT,
-                                                             key=settings.CMAP_PROXY_KEY))
+                                                             key=settings.CMAP_PROXY_KEY),
+                                 timeout=20)
         except Exception as e:
             self._logger.error('Unable to initialize WSDL to Toolzilla API: {}'.format(e))
 
