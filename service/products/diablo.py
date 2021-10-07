@@ -20,10 +20,23 @@ class DiabloAPI(Product):
         :return:
         """
         try:
+            self._logger.info("made it here!!!!!!!!!!!!!!!!: " + guid)
             if guid:
+                self._logger.info("chose the guid: " + guid)
                 r = requests.get(self.url + "/" + guid, auth=self.auth, headers=self._headers, verify=False)
-            else:
-                r = requests.get(self.url + "?addon_domain_eq=" + domain, auth=self.auth, headers=self._headers, verify=False)
+                returned_json = r.json()
+                self._logger.info("created at :" + returned_json.get('created_at'))
+                return {
+                    'guid': returned_json.get('orion_guid'),
+                    'shopper_id': returned_json.get('shopper_id'),
+                    'created_date': returned_json.get('created_at'),
+                    'ip': returned_json.get('shared_ip_address'),
+                    'os': 'Linux',
+                    'product': 'Diablo'
+                }
+
+            self._logger.info("chose the domain: " + domain)
+            r = requests.get(self.url + "?addon_domain_eq=" + domain, auth=self.auth, headers=self._headers, verify=False)
             returned_json = r.json()
 
             if returned_json.get('data'):
