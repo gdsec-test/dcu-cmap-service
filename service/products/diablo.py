@@ -12,7 +12,7 @@ class DiabloAPI(Product):
         self.url = settings.DIABLO_URL
         self.auth = (settings.DIABLO_USER, settings.DIABLO_PASS)
 
-    def locate(self, domain, **kwargs):
+    def locate(self, domain, guid, **kwargs):
         """
         Given a domain, retrieve the guid, shopperId, create date, IP address, etc. if associated with a Diablo product.
         :param domain:
@@ -20,7 +20,10 @@ class DiabloAPI(Product):
         :return:
         """
         try:
-            r = requests.get(self.url + domain, auth=self.auth, headers=self._headers, verify=False)
+            if guid:
+                r = requests.get(self.url + "/" + guid, auth=self.auth, headers=self._headers, verify=False)
+            else:
+                r = requests.get(self.url + "?addon_domain_eq=" + domain, auth=self.auth, headers=self._headers, verify=False)
             returned_json = r.json()
 
             if returned_json.get('data'):
