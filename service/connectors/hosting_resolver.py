@@ -164,7 +164,7 @@ class HostingProductResolver(object):
             sub_guid = sub_params[1]
         if sub_guid != tz_guid:
             mismatched_guid.inc()
-
+        self._logger.info("username: ", data.get('username'))
         return {
             'hostname': hostname,
             'ip': ip,
@@ -177,7 +177,8 @@ class HostingProductResolver(object):
             'friendly_name': data.get('friendly_name'),
             'created_date': data.get('created_date', created_date),
             'private_label_id': data.get('private_label_id'),
-            'account_id': data.get('account_id')
+            'account_id': data.get('account_id'),
+            'username': data.get('username')
         }
 
     def _retrieve_ip(self, domain):
