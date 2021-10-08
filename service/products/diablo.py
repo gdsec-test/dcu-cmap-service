@@ -17,15 +17,13 @@ class DiabloAPI(Product):
         Given a domain, retrieve the guid, shopperId, create date, IP address, etc. if associated with a Diablo product.
         :param domain:
         :param kwargs:
+        :param guid:
         :return:
         """
         try:
-            self._logger.info("made it here!!!!!!!!!!!!!!!!: " + guid)
             if guid:
-                self._logger.info("chose the guid: " + guid)
                 r = requests.get(self.url + "/" + guid, auth=self.auth, headers=self._headers, verify=False)
                 returned_json = r.json()
-                self._logger.info("created at :" + returned_json.get('created_at'))
                 return {
                     'guid': returned_json.get('orion_guid'),
                     'shopper_id': returned_json.get('shopper_id'),
@@ -35,13 +33,11 @@ class DiabloAPI(Product):
                     'product': 'Diablo'
                 }
 
-            self._logger.info("chose the domain: " + domain)
             r = requests.get(self.url + "?addon_domain_eq=" + domain, auth=self.auth, headers=self._headers, verify=False)
             returned_json = r.json()
 
             if returned_json.get('data'):
                 entry = returned_json.get('data', [{}])[0]
-
                 return {
                     'guid': entry.get('orion_guid'),
                     'shopper_id': entry.get('shopper_id'),
@@ -50,6 +46,7 @@ class DiabloAPI(Product):
                     'os': 'Linux',
                     'product': 'Diablo'
                 }
+
             else:
                 self._logger.info('No data value received from Diablo request')
 
