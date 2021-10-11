@@ -38,7 +38,8 @@ class DiabloAPIWHMCS(Product):
                 }
 
                 # If no C2 info, treat as a non-WHMCS Diablo plan
-                if returned_json.get('c2_accounts') == [{}]:
+                c2accounts = returned_json.get('c2_accounts')
+                if c2accounts == [{}] or c2accounts == {}:
                     result.update({
                         'product': 'Diablo',
                         'username': entry.get('username')
