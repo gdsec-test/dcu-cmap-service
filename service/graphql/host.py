@@ -21,3 +21,4 @@ class HostInfo(graphene.ObjectType):
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
     private_label_id = graphene.String(description='Private Label ID for the reseller')
     shopper_create_date = graphene.String(description='The create data of the shopper')
+    username = graphene.String(description='Username')
