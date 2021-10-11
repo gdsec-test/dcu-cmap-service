@@ -164,7 +164,6 @@ class HostingProductResolver(object):
             sub_guid = sub_params[1]
         if sub_guid != tz_guid:
             mismatched_guid.inc()
-        self._logger.info("username: ", data.get('username'))
         return {
             'hostname': hostname,
             'ip': ip,
