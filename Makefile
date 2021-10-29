@@ -49,6 +49,7 @@ dev: prep
 	@echo "----- building $(REPONAME) dev -----"
 	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/dev/cmap_service.deployment.yaml
 	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
+	docker build --no-cache=true -t $(DOCKERREPO)/wiremock:dev -f Dockerfile.wiremock .
 
 .PHONY: ote
 ote: prep
@@ -73,6 +74,7 @@ prod: prep
 dev-deploy: dev
 	@echo "----- deploying $(REPONAME) dev -----"
 	docker push $(DOCKERREPO):dev
+	docker push $(DOCKERREPO)/wiremock:dev
 	kubectl --context dev-dcu apply -f $(BUILDROOT)/k8s/dev/cmap_service.deployment.yaml --record
 
 .PHONY: ote-deploy

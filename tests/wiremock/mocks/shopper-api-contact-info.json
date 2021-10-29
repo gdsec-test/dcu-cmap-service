@@ -1,0 +1,10 @@
+{
+    "request": {
+        "urlPattern": "/shopperapi/v1/shoppers/(\\d{9}).*",
+        "method": "GET"
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "shopper-api-contact-info.json"
+    }
+}

@@ -1,0 +1,11 @@
+{
+  "request" : {
+    "method" : "GET",
+    "urlPathPattern" : "/gocentral/v2/domains/(?:(?!gocentral).)*/website"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName": "gocentral-no-match-response.json",
+    "transformers": ["response-template"]
+  }
+}

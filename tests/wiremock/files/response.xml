@@ -1,0 +1,561 @@
+<?xml version="1.0"?>
+<!-- ATL Server generated Web Service Description -->
+<definitions 
+	xmlns:s="http://www.w3.org/2001/XMLSchema" 
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+	xmlns:s0="urn:RegDBWebSvcService" 
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:atls="http://tempuri.org/vc/atl/server/"
+	targetNamespace="urn:RegDBWebSvcService" 
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+>
+	<types>
+		<s:schema targetNamespace="urn:RegDBWebSvcService" attributeFormDefault="qualified" elementFormDefault="qualified">
+			<s:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+		</s:schema>
+	</types>
+	<message name="SetBillingResourceIDIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="SetBillingResourceIDOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="GetDomainsByShopperAndStatusIn">
+		<part name="bstrRequestXml" type="s:string"/>
+	</message>
+	<message name="GetDomainsByShopperAndStatusOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="GetDomainsByShopperIdRedeemFreeIn">
+		<part name="bstrXmlRequest" type="s:string"/>
+	</message>
+	<message name="GetDomainsByShopperIdRedeemFreeOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="GetDomainsByShopperIdRedeemChargeIn">
+		<part name="bstrXmlRequest" type="s:string"/>
+	</message>
+	<message name="GetDomainsByShopperIdRedeemChargeOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="SearchNonBizRegDomainsIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="SearchNonBizRegDomainsOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="ListNonBizRegDomainsIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="ListNonBizRegDomainsOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="GetDomainCountByShopperIDIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="GetDomainCountByShopperIDOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="UpdateFreeProductPackageIdByBillingResourceIdIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="UpdateFreeProductPackageIdByBillingResourceIdOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="UpdateFreeProductPackageIdByDomainIdIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="UpdateFreeProductPackageIdByDomainIdOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="GetEmergencyContactsIn">
+		<part name="DomainId" type="s:int"/>
+	</message>
+	<message name="GetEmergencyContactsOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="GetEmergencyNotificationsIn">
+		<part name="bstrXMLDoc" type="s:string"/>
+	</message>
+	<message name="GetEmergencyNotificationsOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="AddLockForAbuseIn">
+		<part name="DomainIdXML" type="s:string"/>
+		<part name="LastUserNote" type="s:string"/>
+		<part name="RequestedBy" type="s:string"/>
+		<part name="IP" type="s:string"/>
+		<part name="ModifiedBy" type="s:int"/>
+	</message>
+	<message name="AddLockForAbuseOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="RemoveLockForAbuseIn">
+		<part name="DomainIdXML" type="s:string"/>
+		<part name="LastUserNote" type="s:string"/>
+		<part name="RequestedBy" type="s:string"/>
+		<part name="IP" type="s:string"/>
+		<part name="ModifiedBy" type="s:int"/>
+	</message>
+	<message name="RemoveLockForAbuseOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="UpdateNameServersIn">
+		<part name="DomainId" type="s:int"/>
+		<part name="xmlDoc" type="s:string"/>
+	</message>
+	<message name="UpdateNameServersOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="GetNameServersByShopperIn">
+		<part name="ShopperId" type="s:string"/>
+		<part name="DomainName" type="s:string"/>
+	</message>
+	<message name="GetNameServersByShopperOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="GetNameServerHostNameByDomainNameIn">
+		<part name="DomainName" type="s:string"/>
+	</message>
+	<message name="GetNameServerHostNameByDomainNameOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="GetNameServerHostNameByDomainIdIn">
+		<part name="DomainId" type="s:int"/>
+	</message>
+	<message name="GetNameServerHostNameByDomainIdOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="GetShopperIdByDomainNameIn">
+		<part name="DomainName" type="s:string"/>
+	</message>
+	<message name="GetShopperIdByDomainNameOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="SetDomainStatusIn">
+		<part name="DomainId" type="s:int"/>
+		<part name="Status" type="s:int"/>
+		<part name="LastUserNote" type="s:string"/>
+		<part name="RequestedBy" type="s:string"/>
+		<part name="IP" type="s:string"/>
+	</message>
+	<message name="SetDomainStatusOut">
+		<part name="ResultsXML" type="s:string"/>
+	</message>
+	<message name="GetDomainCountIn">
+		<part name="lInternalRegistrarID" type="s:int"/>
+	</message>
+	<message name="GetDomainCountOut">
+		<part name="iResult" type="s:int"/>
+	</message>
+	<message name="SetDomainContactChangeNotifyIn">
+		<part name="bstrDomainName" type="s:string"/>
+		<part name="bNotifyContactChange" type="s:int"/>
+	</message>
+	<message name="SetDomainContactChangeNotifyOut">
+		<part name="bstrResult" type="s:string"/>
+	</message>
+	<message name="GetDomainListByShopperIDIn">
+		<part name="bstrShopperId" type="s:string"/>
+		<part name="bstrDomainNameOffset" type="s:string"/>
+		<part name="bIncDomainNameOffset" type="s:int"/>
+		<part name="bForward" type="s:int"/>
+		<part name="nCount" type="s:int"/>
+	</message>
+	<message name="GetDomainListByShopperIDOut">
+		<part name="bstrResultsXML" type="s:string"/>
+	</message>
+	<message name="TransferValidationAckIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="TransferValidationAckOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="TransferValidationNackIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="TransferValidationNackOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="UpdateBillingResourceIdByGuidIn">
+		<part name="requestXml" type="s:string"/>
+	</message>
+	<message name="UpdateBillingResourceIdByGuidOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="GetParentChildShopperByDomainNameIn">
+		<part name="DomainName" type="s:string"/>
+	</message>
+	<message name="GetParentChildShopperByDomainNameOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<message name="TestIn">
+	</message>
+	<message name="TestOut">
+		<part name="return" type="s:string"/>
+	</message>
+	<portType name="RegDBWebSvcServiceSoap">
+		<operation name="SetBillingResourceID">
+			<input message="s0:SetBillingResourceIDIn"/>
+			<output message="s0:SetBillingResourceIDOut"/>
+		</operation>
+		<operation name="GetDomainsByShopperAndStatus">
+			<input message="s0:GetDomainsByShopperAndStatusIn"/>
+			<output message="s0:GetDomainsByShopperAndStatusOut"/>
+		</operation>
+		<operation name="GetDomainsByShopperIdRedeemFree">
+			<input message="s0:GetDomainsByShopperIdRedeemFreeIn"/>
+			<output message="s0:GetDomainsByShopperIdRedeemFreeOut"/>
+		</operation>
+		<operation name="GetDomainsByShopperIdRedeemCharge">
+			<input message="s0:GetDomainsByShopperIdRedeemChargeIn"/>
+			<output message="s0:GetDomainsByShopperIdRedeemChargeOut"/>
+		</operation>
+		<operation name="SearchNonBizRegDomains">
+			<input message="s0:SearchNonBizRegDomainsIn"/>
+			<output message="s0:SearchNonBizRegDomainsOut"/>
+		</operation>
+		<operation name="ListNonBizRegDomains">
+			<input message="s0:ListNonBizRegDomainsIn"/>
+			<output message="s0:ListNonBizRegDomainsOut"/>
+		</operation>
+		<operation name="GetDomainCountByShopperID">
+			<input message="s0:GetDomainCountByShopperIDIn"/>
+			<output message="s0:GetDomainCountByShopperIDOut"/>
+		</operation>
+		<operation name="UpdateFreeProductPackageIdByBillingResourceId">
+			<input message="s0:UpdateFreeProductPackageIdByBillingResourceIdIn"/>
+			<output message="s0:UpdateFreeProductPackageIdByBillingResourceIdOut"/>
+		</operation>
+		<operation name="UpdateFreeProductPackageIdByDomainId">
+			<input message="s0:UpdateFreeProductPackageIdByDomainIdIn"/>
+			<output message="s0:UpdateFreeProductPackageIdByDomainIdOut"/>
+		</operation>
+		<operation name="GetEmergencyContacts">
+			<input message="s0:GetEmergencyContactsIn"/>
+			<output message="s0:GetEmergencyContactsOut"/>
+		</operation>
+		<operation name="GetEmergencyNotifications">
+			<input message="s0:GetEmergencyNotificationsIn"/>
+			<output message="s0:GetEmergencyNotificationsOut"/>
+		</operation>
+		<operation name="AddLockForAbuse">
+			<input message="s0:AddLockForAbuseIn"/>
+			<output message="s0:AddLockForAbuseOut"/>
+		</operation>
+		<operation name="RemoveLockForAbuse">
+			<input message="s0:RemoveLockForAbuseIn"/>
+			<output message="s0:RemoveLockForAbuseOut"/>
+		</operation>
+		<operation name="UpdateNameServers">
+			<input message="s0:UpdateNameServersIn"/>
+			<output message="s0:UpdateNameServersOut"/>
+		</operation>
+		<operation name="GetNameServersByShopper">
+			<input message="s0:GetNameServersByShopperIn"/>
+			<output message="s0:GetNameServersByShopperOut"/>
+		</operation>
+		<operation name="GetNameServerHostNameByDomainName">
+			<input message="s0:GetNameServerHostNameByDomainNameIn"/>
+			<output message="s0:GetNameServerHostNameByDomainNameOut"/>
+		</operation>
+		<operation name="GetNameServerHostNameByDomainId">
+			<input message="s0:GetNameServerHostNameByDomainIdIn"/>
+			<output message="s0:GetNameServerHostNameByDomainIdOut"/>
+		</operation>
+		<operation name="GetShopperIdByDomainName">
+			<input message="s0:GetShopperIdByDomainNameIn"/>
+			<output message="s0:GetShopperIdByDomainNameOut"/>
+		</operation>
+		<operation name="SetDomainStatus">
+			<input message="s0:SetDomainStatusIn"/>
+			<output message="s0:SetDomainStatusOut"/>
+		</operation>
+		<operation name="GetDomainCount">
+			<input message="s0:GetDomainCountIn"/>
+			<output message="s0:GetDomainCountOut"/>
+		</operation>
+		<operation name="SetDomainContactChangeNotify">
+			<input message="s0:SetDomainContactChangeNotifyIn"/>
+			<output message="s0:SetDomainContactChangeNotifyOut"/>
+		</operation>
+		<operation name="GetDomainListByShopperID">
+			<input message="s0:GetDomainListByShopperIDIn"/>
+			<output message="s0:GetDomainListByShopperIDOut"/>
+		</operation>
+		<operation name="TransferValidationAck">
+			<input message="s0:TransferValidationAckIn"/>
+			<output message="s0:TransferValidationAckOut"/>
+		</operation>
+		<operation name="TransferValidationNack">
+			<input message="s0:TransferValidationNackIn"/>
+			<output message="s0:TransferValidationNackOut"/>
+		</operation>
+		<operation name="UpdateBillingResourceIdByGuid">
+			<input message="s0:UpdateBillingResourceIdByGuidIn"/>
+			<output message="s0:UpdateBillingResourceIdByGuidOut"/>
+		</operation>
+		<operation name="GetParentChildShopperByDomainName">
+			<input message="s0:GetParentChildShopperByDomainNameIn"/>
+			<output message="s0:GetParentChildShopperByDomainNameOut"/>
+		</operation>
+		<operation name="Test">
+			<input message="s0:TestIn"/>
+			<output message="s0:TestOut"/>
+		</operation>
+	</portType>
+	<binding name="RegDBWebSvcServiceSoap" type="s0:RegDBWebSvcServiceSoap">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+		<operation name="SetBillingResourceID">
+			<soap:operation soapAction="#SetBillingResourceID" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetDomainsByShopperAndStatus">
+			<soap:operation soapAction="#GetDomainsByShopperAndStatus" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetDomainsByShopperIdRedeemFree">
+			<soap:operation soapAction="#GetDomainsByShopperIdRedeemFree" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetDomainsByShopperIdRedeemCharge">
+			<soap:operation soapAction="#GetDomainsByShopperIdRedeemCharge" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="SearchNonBizRegDomains">
+			<soap:operation soapAction="#SearchNonBizRegDomains" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="ListNonBizRegDomains">
+			<soap:operation soapAction="#ListNonBizRegDomains" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetDomainCountByShopperID">
+			<soap:operation soapAction="#GetDomainCountByShopperID" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="UpdateFreeProductPackageIdByBillingResourceId">
+			<soap:operation soapAction="#UpdateFreeProductPackageIdByBillingResourceId" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="UpdateFreeProductPackageIdByDomainId">
+			<soap:operation soapAction="#UpdateFreeProductPackageIdByDomainId" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetEmergencyContacts">
+			<soap:operation soapAction="#GetEmergencyContacts" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetEmergencyNotifications">
+			<soap:operation soapAction="#GetEmergencyNotifications" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="AddLockForAbuse">
+			<soap:operation soapAction="#AddLockForAbuse" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="RemoveLockForAbuse">
+			<soap:operation soapAction="#RemoveLockForAbuse" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="UpdateNameServers">
+			<soap:operation soapAction="#UpdateNameServers" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetNameServersByShopper">
+			<soap:operation soapAction="#GetNameServersByShopper" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetNameServerHostNameByDomainName">
+			<soap:operation soapAction="#GetNameServerHostNameByDomainName" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetNameServerHostNameByDomainId">
+			<soap:operation soapAction="#GetNameServerHostNameByDomainId" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetShopperIdByDomainName">
+			<soap:operation soapAction="#GetShopperIdByDomainName" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="SetDomainStatus">
+			<soap:operation soapAction="#SetDomainStatus" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetDomainCount">
+			<soap:operation soapAction="#GetDomainCount" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="SetDomainContactChangeNotify">
+			<soap:operation soapAction="#SetDomainContactChangeNotify" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetDomainListByShopperID">
+			<soap:operation soapAction="#GetDomainListByShopperID" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="TransferValidationAck">
+			<soap:operation soapAction="#TransferValidationAck" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="TransferValidationNack">
+			<soap:operation soapAction="#TransferValidationNack" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="UpdateBillingResourceIdByGuid">
+			<soap:operation soapAction="#UpdateBillingResourceIdByGuid" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="GetParentChildShopperByDomainName">
+			<soap:operation soapAction="#GetParentChildShopperByDomainName" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+		<operation name="Test">
+			<soap:operation soapAction="#Test" style="rpc"/>
+			<input>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="urn:RegDBWebSvcService" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="RegDBWebSvcService">
+		<port name="RegDBWebSvcServiceSoap" binding="s0:RegDBWebSvcServiceSoap">
+			<soap:address location="https://dsweb.int.dev-godaddy.com:443/RegDBWebSvc/RegDBWebSvc.dll?Handler=Default"/>
+		</port>
+	</service>
+</definitions>

@@ -15,10 +15,10 @@ class AppConfig(object):
     TZ_URL = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
     VERT_URL = 'https://vertigo.cmap.proxy.int.godaddy.com/vertigo/v1/container/?ips__ipv4='
     ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
-    DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts'
+    DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
     DIABLO_WHMCS_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/servers/'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
-    MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts/?domain='
+    MWPONE_URL = 'http://localhost:8080/mwpone/v1/accounts/?domain='
 
     CMAPSERVICE_APP = 'cmapservice.int'
     WITHOUT_SSO = False
@@ -33,7 +33,7 @@ class AppConfig(object):
 
     PARKED_IPS = ['34.102.136.180', '34.98.99.30']
     CRM_CLIENT_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
-    SHOPPER_API_URL = 'https://shopper.api.int.dev-godaddy.com/v1/shoppers/{}'
+    SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
 
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
@@ -89,6 +89,8 @@ class ProductionAppConfig(AppConfig):
     DB_WEB_SVC_URL = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
+    DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts'
+    MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts/?domain='
 
     def __init__(self):
         super().__init__()
@@ -125,14 +127,15 @@ class DevelopmentAppConfig(AppConfig):
     SSO_URL = 'https://sso.dev-godaddy.com'
 
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
-    BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
-    GOCENTRAL_URL = 'https://websites.api.dev-godaddy.com/v2/domains/{domain}/website'
+    BRAND_DETECTION_URL = 'http://localhost:8080/branddetection'
+    GOCENTRAL_URL = 'http://localhost:8080/gocentral/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
     CNDNS_URL = 'http://abuse.partners.int.dev-godaddy.com/v1/'
     CN_WHITELIST = ['cmapservice.int.dev-godaddy.com',
                     'cmap.threatapi.dev-godaddy.com',
                     'kelvinservice.int.dev-godaddy.com']
-    DB_WEB_SVC_URL = 'https://dsweb.int.dev-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
+    DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
+    SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
 
     def __init__(self):
         super().__init__()
@@ -151,7 +154,7 @@ class LocalAppConfig(AppConfig):
     CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
     CN_WHITELIST = ['']
     WITHOUT_SSO = True
-    DB_WEB_SVC_URL = 'https://dsweb.int.dev-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
+    DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
 
     def __init__(self):
         super().__init__()

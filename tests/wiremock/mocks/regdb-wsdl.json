@@ -1,0 +1,22 @@
+{
+    "request": {
+        "url": "/regdb/RegDbWebSvc/RegDVWebSvc.dll?Handler=GenRegDBWebSvcWSDL",
+        "method": "GET"
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "response.xml",
+        "headers": {
+            "Server": "Microsoft-IIS/8.0",
+            "Access-Control-Allow-Origin": "http://www.test.com",
+            "Access-Control-Allow-Methods": "GET, POST",
+            "Connection": "Keep-Alive",
+            "Web-Service": "Test 1.1",
+            "Access-Control-Allow-Headers": "content-type",
+            "Date": "Tue, 26 Jun 2018 07:45:47 GMT",
+            "Strict-Transport-Security": "max-age=31536000",
+            "Cache-Control": "private, max-age=0",
+            "Content-Type": "application/soap+xml; charset=utf-8"
+        }
+    }
+}

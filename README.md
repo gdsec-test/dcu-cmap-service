@@ -43,10 +43,19 @@ make [dev, ote, prod]-deploy
 You must also ensure you have the proper push permissions to Artifactory or you may experience a `Forbidden` message.
 
 ## Testing
+### Unit Tests
 ```
 make test     # runs all unit tests
 make testcov  # runs tests with coverage
 ```
+### Wiremock in dev
+Due to the lack of a robust dev environment here @ GoDaddy, we needed to mock out our external interfaces in order to test a variety of enrichment scenarios. When testing enrichment we need to be able to determine; Is the domain registered here? Is the domain hosted here? What shopper owns the domain? What shopper owns the hosting product? What are the identifiers for those products? What are the shopper contact details? Rather than hard-code these values, we determined that it would be better to be able to encode them in the domain itself. This allows the tester to specify randomly generated data when they don't care, or create links between things when they do care. Here is the regex that describes how to encode the enrichment data into the domain.
+
+```
+      domain here?        shopper       domain id    hosted here?    shopper       guid
+^stub(registered|foreign)(\d{9}|random)(\d{9}|random)(diablo|gocentral|mwpone|foreign)(\d{9}|random)([0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}|random)-.*\.com$
+```
+For example, the domain `stubforeignrandomrandomdiablo123456789random-placeholder.com` tells us that we want CMAP to detect this domain as registered elsewhere, but hosted as a diablo product under shopper 123456789 with a random product identifier.
 
 ## Style and Standards
 All deploys must pass Flake8 linting and all unit tests which are baked into the [Makefile](Makefile).

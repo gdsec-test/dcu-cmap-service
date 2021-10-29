@@ -1,0 +1,11 @@
+{
+  "request" : {
+    "method" : "GET",
+    "urlPathPattern" : "/gocentral/v2/domains/stub(registered|foreign)(\\d{9}|random)(\\d{9}|random)(gocentral)(\\d{9}|random)([0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}|random)-.*\\.com/website"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName": "gocentral-hosted-response.json",
+    "transformers": ["response-template"]
+  }
+}

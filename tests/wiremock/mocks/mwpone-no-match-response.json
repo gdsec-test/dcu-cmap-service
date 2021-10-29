@@ -1,0 +1,16 @@
+{
+  "request" : {
+    "method" : "GET",
+    "urlPath" : "/mwpone/v1/accounts/",
+    "queryParameters" : {
+      "domain" : {
+        "matches" : "(?:(?!mwpone).)*"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName": "mwpone-no-match-response.json",
+    "transformers": ["response-template"]
+  }
+}

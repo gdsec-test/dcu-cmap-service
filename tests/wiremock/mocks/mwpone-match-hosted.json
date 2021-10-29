@@ -1,0 +1,16 @@
+{
+  "request" : {
+    "method" : "GET",
+    "urlPath" : "/mwpone/v1/accounts/",
+    "queryParameters" : {
+      "domain" : {
+        "matches" : "^stub(registered|foreign)(\\d{9}|random)(\\d{9}|random)(mwpone)(\\d{9}|random)([0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}|random)-.*\\.com$"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName": "mwpone-hosted-response.json",
+    "transformers": ["response-template"]
+  }
+}

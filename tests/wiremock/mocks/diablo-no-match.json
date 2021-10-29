@@ -1,0 +1,16 @@
+{
+  "request" : {
+    "method" : "GET",
+    "urlPath" : "/diablo/v1/accounts",
+    "queryParameters" : {
+      "addon_domain_eq" : {
+        "matches" : "^(?:(?!diablo).)*$"
+      }
+    }
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName": "diablo-no-match-response.json",
+    "transformers": ["response-template"]
+  }
+}

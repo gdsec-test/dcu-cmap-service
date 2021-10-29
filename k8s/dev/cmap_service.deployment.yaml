@@ -28,8 +28,10 @@ spec:
           hostnames:
             - "crmclient-api.prod.phx3.int.godaddy.com"
       containers:
-        -
-          name: "cmap-service"
+        - name: wiremock
+          imagePullPolicy: Always
+          image: docker-dcu-local.artifactory.secureserver.net/cmap_service/wiremock:dev
+        - name: "cmap-service"
           imagePullPolicy: "Always"
           image: "docker-dcu-local.artifactory.secureserver.net/cmap_service:dev"
           livenessProbe:

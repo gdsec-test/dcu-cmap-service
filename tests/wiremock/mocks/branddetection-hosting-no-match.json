@@ -1,0 +1,15 @@
+{
+    "request": {
+        "urlPath": "/branddetection/hosting",
+        "method": "GET",
+        "queryParameters" : {
+          "domain" : {
+            "matches" : "^stub(registered|foreign)(\\d{9}|random)(\\d{9}|random)(foreign)(\\d{9}|random)([0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}|random)-.*\\.com$"
+          }
+        }
+    },
+    "response": {
+        "status": 200,
+        "bodyFileName": "branddetection-no-match-hosting.json"
+    }
+}
