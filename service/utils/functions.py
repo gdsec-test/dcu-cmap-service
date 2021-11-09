@@ -3,6 +3,7 @@ import re
 
 import tld
 from dcustructuredloggingflask.flasklogger import get_logging
+from tld.utils import reset_tld_names
 
 from settings import config_by_name
 
@@ -91,16 +92,14 @@ def get_fld_by_domain_name(domain_name):
         try:
             # TLD expects to work on a domain name starting with http://
             domain_name = 'http://' + domain_name if domain_name[:7] != 'http://' else domain_name
-            fld = tld.get_tld(domain_name, as_object=True).fld
+            fld = tld.get_tld(domain_name, as_object=True, search_private=False).fld
         except Exception as e:
             # Try again
             try:
                 _logger.warning('Error updating TLD file for domain {} : {}. Retrying'.format(domain_name, e))
+                reset_tld_names()
                 tld.update_tld_names()
-
-                # Clearing out the global tld_names variable from tld to force it to update
-                tld.utils.tld_names = {}
-                fld = tld.get_tld(domain_name).fld
+                fld = tld.get_tld(domain_name, as_object=True, search_private=False).fld
             except Exception as e:
                 _logger.warning('Retry Error updating TLD file for domain {} : {}.'.format(domain_name, e))
                 return None

@@ -16,6 +16,10 @@ COPY . /tmp/build
 RUN PIP_CONFIG_FILE=/tmp/build/pip_config/pip.conf pip3 install --compile /tmp/build
 RUN rm -rf /tmp/build
 
+# Grab the latest TLD list, and verify it is valid.
+RUN update-tld-names
+RUN python -c 'import tld; tld.get_tld("https://godaddy.com")'
+
 # Fix permissions.
 RUN addgroup dcu && adduser --disabled-password --disabled-login --no-create-home --ingroup dcu --system dcu
 RUN chown -R dcu:dcu /usr/local/lib/python3.7/site-packages/tld/res
