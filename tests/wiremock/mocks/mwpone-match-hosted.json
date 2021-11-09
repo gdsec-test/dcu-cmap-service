@@ -4,7 +4,7 @@
     "urlPath" : "/mwpone/v1/accounts/",
     "queryParameters" : {
       "domain" : {
-        "matches" : "^stub(registered|foreign)(\\d{9}|random)(\\d{9}|random)(mwpone)(\\d{9}|random)([0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}|random)-.*\\.com$"
+        "matches" : "^stub(registered|foreign)(\\d{9}|random)(\\d{9}|random)(mwpone)(\\d{9}|random)([0-9A-Fa-f]{12}|random)-.*\\.com$"
       }
     }
   },

@@ -1,8 +1,8 @@
 {
     "data": [
         {
-            {{regexExtract request.query.addon_domain_eq '^stub(registered|foreign)(\d{9}|random)(\d{9}|random)(diablo|gocentral|mwpone|foreign)(\d{9}|random)([0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}|random)-.*\.com$' 'fields'}}
-            "orion_guid": "{{#if (eq fields.5 'random')}}{{randomValue type='UUID'}}{{else}}{{fields.5}}{{/if}}",
+            {{regexExtract request.query.addon_domain_eq '^stub(registered|foreign)(\d{9}|random)(\d{9}|random)(diablo|gocentral|mwpone|foreign)(\d{9}|random)([0-9A-Fa-f]{12}|random)-.*\.com$' 'fields'}}
+            "orion_guid": "{{#if (eq fields.5 'random')}}{{randomValue type='UUID'}}{{else}}880e45ce-32c5-40c4-a71f-{{fields.5}}{{/if}}",
             "created_date": "{{now offset='-60 days'}}",
             "shopper_id": "{{#if (eq fields.4 'random')}}{{randomValue length=9 type='NUMERIC'}}{{else}}{{fields.4}}{{/if}}"
         }
