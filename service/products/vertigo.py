@@ -32,7 +32,8 @@ class VertigoAPI(Product):
                     'created_data': data.get('created'),
                     'friendly_name': data.get('friendlyName'),
                     'shopper_id': data.get('shopperId'),
-                    'os': data.get('template_name')
+                    'os': data.get('template_name'),
+                    'managed_level': data.get('managedLevelString').replace(' ', '')
                 }
         except Exception as e:
             self._logger.error('Failed Vertigo Lookup: {}'.format(e))

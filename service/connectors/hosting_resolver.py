@@ -177,7 +177,8 @@ class HostingProductResolver(object):
             'created_date': data.get('created_date', created_date),
             'private_label_id': data.get('private_label_id'),
             'account_id': data.get('account_id'),
-            'username': data.get('username')
+            'username': data.get('username'),
+            'managed_level': data.get('managedLevel')
         }
 
     def _retrieve_ip(self, domain):

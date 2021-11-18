@@ -50,7 +50,7 @@ class AppConfig(object):
         self.CMAP_API_KEY = os.getenv('CMAP_API_KEY', 'api.key')
 
         self.VERTIGO_USER = os.getenv('VERTIGO_USER', 'vertigo_user')
-        self.VERTIGO_PASS = os.getenv('VERTIGO_PASS', 'vertiog_pass')
+        self.VERTIGO_PASS = os.getenv('VERTIGO_PASS', 'vertigo_pass')
         self.DIABLO_USER = os.getenv('DIABLO_USER', 'diablo_user')
         self.DIABLO_PASS = os.getenv('DIABLO_PASS', 'diablo_pass')
         self.ANGELO_USER = os.getenv('ANGELO_USER', 'angelo_user')

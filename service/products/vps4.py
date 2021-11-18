@@ -152,6 +152,7 @@ class VPS4API(Product):
         '''
 
         query_dict = self._build_query_dict(ip, guid)
+        managed_level_string = {0: 'SelfManaged', 1: 'Managed', 2: 'FullyManaged'}
 
         for dc, dc_url in self._vps4_urls.items():
             try:
@@ -172,6 +173,7 @@ class VPS4API(Product):
                         continue
                     if (query_dict.get(self.IP_STR) == vps_data.get('primaryIpAddress', {}).get(self.IP_STR)) or \
                             (query_dict.get(self.GUID_STR) == vps_data.get(self.GUID_STR)):
+                        managed_level = managed_level_string.get(vps_data.get('managedLevel'))
                         return {
                             'product': 'VPS4',
                             'data_center': dc,
@@ -179,7 +181,8 @@ class VPS4API(Product):
                             'created_date': vps_data.get('validOn'),
                             'friendly_name': vps_data.get('name'),
                             'os': vps_data.get('image').get('operatingSystem'),
-                            'ip': vps_data.get('primaryIpAddress').get(self.IP_STR)
+                            'ip': vps_data.get('primaryIpAddress').get(self.IP_STR),
+                            'managed_level': managed_level
                         }
             except Exception as e:
                 self._logger.error('Failed VPS4 Lookup: {}'.format(e))

@@ -22,3 +22,4 @@ class HostInfo(graphene.ObjectType):
     private_label_id = graphene.String(description='Private Label ID for the reseller')
     shopper_create_date = graphene.String(description='The create data of the shopper')
     username = graphene.String(description='Username')
+    managed_level = graphene.String(description='Managed Service Level, specific to servers')

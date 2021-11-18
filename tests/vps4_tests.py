@@ -115,7 +115,8 @@ class TestVPS4API:
         'friendly_name': FRIENDLY,
         'os': OS,
         'ip': IP,
-        'shopper_id': SHOPPER_ID
+        'shopper_id': SHOPPER_ID,
+        "managed_level": 'SelfManaged'
     }
 
     # When a valid get request is made without a SSO token
