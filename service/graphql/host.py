@@ -23,3 +23,5 @@ class HostInfo(graphene.ObjectType):
     shopper_create_date = graphene.String(description='The create data of the shopper')
     username = graphene.String(description='Username')
     managed_level = graphene.String(description='Managed Service Level, specific to servers')
+    first_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')
+    second_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')

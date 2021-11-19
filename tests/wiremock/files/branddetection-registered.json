@@ -4,5 +4,6 @@
     "registrar_name": "GoDaddy.com LLC",
     "registrar_abuse_email": ["abuse@godaddy.com"],
     "domain_create_date": "{{now offset='-55 days'}}",
-    "domain_id": "{{#if (eq fields.2 'random')}}{{randomValue length=9 type='NUMERIC'}}{{else}}{{fields.2}}{{/if}}"
+    "domain_id": "{{#if (eq fields.2 'random')}}{{randomValue length=9 type='NUMERIC'}}{{else}}{{fields.2}}{{/if}}",
+    "first_pass_enrichment": "regdb"
 }

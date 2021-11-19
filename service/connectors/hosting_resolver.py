@@ -113,11 +113,13 @@ class HostingProductResolver(object):
         if product and product in self.product_locators:
             pl_data = self.product_locators.get(product).locate(domain=domain, guid=guid, ip=ip)
             if pl_data:
+                pl_data['second_pass_enrichment'] = product
                 return pl_data
         else:
             for product_locator in self.product_locators.values():
                 pl_data = product_locator.locate(domain=domain, guid=guid, ip=ip)
                 if pl_data:
+                    pl_data['second_pass_enrichment'] = pl_data['product']
                     return pl_data
         return {}
 
@@ -130,6 +132,7 @@ class HostingProductResolver(object):
         :return:
         """
         created_date = dc = guid = hostname = host_shopper = os = product = tz_guid = sub_guid = None
+        first_pass_enrichment = ''
         ip = self._retrieve_ip(domain)
 
         # We support three sources: Toolzilla, Subscriptions API, and IPAM
@@ -149,13 +152,16 @@ class HostingProductResolver(object):
             tz_guid = guid
             hostname = tz_params[4]
             host_shopper = tz_params[5]
+            first_pass_enrichment = 'toolzilla'
         elif sub_params:
             product = sub_params[0]
             guid = sub_guid = sub_params[1]
             created_date = sub_params[2]
             host_shopper = shopper_id
+            first_pass_enrichment = 'subscriptionapi'
         elif ipam_params:
             dc, os, product = ipam_params
+            first_pass_enrichment = 'ipam'
         data = self.locate_product(domain=domain, guid=guid, ip=ip, product=product)
 
         if tz_params:
@@ -178,7 +184,9 @@ class HostingProductResolver(object):
             'private_label_id': data.get('private_label_id'),
             'account_id': data.get('account_id'),
             'username': data.get('username'),
-            'managed_level': data.get('managedLevel')
+            'managed_level': data.get('managedLevel'),
+            'first_pass_enrichment': first_pass_enrichment,
+            'second_pass_enrichment': data.get('second_pass_enrichment', '')
         }
 
     def _retrieve_ip(self, domain):

@@ -85,6 +85,8 @@ class DomainQuery(graphene.ObjectType):
                 whois['mwp_id'] = host_info.get('account_id')
                 whois['private_label_id'] = host_info.get('private_label_id')
                 whois['username'] = host_info.get('username')
+                whois['first_pass_enrichment'] = host_info.get('first_pass_enrichment')
+                whois['second_pass_enrichment'] = host_info.get('second_pass_enrichment')
 
         vip = {}
         host_shopper = whois.get('shopper_id')

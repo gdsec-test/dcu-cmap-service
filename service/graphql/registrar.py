@@ -7,3 +7,4 @@ class RegistrarInfo(graphene.ObjectType):
     domain_id = graphene.String(description='ID of domain name')
     registrar_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
     registrar_name = graphene.String(description='Name of registrar or hosting provider')
+    first_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')

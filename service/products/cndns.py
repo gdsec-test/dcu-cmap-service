@@ -40,7 +40,7 @@ class CNDNSAPI(Product):
         failure_msg = 'Failed CNDNS Lookup.'
         try:
             cnds_domains_url = self._url + 'domains/{}/account'.format(domain)
-            r = requests.get(cnds_domains_url, headers=self._headers, cert=self._cert)
+            r = requests.get(cnds_domains_url, headers=self._headers, cert=self._cert, timeout=5)
             # To avoid running json() on a 404 response
             if r.status_code == 200:
                 response = r.json()
