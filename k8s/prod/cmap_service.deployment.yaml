@@ -134,12 +134,12 @@ spec:
             - name: MWP_ONE_USER
               valueFrom:
                 secretKeyRef:
-                  name: auth-hosting-envs
+                  name: mwp-one-creds-v2
                   key: mwponeuser
             - name: MWP_ONE_PASS
               valueFrom:
                 secretKeyRef:
-                  name: auth-hosting-envs
+                  name: mwp-one-creds-v2
                   key: mwponepass
             - name: SMDB_USER
               valueFrom:
