@@ -25,6 +25,8 @@ class VertigoAPI(Product):
 
             if returned_json.get('data'):
                 data = returned_json.get('data', [{}])[0]
+                managed_string = data.get('managedLevelString', '')
+                self._logger.info(f'managedLevelString: {managed_string}')
 
                 return {
                     'guid': data.get('accountUid'),
@@ -33,7 +35,7 @@ class VertigoAPI(Product):
                     'friendly_name': data.get('friendlyName'),
                     'shopper_id': data.get('shopperId'),
                     'os': data.get('template_name'),
-                    'managed_level': data.get('managedLevelString').replace(' ', '')
+                    'managed_level': managed_string.replace(' ', '')
                 }
         except Exception as e:
             self._logger.error('Failed Vertigo Lookup: {}'.format(e))

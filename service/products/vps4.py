@@ -152,7 +152,7 @@ class VPS4API(Product):
         '''
 
         query_dict = self._build_query_dict(ip, guid)
-        managed_level_string = {0: 'SelfManaged', 1: 'Managed', 2: 'FullyManaged'}
+        managed_level_string = {0: 'SelfManaged', 1: 'Managed', 2: 'FullyManaged', 9: 'Unknown'}
 
         for dc, dc_url in self._vps4_urls.items():
             try:
@@ -173,7 +173,9 @@ class VPS4API(Product):
                         continue
                     if (query_dict.get(self.IP_STR) == vps_data.get('primaryIpAddress', {}).get(self.IP_STR)) or \
                             (query_dict.get(self.GUID_STR) == vps_data.get(self.GUID_STR)):
-                        managed_level = managed_level_string.get(vps_data.get('managedLevel'))
+                        managed_int = vps_data.get('managedLevel', 9)
+                        managed_level = managed_level_string.get(managed_int)
+                        self._logger.info(f'managed_level: {managed_level} (managed_int: {managed_int})')
                         return {
                             'product': 'VPS4',
                             'data_center': dc,
