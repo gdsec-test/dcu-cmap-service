@@ -184,7 +184,7 @@ class HostingProductResolver(object):
             'private_label_id': data.get('private_label_id'),
             'account_id': data.get('account_id'),
             'username': data.get('username'),
-            'managed_level': data.get('managedLevel'),
+            'managed_level': data.get('managed_level'),
             'first_pass_enrichment': first_pass_enrichment,
             'second_pass_enrichment': data.get('second_pass_enrichment', '')
         }
