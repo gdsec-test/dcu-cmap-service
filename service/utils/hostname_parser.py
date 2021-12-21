@@ -67,6 +67,9 @@ def parse_hostname(hostname):
     elif re.search('gemwbe|wbeout', hostname):
         product = 'GEM'
 
+    elif re.search('plnemoats', hostname):
+        product = 'vNext Store'
+
     elif re.search('redir', hostname):
         product = 'EOL'
 

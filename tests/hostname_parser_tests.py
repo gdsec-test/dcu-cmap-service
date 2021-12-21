@@ -242,3 +242,10 @@ class TestNutritionLabel:
         assert_equals(dc, 'P3')
         assert_is_none(os)
         assert_equals(product, 'EOL')
+
+    def test_vnext_store(self):
+        hostname = 'P3PLNEMOATS001'
+        dc, os, product = parse_hostname(hostname)
+        assert_equals(dc, 'P3')
+        assert_is_none(os)
+        assert_equals(product, 'vNext Store')
