@@ -20,6 +20,13 @@ class TestDiabloWHMCSAPI:
     WHMCS = 'Diablo WHMCS'
     NON_WHMCS = 'Diablo'
     USERNAME = 'username'
+    C2NOTFOUND = 'NotFound'
+    C2USERNAME1 = 'c2user1'
+    C2USERNAME2 = 'c2user2'
+    DOMAIN = C2DOMAIN1 = 'domain.tld'
+    C2DOMAIN2 = 'c2domain2.tld'
+    PATH1 = '/folder/file.ext'
+    PATH2 = '/~c2user2/file.ext'
 
     expected_whmcs_requests_get_return = {
         'c1_account': {
@@ -33,7 +40,20 @@ class TestDiabloWHMCSAPI:
         },
         'c2_accounts': [
             {
-                'something': 'foo'
+                'user': C2USERNAME1,
+                'domain': C2DOMAIN1,
+                'suspended': 0,
+                'suspendreason': 'not suspended',
+                'owner': 'c1user',
+                'ip': IP
+            },
+            {
+                'user': C2USERNAME2,
+                'domain': C2DOMAIN2,
+                'suspended': 0,
+                'suspendreason': 'not suspended',
+                'owner': 'c1user',
+                'ip': IP
             }
         ],
         'type': 'hash'
@@ -63,7 +83,30 @@ class TestDiabloWHMCSAPI:
         'ip': IP,
         'os': OS,
         'product': WHMCS,
-        'reseller_id': RESELLER_ID
+        'reseller_id': RESELLER_ID,
+        'username': C2USERNAME1
+    }
+
+    expected_whmcs_locate_return_ip_url = {
+        'guid': GUID,
+        'shopper_id': SHOPPER_ID,
+        'created_date': CREATED,
+        'ip': IP,
+        'os': OS,
+        'product': WHMCS,
+        'reseller_id': RESELLER_ID,
+        'username': C2USERNAME2
+    }
+
+    expected_whmcs_locate_return_ip_url_invalid = {
+        'guid': GUID,
+        'shopper_id': SHOPPER_ID,
+        'created_date': CREATED,
+        'ip': IP,
+        'os': OS,
+        'product': WHMCS,
+        'reseller_id': RESELLER_ID,
+        'username': C2NOTFOUND
     }
 
     expected_non_whmcs_locate_return = {
@@ -90,7 +133,29 @@ class TestDiabloWHMCSAPI:
         diablo_api_whmcs = DiabloAPIWHMCS(DevelopmentAppConfig())
         mocked_get.return_value = MagicMock(status_code=200)
         mocked_get.return_value.json.return_value = self.expected_whmcs_requests_get_return
-        assert_dict_equal(self.expected_whmcs_locate_return, diablo_api_whmcs.locate(self.WHMCS))
+        assert_dict_equal(self.expected_whmcs_locate_return, diablo_api_whmcs.locate(self.IP, self.DOMAIN, self.PATH1))
+        mocked_get.assert_called()
+
+    # When the ip matches a Diablo WHMCS product on an IP-based URL with a valid username in the path
+    @patch.object(requests, 'get')
+    def test_locate_whmcs_ip_success_ip_url_with_user(self, mocked_get):
+        self.DOMAIN = self.IP
+        diablo_api_whmcs = DiabloAPIWHMCS(DevelopmentAppConfig())
+        mocked_get.return_value = MagicMock(status_code=200)
+        mocked_get.return_value.json.return_value = self.expected_whmcs_requests_get_return
+        assert_dict_equal(self.expected_whmcs_locate_return_ip_url,
+                          diablo_api_whmcs.locate(self.IP, self.DOMAIN, self.PATH2))
+        mocked_get.assert_called()
+
+    # When the ip matches a Diablo WHMCS product on an IP-based URL with an invalid or no username in the path
+    @patch.object(requests, 'get')
+    def test_locate_whmcs_ip_success_ip_url_without_user(self, mocked_get):
+        self.DOMAIN = self.IP
+        diablo_api_whmcs = DiabloAPIWHMCS(DevelopmentAppConfig())
+        mocked_get.return_value = MagicMock(status_code=200)
+        mocked_get.return_value.json.return_value = self.expected_whmcs_requests_get_return
+        assert_dict_equal(self.expected_whmcs_locate_return_ip_url_invalid,
+                          diablo_api_whmcs.locate(self.IP, self.DOMAIN, self.PATH1))
         mocked_get.assert_called()
 
     # When the ip matches a Diablo non-WHMCS product
@@ -99,7 +164,8 @@ class TestDiabloWHMCSAPI:
         diablo_api_whmcs = DiabloAPIWHMCS(DevelopmentAppConfig())
         mocked_get.return_value = MagicMock(status_code=200)
         mocked_get.return_value.json.return_value = self.expected_non_whmcs_requests_get_return
-        assert_dict_equal(self.expected_non_whmcs_locate_return, diablo_api_whmcs.locate(self.NON_WHMCS))
+        assert_dict_equal(self.expected_non_whmcs_locate_return,
+                          diablo_api_whmcs.locate(self.NON_DIABLO_IP, self.DOMAIN, self.PATH1))
         mocked_get.assert_called()
 
     # When the ip doesn't match a Diablo product
@@ -108,5 +174,6 @@ class TestDiabloWHMCSAPI:
         diablo_api_whmcs = DiabloAPIWHMCS(DevelopmentAppConfig())
         mocked_get.return_value = MagicMock(status_code=400)
         mocked_get.return_value.json.return_value = self.expected_400_requests_get_return
-        assert_dict_equal(self.expected_400_locate_return, diablo_api_whmcs.locate(self.NON_WHMCS))
+        assert_dict_equal(self.expected_400_locate_return,
+                          diablo_api_whmcs.locate(self.NON_DIABLO_IP, self.DOMAIN, self.PATH1))
         mocked_get.assert_called()

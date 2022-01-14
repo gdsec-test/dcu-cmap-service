@@ -1,3 +1,5 @@
+import re
+
 import requests
 from dcustructuredloggingflask.flasklogger import get_logging
 
@@ -12,7 +14,7 @@ class DiabloAPIWHMCS(Product):
         self.url = settings.DIABLO_WHMCS_URL
         self.auth = (settings.DIABLO_USER, settings.DIABLO_PASS)
 
-    def locate(self, ip: str, **kwargs) -> dict:
+    def locate(self, ip: str, domain='', path='', **kwargs) -> dict:
         """
         Given an IP, retrieve account details when associated with a Diablo WHMCS product.
         NOTE: Although this endpoint is meant to be specific to the WHMCS product, it *sometimes* returns info
@@ -44,6 +46,28 @@ class DiabloAPIWHMCS(Product):
                         'product': 'Diablo',
                         'username': entry.get('username')
                     })
+
+                else:  # since we do have C2 accounts, try to locate & enrich the C2 username or have it be 'NotFound'
+                    c2user = 'NotFound'
+                    c2domain = domain
+                    usr_pattern = r'\/\~.*\/'
+
+                    # try to determine domain on ip-based URLs when a potential user is in the path
+                    if c2domain == ip and re.search(usr_pattern, path):
+                        c2pattern = re.search(usr_pattern, path).group().replace('/', '').replace('~', '')
+                        for i in (i for i in c2accounts if c2domain == ip):
+                            c2domain = i.get('domain') if i.get('user') == c2pattern else c2domain
+
+                        c2user = c2pattern if c2domain != ip else c2user
+
+                    # try to find the c2 user if we don't already have it, but do have an actual domain
+                    if c2domain != ip and c2user == 'NotFound':
+                        for i in c2accounts:
+                            c2user = i.get('user') if i.get('domain') == c2domain else c2user
+
+                    result.update({'username': c2user})
+                    self._logger.info(f'Updating Diablo WHMCS C2 user {c2user} for {c2domain} (ingested as {domain})')
+
             else:
                 self._logger.info(f'No dictionary value received from Diablo WHMCS for {ip}')
 

@@ -53,6 +53,7 @@ class DomainQuery(graphene.ObjectType):
     api_reseller = graphene.Field(APIReseller, description='API Reseller Information for Provided Domain Name')
     blacklist = graphene.Boolean(description='Domain Name Blacklist Status - Do Not Suspend!')
     domain = graphene.String(description='Domain Name from DomainQuery')
+    path = graphene.String(description='Reported content path')
     shopper_id = graphene.String(description='Shopper ID from DomainQuery')
     domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
     host = graphene.Field(HostInfo, description='Hosting Information for Provided Domain Name')
@@ -70,7 +71,7 @@ class DomainQuery(graphene.ObjectType):
 
         whois = info.context.get('bd').get_hosting_info(self.domain)
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
-            host_info = run(info.context.get('ipam').get_properties_for_domain(self.domain, self.shopper_id))
+            host_info = run(info.context.get('ipam').get_properties_for_domain(self.domain, self.shopper_id, self.path))
             if type(host_info) is dict:
                 whois['data_center'] = host_info.get('data_center')
                 whois['created_date'] = host_info.get('created_date')
@@ -85,6 +86,7 @@ class DomainQuery(graphene.ObjectType):
                 whois['mwp_id'] = host_info.get('account_id')
                 whois['private_label_id'] = host_info.get('private_label_id')
                 whois['username'] = host_info.get('username')
+                whois['managed_level'] = host_info.get('managed_level')
                 whois['first_pass_enrichment'] = host_info.get('first_pass_enrichment')
                 whois['second_pass_enrichment'] = host_info.get('second_pass_enrichment')
 
