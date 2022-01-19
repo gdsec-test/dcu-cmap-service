@@ -34,7 +34,7 @@ class AngeloAPI(Product):
                 shopper_id = str(returned_json.get('shopper_id'))
                 private_label_id = str(returned_json.get('reseller_id'))
 
-                return {'guid': guid, 'shopper_id': shopper_id, 'os': 'Windows', 'private_label_id': private_label_id}
+                return {'guid': guid, 'shopper_id': shopper_id, 'os': 'Windows', 'private_label_id': private_label_id, 'product': 'Plesk'}
 
             elif r.status_code == 400:
                 t = ast.literal_eval(r.text)
