@@ -12,7 +12,6 @@ class AppConfig(object):
     COLLECTION = 'blacklist'
     DATE_FORMAT = '%Y-%m-%d'
 
-    TZ_URL = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService'
     VERT_URL = 'https://vertigo.cmap.proxy.int.godaddy.com/vertigo/v1/container/?ips__ipv4='
     ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
