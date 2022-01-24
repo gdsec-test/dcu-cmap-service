@@ -1,0 +1,19 @@
+---
+apiVersion: "networking.k8s.io/v1beta1"
+kind: "Ingress"
+metadata:
+  name: "cmap-service"
+  namespace: "abuse-api-test"
+spec:
+  tls:
+    - hosts:
+      - "cmapservice.int.test-godaddy.com"
+      secretName: tls-cmap-service
+  rules:
+  - host: "cmapservice.int.test-godaddy.com"
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: "cmap-service"
+          servicePort: 5000

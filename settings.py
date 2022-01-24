@@ -12,7 +12,7 @@ class AppConfig(object):
     COLLECTION = 'blacklist'
     DATE_FORMAT = '%Y-%m-%d'
 
-    TZ_URL = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService/WSDL'
+    TZ_URL = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService'
     VERT_URL = 'https://vertigo.cmap.proxy.int.godaddy.com/vertigo/v1/container/?ips__ipv4='
     ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
@@ -39,10 +39,10 @@ class AppConfig(object):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
         self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)
 
-        self.CMAP_PROXY_USER = os.getenv('CMAP_PROXY_USER', 'cmap_proxy_user')
-        self.CMAP_PROXY_PASS = os.getenv('CMAP_PROXY_PASS', 'cmap_prox_password')
-        self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT', 'proxy.crt')
-        self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY', 'proxy.key')
+        self.CMAP_PROXY_USER = os.getenv('CMAP_PROXY_USER')
+        self.CMAP_PROXY_PASS = os.getenv('CMAP_PROXY_PASS')
+        self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT')
+        self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY')
         self.CMAP_SERVICE_CERT = os.getenv('CMAP_SERVICE_CERT', 'service.crt')
         self.CMAP_SERVICE_KEY = os.getenv('CMAP_SERVICE_KEY', 'service.key')
 
@@ -119,6 +119,39 @@ class OTEAppConfig(AppConfig):
         super().__init__()
 
 
+class TestAppConfig(AppConfig):
+    DB = 'testphishstory'
+    DB_HOST = '10.36.156.188'
+    DB_USER = 'testuser'
+
+    SSO_URL = 'https://sso.test-godaddy.com'
+
+    REDIS = 'cmap-service-redis.abuse-api-test.svc.cluster.local'
+    BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-test.svc.cluster.local:5000'
+    CN_WHITELIST = ['cmapservice.int.test-godaddy.com',
+                    'cmap.threatapi.test-godaddy.com',
+                    'kelvinservice.int.test-godaddy.com']
+    VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.test-godaddy.com'),
+                             ('SIN2', 'https://vps4.api.test-godaddy.com'),
+                             ('AMS3', 'https://vps4.api.test-godaddy.com')])
+    DIABLO_URL = 'https://diablo.api.test-godaddy.com/v1/accounts'
+    DIABLO_WHMCS_URL = 'https://diablo.api.test-godaddy.com/v1/servers/'
+    VERT_URL = ''
+    ANGELO_URL = 'https://p3nwplskapp.test-godaddy.com:8084/v1/accounts?SearchAddonDomain&'
+    MWPONE_URL = 'https://api.servicemanager.test-godaddy.com/v1/accounts/?domain='
+    DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
+    SHOPPER_API_URL = 'https://shopper.api.int.test-godaddy.com/v1/shoppers/{}'
+    TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
+    GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
+    SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
+    CNDNS_URL = ''
+    CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
+    SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
+
+    def __init__(self):
+        super().__init__()
+
+
 class DevelopmentAppConfig(AppConfig):
     DB = 'devphishstory'
     DB_HOST = '10.36.156.188'
@@ -164,4 +197,5 @@ class LocalAppConfig(AppConfig):
 config_by_name = {'dev': DevelopmentAppConfig,
                   'ote': OTEAppConfig,
                   'prod': ProductionAppConfig,
+                  'test': TestAppConfig,
                   'local': LocalAppConfig}

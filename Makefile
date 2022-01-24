@@ -51,6 +51,12 @@ dev: prep
 	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
 	docker build --no-cache=true -t $(DOCKERREPO)/wiremock:dev -f Dockerfile.wiremock .
 
+.PHONY: test-env
+test-env: prep
+	@echo "----- building $(REPONAME) test -----"
+	sed -ie 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$(DATE)/g' $(BUILDROOT)/k8s/test/cmap_service.deployment.yaml
+	docker build --no-cache=true -t $(DOCKERREPO):test $(BUILDROOT)
+
 .PHONY: ote
 ote: prep
 	@echo "----- building $(REPONAME) ote -----"
@@ -75,19 +81,29 @@ dev-deploy: dev
 	@echo "----- deploying $(REPONAME) dev -----"
 	docker push $(DOCKERREPO):dev
 	docker push $(DOCKERREPO)/wiremock:dev
-	kubectl --context dev-dcu apply -f $(BUILDROOT)/k8s/dev/cmap_service.deployment.yaml --record
+	kubectl --context dev-dcu apply -f $(BUILDROOT)/k8s/dev/cmap_service.deployment.yaml
+
+.PHONY: test-deploy
+test-deploy: test-env
+	@echo "----- deploying $(REPONAME) test -----"
+	docker push $(DOCKERREPO):test
+	kubectl --context test-dcu apply -f $(BUILDROOT)/k8s/test/cmap_service.deployment.yaml
+	kubectl --context test-dcu apply -f $(BUILDROOT)/k8s/test/cmap_service.service.yaml
+	kubectl --context test-dcu apply -f $(BUILDROOT)/k8s/test/cmap_service.ingress.yaml
+	kubectl --context test-dcu apply -f $(BUILDROOT)/k8s/test/cmap-service-redis.deployment.yaml
+	kubectl --context test-dcu apply -f $(BUILDROOT)/k8s/test/cmap-service-redis.service.yaml
 
 .PHONY: ote-deploy
 ote-deploy: ote
 	@echo "----- deploying $(REPONAME) ote -----"
 	docker push $(DOCKERREPO):ote
-	kubectl --context ote-dcu apply -f $(BUILDROOT)/k8s/ote/cmap_service.deployment.yaml --record
+	kubectl --context ote-dcu apply -f $(BUILDROOT)/k8s/ote/cmap_service.deployment.yaml
 
 .PHONY: prod-deploy
 prod-deploy: prod
 	@echo "----- deploying $(REPONAME) prod -----"
 	docker push $(DOCKERREPO):$(COMMIT)
-	kubectl --context prod-dcu apply -f $(BUILDROOT)/k8s/prod/cmap_service.deployment.yaml --record
+	kubectl --context prod-dcu apply -f $(BUILDROOT)/k8s/prod/cmap_service.deployment.yaml
 
 .PHONY: clean
 clean:

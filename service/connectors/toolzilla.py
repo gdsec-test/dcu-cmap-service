@@ -2,23 +2,27 @@ from dcustructuredloggingflask.flasklogger import get_logging
 from suds.client import Client
 
 from service.soap.request_transport import RequestsTransport
+from settings import AppConfig
 
 
 class ToolzillaAPI(object):
-    _location = 'https://toolzilla.cmap.proxy.int.godaddy.com/webservice.php/AccountSearchService'
-    _wsdl = _location + '/WSDL'
 
-    def __init__(self, settings, ipam_obj):
+    def __init__(self, settings: AppConfig, ipam_obj):
         self._logger = get_logging()
         self._ipam = ipam_obj
 
         try:
-            self.client = Client(self._wsdl, location=self._location,
+            location = settings.TZ_URL
+            wsdl = location + '/WSDL'
+            transport = RequestsTransport(username=settings.CMAP_PROXY_USER,
+                                          password=settings.CMAP_PROXY_PASS,
+                                          cert=settings.CMAP_PROXY_CERT,
+                                          key=settings.CMAP_PROXY_KEY,
+                                          verify=False)
+
+            self.client = Client(wsdl, location=location,
                                  headers=RequestsTransport.get_soap_headers(),
-                                 transport=RequestsTransport(username=settings.CMAP_PROXY_USER,
-                                                             password=settings.CMAP_PROXY_PASS,
-                                                             cert=settings.CMAP_PROXY_CERT,
-                                                             key=settings.CMAP_PROXY_KEY),
+                                 transport=transport,
                                  timeout=20)
         except Exception as e:
             self._logger.error('Unable to initialize WSDL to Toolzilla API: {}'.format(e))
