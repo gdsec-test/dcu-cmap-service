@@ -1,7 +1,7 @@
 import socket
 from asyncio import create_task
 from collections import OrderedDict
-from typing import Union
+from typing import Optional
 
 from dcustructuredloggingflask.flasklogger import get_logging
 
@@ -57,7 +57,7 @@ class HostingProductResolver(object):
             ('VPS4', VPS4API(config))
         ])
 
-    async def __get_subscription_properties(self, shopper_id: str, domain: str) -> tuple:
+    async def __get_subscription_properties(self, shopper_id: str, domain: str) -> Optional[tuple]:
         subscription = self.subscriptions_api.get_hosting_subscriptions(shopper_id, domain)
         if subscription:
             namespace = subscription.get('product', {}).get('namespace', '')
@@ -65,9 +65,9 @@ class HostingProductResolver(object):
             guid = subscription.get('externalId')
             created_date = subscription.get('createdAt')
             return product, guid, created_date
-        return (None, None, None)
+        return None
 
-    async def __get_ipam_properties(self, ip: str) -> Union[tuple, None]:
+    async def __get_ipam_properties(self, ip: str) -> Optional[tuple]:
         # check for parking IP first
         if ip_is_parked(ip):
             return None, None, 'Parked'
