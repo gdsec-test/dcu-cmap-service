@@ -1,4 +1,5 @@
 import os
+import socket
 from collections import OrderedDict
 from urllib.parse import quote
 
@@ -33,6 +34,8 @@ class AppConfig(object):
     PARKED_IPS = ['34.102.136.180', '34.98.99.30']
     CRM_CLIENT_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
+
+    CUSTOM_NS = None
 
     def __init__(self):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
@@ -149,6 +152,7 @@ class TestAppConfig(AppConfig):
 
     def __init__(self):
         super().__init__()
+        self.CUSTOM_NS = socket.gethostbyname('ns05.test-dc.gdns.godaddy.com')
 
 
 class DevelopmentAppConfig(AppConfig):

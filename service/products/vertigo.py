@@ -1,5 +1,3 @@
-import socket
-
 import requests
 from dcustructuredloggingflask.flasklogger import get_logging
 
@@ -15,11 +13,9 @@ class VertigoAPI(Product):
         self.auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
         self.cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
 
-    def locate(self, domain, **kwargs):
+    def locate(self, domain, ip, **kwargs):
 
         try:
-            ip = socket.gethostbyname(domain)
-
             response = requests.get(self.url + ip, cert=self.cert, auth=self.auth, headers=self._headers, verify=False)
             returned_json = response.json()
 

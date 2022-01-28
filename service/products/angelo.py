@@ -1,6 +1,3 @@
-import ast
-import socket
-
 import requests
 from dcustructuredloggingflask.flasklogger import get_logging
 
@@ -15,7 +12,7 @@ class AngeloAPI(Product):
         self.url = settings.ANGELO_URL
         self.auth = (settings.ANGELO_USER, settings.ANGELO_PASS)
 
-    def locate(self, domain, **kwargs):
+    def locate(self, domain, ip, **kwargs):
         """
         Given a domain, retrieve the guid, shopperId, and private label if associated with an Angelo product.
         :param domain:
@@ -24,7 +21,6 @@ class AngeloAPI(Product):
         """
 
         try:
-            ip = socket.gethostbyname(domain)
             r = requests.post(self.url + 'addonDomain=' + domain + '&serverIp=' + ip,
                               auth=self.auth, headers=self._headers, verify=False)
 
@@ -37,8 +33,7 @@ class AngeloAPI(Product):
                 return {'guid': guid, 'shopper_id': shopper_id, 'os': 'Windows', 'private_label_id': private_label_id, 'product': 'Plesk'}
 
             elif r.status_code == 400:
-                t = ast.literal_eval(r.text)
-                self._logger.info(t)
+                self._logger.info(r.text)
 
             self._logger.info('Failed Angelo Lookup')
         except Exception as e:

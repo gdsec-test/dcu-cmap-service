@@ -4,6 +4,7 @@ from collections import OrderedDict
 from typing import Optional
 
 from dcustructuredloggingflask.flasklogger import get_logging
+from dns import resolver
 
 from service.connectors.smdb import Ipam
 from service.connectors.subscriptions import SubscriptionsAPI
@@ -18,6 +19,7 @@ from service.products.vertigo import VertigoAPI
 from service.products.vps4 import VPS4API
 from service.utils.functions import ip_is_parked
 from service.utils.hostname_parser import parse_hostname
+from settings import AppConfig
 
 
 class HostingProductResolver(object):
@@ -36,10 +38,11 @@ class HostingProductResolver(object):
         'sharedhosting': '4GH'
     }
 
-    def __init__(self, config):
+    def __init__(self, config: AppConfig):
         self._logger = get_logging()
         self.ipam = Ipam(config.SMDB_URL, config.SMDB_USER, config.SMDB_PASS)
         self.subscriptions_api = SubscriptionsAPI(config)
+        self.config = config
 
         """
         IPAM can not search for MWP 2.0 and GoCentral Products.
@@ -151,6 +154,13 @@ class HostingProductResolver(object):
         :return:
         """
         try:
+            if self.config.CUSTOM_NS:
+                try:
+                    dnsresolver = resolver.Resolver()
+                    dnsresolver.nameservers = [self.config.CUSTOM_NS]
+                    return dnsresolver.query(domain, 'A')[0].address
+                except:  # noqa: E722
+                    pass
             return socket.gethostbyname(domain)
         except Exception as e:
             self._logger.error(e)
