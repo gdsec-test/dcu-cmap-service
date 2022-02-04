@@ -24,11 +24,12 @@ class DiabloAPIWHMCS(Product):
         try:
             r = requests.get(f'{self.url}{ip}/list_whmcs_accounts_info', auth=self.auth, headers=self._headers, timeout=10)
             returned_json = r.json()
+            c2accounts = returned_json.get('c2_accounts') or [{}]
 
-            if isinstance(returned_json, dict):
+            if isinstance(returned_json, dict) and c2accounts not in ([{}], {}):
                 entry = returned_json.get('c1_account')
 
-                # NOTE: not grabbing username as C1 home dir is not typically the location of reported content
+                # NOTE: not grabbing C1 username as home dir is not typically the location of WHMCS-reported content
                 result = {
                     'guid': entry.get('orion_guid'),
                     'shopper_id': entry.get('shopper_id'),
@@ -39,34 +40,26 @@ class DiabloAPIWHMCS(Product):
                     'reseller_id': entry.get('reseller_id')
                 }
 
-                # If no C2 info, treat as a non-WHMCS Diablo plan
-                c2accounts = returned_json.get('c2_accounts')
-                if c2accounts == [{}] or c2accounts == {}:
-                    result.update({
-                        'product': 'Diablo',
-                        'username': entry.get('username')
-                    })
+                # Try to locate & enrich the C2 username or have it be 'NotFound'
+                c2user = 'NotFound'
+                c2domain = domain
+                usr_pattern = r'\/\~.*\/'
 
-                else:  # since we do have C2 accounts, try to locate & enrich the C2 username or have it be 'NotFound'
-                    c2user = 'NotFound'
-                    c2domain = domain
-                    usr_pattern = r'\/\~.*\/'
+                # try to determine domain on ip-based URLs when a potential user is in the path
+                if c2domain == ip and re.search(usr_pattern, path):
+                    c2pattern = re.search(usr_pattern, path).group().replace('/', '').replace('~', '')
+                    for i in (i for i in c2accounts if c2domain == ip):
+                        c2domain = i.get('domain') if i.get('user') == c2pattern else c2domain
 
-                    # try to determine domain on ip-based URLs when a potential user is in the path
-                    if c2domain == ip and re.search(usr_pattern, path):
-                        c2pattern = re.search(usr_pattern, path).group().replace('/', '').replace('~', '')
-                        for i in (i for i in c2accounts if c2domain == ip):
-                            c2domain = i.get('domain') if i.get('user') == c2pattern else c2domain
+                    c2user = c2pattern if c2domain != ip else c2user
 
-                        c2user = c2pattern if c2domain != ip else c2user
+                # try to find the c2 user if we don't already have it, but do have an actual domain
+                if c2domain != ip and c2user == 'NotFound':
+                    for i in c2accounts:
+                        c2user = i.get('user') if i.get('domain') == c2domain else c2user
 
-                    # try to find the c2 user if we don't already have it, but do have an actual domain
-                    if c2domain != ip and c2user == 'NotFound':
-                        for i in c2accounts:
-                            c2user = i.get('user') if i.get('domain') == c2domain else c2user
-
-                    result.update({'username': c2user})
-                    self._logger.info(f'Updating Diablo WHMCS C2 user {c2user} for {c2domain} (ingested as {domain})')
+                result.update({'username': c2user})
+                self._logger.info(f'Updating Diablo WHMCS C2 user {c2user} for {c2domain} (ingested as {domain})')
 
             else:
                 self._logger.info(f'No dictionary value received from Diablo WHMCS for {ip}')

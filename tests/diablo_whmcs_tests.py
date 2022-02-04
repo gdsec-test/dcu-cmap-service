@@ -109,17 +109,6 @@ class TestDiabloWHMCSAPI:
         'username': C2NOTFOUND
     }
 
-    expected_non_whmcs_locate_return = {
-        'guid': GUID,
-        'shopper_id': SHOPPER_ID,
-        'created_date': CREATED,
-        'ip': NON_DIABLO_IP,
-        'os': OS,
-        'product': NON_WHMCS,
-        'reseller_id': RESELLER_ID,
-        'username': USERNAME
-    }
-
     expected_400_requests_get_return = {
         "message": "Failed to get whmcs accounts info",
         "type": "error"
@@ -160,11 +149,11 @@ class TestDiabloWHMCSAPI:
 
     # When the ip matches a Diablo non-WHMCS product
     @patch.object(requests, 'get')
-    def test_locate_non_whmcs_ip_success(self, mocked_get):
+    def test_locate_non_whmcs(self, mocked_get):
         diablo_api_whmcs = DiabloAPIWHMCS(DevelopmentAppConfig())
-        mocked_get.return_value = MagicMock(status_code=200)
+        mocked_get.return_value = MagicMock(status_code=400)
         mocked_get.return_value.json.return_value = self.expected_non_whmcs_requests_get_return
-        assert_dict_equal(self.expected_non_whmcs_locate_return,
+        assert_dict_equal(self.expected_400_locate_return,
                           diablo_api_whmcs.locate(self.NON_DIABLO_IP, self.DOMAIN, self.PATH1))
         mocked_get.assert_called()
 
