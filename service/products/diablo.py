@@ -27,17 +27,17 @@ class DiabloAPI(Product):
                     'os': 'Linux',
                     'product': 'Diablo'
                 }
-            payload = {'addon_domain_eq': domain}
-            r = requests.get(self.url, auth=self.auth, headers=self._headers, params=payload, verify=False)
+            payload = {'name': domain}
+            r = requests.get(f'{self.url}/find_domain', auth=self.auth, headers=self._headers, params=payload, verify=False)
             returned_json = r.json()
 
-            if returned_json.get('data'):
-                entry = returned_json.get('data', [{}])[0]
+            if returned_json.get('id'):
                 return {
-                    'guid': entry.get('orion_guid'),
-                    'shopper_id': entry.get('shopper_id'),
-                    'created_date': entry.get('created_at'),
-                    'ip': entry.get('shared_ip_address'),
+                    'guid': returned_json.get('orion_guid'),
+                    'shopper_id': returned_json.get('shopper_id'),
+                    'created_date': returned_json.get('created_at'),
+                    'ip': returned_json.get('shared_ip_address'),
+                    'username': returned_json.get('username'),
                     'os': 'Linux',
                     'product': 'Diablo'
                 }
