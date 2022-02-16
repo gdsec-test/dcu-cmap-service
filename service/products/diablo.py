@@ -31,19 +31,28 @@ class DiabloAPI(Product):
             r = requests.get(f'{self.url}/find_domain', auth=self.auth, headers=self._headers, params=payload, verify=False)
             returned_json = r.json()
 
+            diablo_account = None
+            # We found just a single account, this is easy mode.
             if returned_json.get('id'):
+                diablo_account = returned_json
+            elif len(returned_json.get('data', [])) > 0:
+                all_accounts = [x for x in returned_json.get('data') if x.get('type') == 'account']
+                # If there is anything besides one account returned let the analyst sort it out.
+                if len(all_accounts) == 1:
+                    diablo_account = all_accounts[0]
+            else:
+                self._logger.info('No data value received from Diablo request')
+
+            if diablo_account:
                 return {
-                    'guid': returned_json.get('orion_guid'),
-                    'shopper_id': returned_json.get('shopper_id'),
-                    'created_date': returned_json.get('created_at'),
-                    'ip': returned_json.get('shared_ip_address'),
-                    'username': returned_json.get('username'),
+                    'guid': diablo_account.get('orion_guid'),
+                    'shopper_id': diablo_account.get('shopper_id'),
+                    'created_date': diablo_account.get('created_at'),
+                    'ip': diablo_account.get('shared_ip_address'),
+                    'username': diablo_account.get('username'),
                     'os': 'Linux',
                     'product': 'Diablo'
                 }
-
-            else:
-                self._logger.info('No data value received from Diablo request')
 
         except Exception as e:
             self._logger.error('Failed Diablo Lookup: {}'.format(e))
