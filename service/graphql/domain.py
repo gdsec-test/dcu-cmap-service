@@ -9,7 +9,7 @@ from service.graphql.shopper import (APIReseller, ShopperByDomain,
                                      ShopperProfile)
 from service.graphql.ssl import SSLSubscription
 from service.graphql.sucuri import SecuritySubscription
-from service.utils.functions import get_fld_by_domain_name
+from service.utils.functions import convert_str_to_none, get_fld_by_domain_name
 
 
 class StatusInfo(graphene.Interface):
@@ -100,6 +100,7 @@ class DomainQuery(graphene.ObjectType):
             shopper_data = self.resolve_shopper_info(info, host_shopper)
             whois['shopper_create_date'] = shopper_data.shopper_create_date
 
+        whois = convert_str_to_none(whois)
         host_obj = HostInfo(**whois)
         host_obj.vip = ShopperProfile(**vip)
         return host_obj

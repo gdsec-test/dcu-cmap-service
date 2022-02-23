@@ -76,3 +76,14 @@ class TestIpIsParked:
 
     def test_ip_is_parked_not(self):
         assert_false(service.utils.functions.ip_is_parked('76.76.21.21'))
+
+
+class TestConvertStrToNone:
+    def test_convert_str_to_none(self):
+        test_dict = {"key1": "None",
+                     "list_key": ["valid str", "None"],
+                     "dict_key": {"blacklist": "valid str", "portfolioType": "None"}}
+        expected_dict = {"key1": None,
+                         "list_key": ["valid str", None],
+                         "dict_key": {"blacklist": "valid str", "portfolioType": None}}
+        assert_equals(service.utils.functions.convert_str_to_none(test_dict), expected_dict)

@@ -109,3 +109,19 @@ def get_fld_by_domain_name(domain_name):
 
 def ip_is_parked(ip: str) -> bool:
     return ip in config.PARKED_IPS
+
+
+def convert_str_to_none(data: dict) -> dict:
+    convert_list = ['NONE']
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if isinstance(value, list):
+                for i in range(len(value)):
+                    if isinstance(value[i], str) and value[i].upper() in convert_list:
+                        data[key][i] = None
+            elif isinstance(value, dict):
+                convert_str_to_none(value)
+            else:
+                if isinstance(value, str) and value.upper() in convert_list:
+                    data[key] = None
+    return data
