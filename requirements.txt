@@ -10,6 +10,7 @@ cryptography==3.4.7
 dcu-structured-logging-flask==1.0.1
 defusedxml==0.7.1
 dnspython==2.1.0
+elastic-apm[flask]==6.7.2
 Flask==1.1.2
 Flask-GraphQL==2.0.1
 future==0.18.2

@@ -5,6 +5,7 @@ import graphene
 import tld
 import urllib3
 from dcustructuredloggingflask.flasklogger import add_request_logging
+from elasticapm.contrib.flask import ElasticAPM
 from flask import Flask, Response, request
 from flask_graphql import GraphQLView
 from prometheus_flask_exporter import PrometheusMetrics
@@ -36,6 +37,8 @@ config = config_by_name[os.getenv('sysenv', 'dev')]()
 
 redis_obj = RedisCache(config)
 app = Flask(__name__)
+apm = ElasticAPM()
+apm.init_app(app, service_name='cmap-service', debug=True, environment=os.getenv('sysenv', 'dev'))
 
 add_request_logging(app, 'cmap_service', sso=config.SSO_URL[8:], excluded_paths=[
     '/doc/',
