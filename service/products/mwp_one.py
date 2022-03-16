@@ -10,7 +10,7 @@ class MWPOneAPI(Product):
     def __init__(self, settings):
         self._logger = get_logging()
         self.url = settings.MWPONE_URL
-        self.auth = (settings.MWP_ONE_USER, settings.MWP_ONE_PASS)
+        self.cert = (settings.CMAP_API_CERT, settings.CMAP_API_KEY)
 
     def locate(self, domain, **kwargs):
         """
@@ -23,7 +23,7 @@ class MWPOneAPI(Product):
         response = {}
 
         try:
-            r = requests.get(self.url + domain, auth=self.auth, headers=self._headers, verify=False)
+            r = requests.get(self.url + domain, cert=self.cert, headers=self._headers, verify=False)
             response = r.json()
         except Exception as e:
             self._logger.error(e)

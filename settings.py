@@ -57,8 +57,6 @@ class AppConfig(object):
         self.DIABLO_PASS = os.getenv('DIABLO_PASS', 'diablo_pass')
         self.ANGELO_USER = os.getenv('ANGELO_USER', 'angelo_user')
         self.ANGELO_PASS = os.getenv('ANGELO_PASS', 'angelo_pass')
-        self.MWP_ONE_USER = os.getenv('MWP_ONE_USER', 'mwp_one_user')
-        self.MWP_ONE_PASS = os.getenv('MWP_ONE_PASS', 'mwp_one_pass')
 
         # VPS4 User/Pass are creds for a DCU Service account in the DCU-PHISHSTORY AD Group
         self.VPS4_USER = os.getenv('VPS4_USER', 'vps4user')

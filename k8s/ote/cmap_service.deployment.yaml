@@ -126,16 +126,6 @@ spec:
                 secretKeyRef:
                   name: auth-hosting-envs
                   key: vertigopass
-            - name: MWP_ONE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: auth-hosting-envs
-                  key: mwponeuser
-            - name: MWP_ONE_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: auth-hosting-envs
-                  key: mwponepass
             - name: SMDB_USER
               valueFrom:
                 secretKeyRef:

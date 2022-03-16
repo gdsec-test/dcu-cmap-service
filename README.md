@@ -94,8 +94,6 @@ If you would like to run CMAP Service locally, you will need to specify the foll
 * `DB_PASS` (Password for MongoDB)
 * `DIABLO_USER` (User for Diablo API)
 * `DIABLO_PASS` (Password for Diablo API)
-* `MWP_ONE_USER` (User for Managed Wordpress API)
-* `MWP_ONE_PASS` (Password for Managed Wordpress API)
 * `SMDB_USER` (User for SMDB WSDL)
 * `SMDB_PASS` (Password for SMDB WSDL)
 * `VALUATION_KEY` (Access key for Valuation API)
