@@ -21,6 +21,7 @@ class DiabloAPI(Product):
                 return {
                     'guid': guid,
                     'shopper_id': returned_json.get('shopper_id'),
+                    'reseller_id': returned_json.get('reseller_id'),
                     'created_date': returned_json.get('created_at'),
                     'ip': returned_json.get('shared_ip_address'),
                     'username': returned_json.get('username'),

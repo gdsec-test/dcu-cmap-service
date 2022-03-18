@@ -1,5 +1,4 @@
 import json
-from urllib.parse import urlencode
 
 import requests
 from dcustructuredloggingflask.flasklogger import get_logging
@@ -45,10 +44,12 @@ class VPS4API(Product):
             hosting_info = self._get_vms(ip, guid)
 
             if hosting_info:
-                shopper = self._get_shopper_from_credits(hosting_info.get('guid'))
+                shopper, reseller = self._get_shopper_from_credits(hosting_info.get('guid'))
 
                 if shopper:
                     hosting_info.update(shopper_id=shopper)
+                if reseller:
+                    hosting_info.update(reseller_id=reseller)
 
         else:
             self._logger.info('A required VPS4 IP Address or Guid was NOT provided')
@@ -74,27 +75,33 @@ class VPS4API(Product):
     def _get_shopper_from_credits(self, guid):
         """
         Queries VPS4 API /credits/ with Orion GUID for shopperId as /vms does not provide shopperId.
+        We also need to get the resellerId here as well, as that is also not include in /vms return
         :param guid: Orion GUID
-        :return: shopper ID string
+        :return: shopper ID string, reseller ID string
         """
+        shopper = reseller = None
         if guid:
             for url in self._vps4_urls.values():
                 try:
-                    url = '{}credits/{}'.format(url, guid)
+                    url = f'{url}credits/{guid}'
                     r = self._query(url)
 
-                    if not r:
-                        self._logger.info('The details for the GUID could not be found at {}'.format(url))
+                    if r:
+                        shopper = r.json().get('shopperId', None)
+                        reseller = r.json().get('resellerId', None)
+                        break
+
+                    else:
+                        self._logger.info(f'The details for {guid} could not be found at {url}')
                         continue
 
-                    return r.json().get('shopperId')
-
                 except Exception as e:
-                    self._logger.error('Failed VPS4 credit Lookup: {}'.format(e))
+                    self._logger.error(f'Failed VPS4 credit Lookup: {e}')
 
-            self._logger.info('Can not get VPS4 credits details for: {}'.format(guid))
         else:
             self._logger.info('A required Orion GUID was not provided')
+
+        return shopper, reseller
 
     def _get_vms(self, ip, guid):
         """
@@ -156,7 +163,7 @@ class VPS4API(Product):
 
         for dc, dc_url in self._vps4_urls.items():
             try:
-                dc_url = '{}vms?{}'.format(dc_url, urlencode(query_dict))
+                dc_url = 'f{dc_url}vms?{urlencode(query_dict)}'
                 dc_r = self._query(dc_url)
 
                 dc_res = dc_r.json()
@@ -165,7 +172,7 @@ class VPS4API(Product):
                 # In order to test VPS4 in dev or ote, you'll need to return a hardcoded prod JWT from _get_jwt
 
                 if not dc_res:
-                    self._logger.info('The details provided could not be found at {}'.format(dc_url))
+                    self._logger.info(f'The details provided could not be found at {dc_url}')
 
                 for vps_data in dc_res:
                     # If vps_data isn't a dictionary, it causes the error: 'str' object has no attribute 'get'
@@ -187,7 +194,7 @@ class VPS4API(Product):
                             'managed_level': managed_level
                         }
             except Exception as e:
-                self._logger.error('Failed VPS4 Lookup: {}'.format(e))
+                self._logger.error(f'Failed VPS4 Lookup: {e}')
                 return dict()
 
         self._logger.info('Not determined to be a VPS4 product')

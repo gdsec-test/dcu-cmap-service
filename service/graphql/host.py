@@ -20,6 +20,7 @@ class HostInfo(graphene.ObjectType):
     mwp_id = graphene.String(description='ID required for MWP 1.0 account suspension/reinstatement')
     vip = graphene.Field(ShopperProfile, description='Shoppers VIP status')
     private_label_id = graphene.String(description='Private Label ID for the reseller')
+    reseller_id = graphene.String(description='Reseller ID for the reseller')
     shopper_create_date = graphene.String(description='The create data of the shopper')
     username = graphene.String(description='Username')
     managed_level = graphene.String(description='Managed Service Level, specific to servers')

@@ -30,6 +30,7 @@ class VertigoAPI(Product):
                     'created_data': data.get('created'),
                     'friendly_name': data.get('friendlyName'),
                     'shopper_id': data.get('shopperId'),
+                    'reseller_id': data.get('resellerId'),
                     'os': data.get('template_name'),
                     'managed_level': managed_string.replace(' ', ''),
                     'product': 'Vertigo'

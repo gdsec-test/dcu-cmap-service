@@ -24,6 +24,7 @@ class TestVPS4API:
     JWT = 'JWT_STRING'
     OS = 'LINUX'
     SHOPPER_ID = '123'
+    RESELLER_ID = '1'
 
     # Actual format of VPS API call
     vps4_api_vms_return = [
@@ -116,6 +117,7 @@ class TestVPS4API:
         'os': OS,
         'ip': IP,
         'shopper_id': SHOPPER_ID,
+        'reseller_id': RESELLER_ID,
         "managed_level": 'SelfManaged'
     }
 
@@ -154,7 +156,7 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = self.vps4_api_vms_return
-            mocked_credits.return_value = self.SHOPPER_ID
+            mocked_credits.return_value = self.SHOPPER_ID, self.RESELLER_ID
             assert_equal(self.expected_value, vps_api.locate(self.IP, self.GUID))
 
     # When neither an ip nor guid is provided, should raise TypeError exception as either is required
@@ -170,4 +172,4 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = self.vps4_api_credits_return
-            assert_equal(self.SHOPPER_ID, vps_api._get_shopper_from_credits(self.GUID))
+            assert_equal((self.SHOPPER_ID, self.RESELLER_ID), vps_api._get_shopper_from_credits(self.GUID))

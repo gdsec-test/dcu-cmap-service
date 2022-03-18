@@ -36,6 +36,7 @@ class MWPOneAPI(Product):
                 'guid': entry.get('accountUid'),
                 'account_id': entry.get('id'),
                 'shopper_id': entry.get('shopperId'),
+                'reseller_id': entry.get('resellerId'),
                 'os': 'Linux',
                 'data_center': self._dc_helper(entry.get('dataCenter', {}).get('description')),
                 'product': 'MWP 1.0',

@@ -28,9 +28,10 @@ class AngeloAPI(Product):
                 returned_json = r.json()
                 guid = str(returned_json.get('orion_id'))
                 shopper_id = str(returned_json.get('shopper_id'))
-                private_label_id = str(returned_json.get('reseller_id'))
+                reseller_id = str(returned_json.get('reseller_id'))
 
-                return {'guid': guid, 'shopper_id': shopper_id, 'os': 'Windows', 'private_label_id': private_label_id, 'product': 'Plesk'}
+                return {'guid': guid, 'shopper_id': shopper_id, 'os': 'Windows', 'reseller_id': reseller_id,
+                        'product': 'Plesk'}
 
             elif r.status_code == 400:
                 self._logger.info(r.text)
