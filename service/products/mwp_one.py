@@ -12,7 +12,7 @@ class MWPOneAPI(Product):
         self.url = settings.MWPONE_URL
         self.cert = (settings.CMAP_API_CERT, settings.CMAP_API_KEY)
 
-    def locate(self, domain, **kwargs):
+    def locate(self, domain, guid=None, **kwargs):
         """
         This functions sole purpose is to locate all data for a MWP 1.0 account to be placed into the data
         sub document of the incident's mongo document
@@ -21,9 +21,13 @@ class MWPOneAPI(Product):
         :return:
         """
         response = {}
-
+        query_param = {}
+        if guid:
+            query_param['accountUid'] = guid
+        else:
+            query_param['domain'] = domain
         try:
-            r = requests.get(self.url + domain, cert=self.cert, headers=self._headers, verify=False)
+            r = requests.get(self.url, cert=self.cert, headers=self._headers, params=query_param, verify=False)
             response = r.json()
         except Exception as e:
             self._logger.error(e)
