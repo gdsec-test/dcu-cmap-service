@@ -46,7 +46,8 @@ class MWPOneAPI(Product):
                 'product': 'MWP 1.0',
                 'ip': entry.get('ipAddress'),
                 'hostname': 'MWP 1.0 does not return hostname',
-                'created_date': entry.get('dateCreated')
+                'created_date': entry.get('dateCreated'),
+                'primary_domain': entry.get('domain')
             }
         else:
             self._logger.info('No active MWP 1.0 account ID found for {}'.format(domain))
