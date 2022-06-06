@@ -5,13 +5,12 @@ cached-property==1.5.2
 certifi==2020.12.5
 cffi==1.14.5
 chardet==4.0.0
-click==7.1.2
 cryptography==3.4.7
 dcu-structured-logging-flask==1.0.1
 defusedxml==0.7.1
 dnspython==2.1.0
 elastic-apm[flask]==6.7.2
-Flask==1.1.2
+Flask==2.1.2
 Flask-GraphQL==2.0.1
 future==0.18.2
 graphene==2.1.8
@@ -20,10 +19,7 @@ graphql-relay==2.0.1
 graphql-server-core==1.2.0
 idna==2.10
 isodate==0.6.0
-itsdangerous==1.1.0
-Jinja2==2.11.3
 lxml==4.6.5
-MarkupSafe==1.1.1
 ntlm-auth==1.5.0
 prometheus-client==0.10.1
 prometheus-flask-exporter==0.18.1
@@ -50,6 +46,6 @@ suds-py3==1.4.4.1
 tld==0.12.5
 urllib3==1.26.5
 uWSGI==2.0.19.1
-Werkzeug==1.0.1
+Werkzeug==2.1.1
 # We use Zeep for contacting IPAM SOAP API
 zeep==4.0.0
