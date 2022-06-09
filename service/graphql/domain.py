@@ -2,6 +2,7 @@ import re
 from asyncio import run
 
 import graphene
+import tld
 
 from service.graphql.host import HostInfo
 from service.graphql.registrar import RegistrarInfo
@@ -141,7 +142,14 @@ class DomainQuery(graphene.ObjectType):
         return ShopperByDomain(shopper_id=shopper_id, **extra_data)
 
     def resolve_blacklist(self, info):
-        return info.context.get('vip').is_blacklisted(self.domain)
+        bl = False
+        domain_object = tld.get_tld(info.context.domain, as_object=True, search_private=False)
+        base_domain = domain_object.fld
+        if info.context.get('vip').is_blacklisted(base_domain):
+            bl = True
+        elif domain_object.subdomain and info.context.get('vip').is_blacklisted(f'{domain_object.subdomain}.{base_domain}'):
+            bl = True
+        return bl
 
     def resolve_alexa_rank(self, info):
         return info.context.get('alexa').get_url_information(self.domain)
