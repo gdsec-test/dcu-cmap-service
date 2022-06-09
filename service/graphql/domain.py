@@ -143,7 +143,7 @@ class DomainQuery(graphene.ObjectType):
 
     def resolve_blacklist(self, info):
         bl = False
-        domain_object = tld.get_tld(info.context.domain, as_object=True, search_private=False)
+        domain_object = tld.get_tld(self.domain, as_object=True, search_private=False)
         base_domain = domain_object.fld
         if info.context.get('vip').is_blacklisted(base_domain):
             bl = True
