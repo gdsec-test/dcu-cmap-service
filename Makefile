@@ -54,7 +54,7 @@ prep: test
 .PHONY: dev
 dev: prep
 	@echo "----- building $(REPONAME) dev -----"
-	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT
+	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
 
 .PHONY: test-env
 test-env: prep

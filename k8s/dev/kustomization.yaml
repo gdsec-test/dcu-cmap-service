@@ -12,7 +12,7 @@ patches:
       path: "/spec/template/spec/containers/1"
       value:
         name: wiremock
-        image: docker-dcu-local.artifactory.secureserver.net/cmap-service/wiremock:dev
+        image: docker-dcu-local.artifactory.secureserver.net/cmap_service/wiremock:dev
   target:
     kind: Deployment
     name: cmap-service

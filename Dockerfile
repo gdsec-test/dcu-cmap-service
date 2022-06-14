@@ -28,4 +28,4 @@ ENV TLS_MIN_VERSION 1.2
 EXPOSE 5000
 
 USER dcu
-ENTRYPOINT ["/app/runserver.sh"]
+ENTRYPOINT ["/usr/local/bin/uwsgi", "--ini", "/app/uwsgi.ini", "--need-app"]
