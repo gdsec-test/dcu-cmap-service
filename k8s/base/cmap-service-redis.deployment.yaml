@@ -3,7 +3,6 @@ apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
   name: "cmap-service-redis"
-  namespace: "abuse-api-test"
   labels:
     app: "cmap-service-redis"
 spec:
@@ -33,5 +32,5 @@ spec:
             exec:
               command:
               - sh
-              - -c 
+              - -c
               - "redis-cli ping"

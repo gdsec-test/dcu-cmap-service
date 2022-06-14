@@ -7,7 +7,6 @@
     # this name is accessible via cluster DNS
     # ("service-redis" or "service-redis.<namespace>.svc.cluster.local")
     name: "cmap-service-redis"
-    namespace: abuse-api-dev
   spec:
     ports:
       -

@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../base
+- cmap_service.ingress.yaml
+
+namespace: abuse-api-test
+patches:
+- patch: |-
+    - op: add
+      path: "/spec/template/spec/containers/0/livenessProbe"
+      value:
+        exec:
+          command:
+            - /app/kubetipper.sh
+        initialDelaySeconds: 120
+        periodSeconds: 120
+        failureThreshold: 1
+  target:
+    kind: Deployment
+    name: cmap-service
+
+images:
+- name: docker-dcu-local.artifactory.secureserver.net/cmap_service
+  newTag: test
+replicas:
+- count: 2
+  name: cmap-service
+
+
+configMapGenerator:
+- literals:
+  - METRICS_PORT='9200'
+  - LOGLEVEL=INFO
+  - sysenv=test
+  - HTTP_ONLY='true'
+  - LIVENESS_TTL="7200"
+  - LIVENESS_FACTOR="0.1"
+  name: env-specific-values
