@@ -3,7 +3,7 @@ from asyncio import create_task
 from collections import OrderedDict
 from typing import Optional
 
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 from dns import resolver
 
 from service.connectors.smdb import Ipam

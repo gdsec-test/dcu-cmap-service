@@ -4,12 +4,9 @@ import os
 import graphene
 import tld
 import urllib3
-from dcustructuredloggingflask.flasklogger import add_request_logging
-from elasticapm.contrib.flask import ElasticAPM
+from csetutils.flask import instrument
 from flask import Flask, Response, request
 from flask_graphql import GraphQLView
-from prometheus_flask_exporter import PrometheusMetrics
-from prometheus_flask_exporter.multiprocess import UWsgiPrometheusMetrics
 from tld.conf import set_setting
 
 from service.connectors.alexa import AlexaWebInformationService
@@ -37,10 +34,8 @@ config = config_by_name[os.getenv('sysenv', 'dev')]()
 
 redis_obj = RedisCache(config)
 app = Flask(__name__)
-apm = ElasticAPM()
-apm.init_app(app, service_name='cmap-service', debug=True, environment=os.getenv('sysenv', 'dev'))
 
-add_request_logging(app, 'cmap_service', sso=config.SSO_URL[8:], excluded_paths=[
+instrument(app, service_name='cmap-service', env=os.getenv('sysenv', 'dev'), sso=config.SSO_URL[8:], excluded_paths=[
     '/doc/',
     '/health'
 ], min_status_code=300)
@@ -142,14 +137,6 @@ app.add_url_rule('/graphql',
                                                get_context=lambda: ctx)
                  )
 
-# Need to use the special server for multiprocess apps. This only works
-# when spawned within a UWSGI env. Otherwise use the default interface
-# for local development.
-if 'prometheus_multiproc_dir' in os.environ:
-    metrics = UWsgiPrometheusMetrics(app, group_by='url_rule')
-else:
-    metrics = PrometheusMetrics(app, group_by='url_rule')
-metrics.start_http_server(config.METRICS_PORT)
 
 if __name__ == '__main__':
     app.run()

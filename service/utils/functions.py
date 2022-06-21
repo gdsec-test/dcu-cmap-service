@@ -2,7 +2,7 @@ import os
 import re
 
 import tld
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 from tld.utils import reset_tld_names
 
 from settings import config_by_name

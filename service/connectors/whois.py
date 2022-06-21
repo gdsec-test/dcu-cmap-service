@@ -1,6 +1,6 @@
 import re
 
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 from dns import resolver, reversename
 
 

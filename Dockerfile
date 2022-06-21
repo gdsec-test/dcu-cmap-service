@@ -26,7 +26,6 @@ RUN chown -R dcu:dcu /usr/local/lib/python3.7/site-packages/tld/res
 RUN chown dcu:dcu -R /app
 
 # Configure container level settings.
-ENV prometheus_multiproc_dir /tmp
 ENV TLS_MIN_VERSION 1.2
 EXPOSE 5000
 
