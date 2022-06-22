@@ -2,7 +2,7 @@ import json
 import os
 
 import requests
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 
 from settings import config_by_name
 

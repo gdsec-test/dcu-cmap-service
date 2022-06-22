@@ -1,4 +1,4 @@
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 from requests import Session
 from requests_ntlm import HttpNtlmAuth
 from zeep.client import Client

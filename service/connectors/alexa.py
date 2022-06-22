@@ -4,7 +4,7 @@ import hmac
 import xml.etree.ElementTree as ET
 
 import requests
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 
 
 class AlexaWebInformationService(object):

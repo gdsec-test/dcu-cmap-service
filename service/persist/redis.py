@@ -1,4 +1,4 @@
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 from redis import Redis
 
 

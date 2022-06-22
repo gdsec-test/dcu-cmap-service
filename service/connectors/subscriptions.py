@@ -2,7 +2,7 @@ import json
 from urllib.parse import urlencode
 
 import requests
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 
 
 class SubscriptionsAPI(object):

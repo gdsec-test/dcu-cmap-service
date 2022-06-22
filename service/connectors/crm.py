@@ -1,7 +1,7 @@
 import json
 import xml.etree.ElementTree as ET
 
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 from suds.client import Client
 
 from service.soap.request_transport import RequestsTransport

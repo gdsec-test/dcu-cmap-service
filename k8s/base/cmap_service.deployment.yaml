@@ -15,9 +15,6 @@ spec:
     metadata:
       labels:
         app: "cmap-service"
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9200"
     spec:
       imagePullSecrets:
         -

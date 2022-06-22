@@ -1,7 +1,7 @@
 import json
 
 import requests
-from dcustructuredloggingflask.flasklogger import get_logging
+from csetutils.flask.logging import get_logging
 
 from service.products.product_interface import Product
 
