@@ -21,7 +21,7 @@ patches:
 
 images:
 - name: docker-dcu-local.artifactory.secureserver.net/cmap_service
-  newTag: dev
+  newTag: ote
 
 configMapGenerator:
 - literals:
