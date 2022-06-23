@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ./cmap-service-redis.deployment.yaml
+- ./cmap-service-redis.service.yaml
+- ./cmap_service.deployment.yaml
+- ./cmap_service.service.yaml

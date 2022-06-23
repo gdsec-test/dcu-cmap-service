@@ -3,11 +3,10 @@ apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
   name: "cmap-service"
-  namespace: "abuse-api-prod"
   labels:
     app: "cmap-service"
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -25,32 +24,12 @@ spec:
           hostnames:
             - "crmclient-api.prod.phx3.int.godaddy.com"
       containers:
-        -
-          name: "cmap-service"
-          imagePullPolicy: "Always"
-          image: "docker-dcu-local.artifactory.secureserver.net/cmap_service:REPLACE_WITH_GIT_COMMIT"
-          livenessProbe:
-            exec:
-              command:
-              - /app/kubetipper.sh
-            initialDelaySeconds: 120
-            periodSeconds: 120
-            failureThreshold: 1
+        - name: "cmap-service"
+          image: "docker-dcu-local.artifactory.secureserver.net/cmap_service"
+          envFrom:
+            - configMapRef:
+                name: env-specific-values
           env:
-            - name: METRICS_PORT
-              value: '9200'
-            - name: LOGLEVEL
-              value: INFO
-            - name: LIVENESS_TTL
-              value: "7200"
-            - name: LIVENESS_FACTOR
-              value: "0.1"
-            - name: BUILD_DATE
-              value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
-            - name: sysenv
-              value: prod
-            - name: HTTP_ONLY
-              value: 'true'
             - name: CMAP_PROXY_USER
               valueFrom:
                 secretKeyRef:
@@ -154,11 +133,11 @@ spec:
                   name: apm-access
                   key: secret
           volumeMounts:
-            - name: tls-files-proxy
-              mountPath: /proxycerts
-              readOnly: true
             - name: tls-files-api
               mountPath: /apicerts
+              readOnly: true
+            - name: tls-files-proxy
+              mountPath: /proxycerts
               readOnly: true
             - name: tls-files-service
               mountPath: /servicecerts

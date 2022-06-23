@@ -1,11 +1,9 @@
-FROM python:3.7.10-slim as base
+FROM docker-dcu-local.artifactory.secureserver.net/dcu-python3.7:3.3
+LABEL MAINTAINER=dcueng@godaddy.com
 
-LABEL DCUENG <dcueng@godaddy.com>
-
+USER root
 RUN apt-get update && apt-get install gcc -y
 RUN pip3 install -U pip
-
-FROM base as deliverable
 
 # Move files to new dir
 COPY ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
@@ -21,7 +19,6 @@ RUN update-tld-names
 RUN python -c 'import tld; tld.get_tld("https://godaddy.com")'
 
 # Fix permissions.
-RUN addgroup dcu && adduser --disabled-password --disabled-login --no-create-home --ingroup dcu --system dcu
 RUN chown -R dcu:dcu /usr/local/lib/python3.7/site-packages/tld/res
 RUN chown dcu:dcu -R /app
 
@@ -29,4 +26,5 @@ RUN chown dcu:dcu -R /app
 ENV TLS_MIN_VERSION 1.2
 EXPOSE 5000
 
-ENTRYPOINT ["/app/runserver.sh"]
+USER dcu
+ENTRYPOINT ["/usr/local/bin/uwsgi", "--ini", "/app/uwsgi.ini", "--need-app"]
