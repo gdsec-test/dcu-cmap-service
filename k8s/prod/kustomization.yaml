@@ -24,8 +24,8 @@ images:
 - name: docker-dcu-local.artifactory.secureserver.net/cmap_service
   newTag: prod
 replicas:
-  - count: 2
-    name: cmap-service
+- count: 2
+  name: cmap-service
 
 configMapGenerator:
 - literals:
