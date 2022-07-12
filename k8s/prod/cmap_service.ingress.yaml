@@ -9,8 +9,18 @@ spec:
     - hosts:
       - "cmapservice.int.godaddy.com"
       secretName: tls-cmap-service
+    - hosts:
+      - "cmapservice.cset.int.gdcorp.tools"
+      secretName: cset-wildcard
   rules:
   - host: "cmapservice.int.godaddy.com"
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: "cmap-service"
+          servicePort: 5000
+  - host: "cmapservice.cset.int.gdcorp.tools"
     http:
       paths:
       - path: /
