@@ -76,7 +76,7 @@ class ProductionAppConfig(AppConfig):
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_p_phishv2'
 
-    SSO_URL = 'https://sso.godaddy.com'
+    SSO_URL = 'https://sso.gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
@@ -101,7 +101,7 @@ class OTEAppConfig(AppConfig):
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_o_phish'
 
-    SSO_URL = 'https://sso.ote-godaddy.com'
+    SSO_URL = 'https://sso.ote-gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-ote.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-ote.svc.cluster.local:5000'
@@ -124,7 +124,7 @@ class TestAppConfig(AppConfig):
     DB_HOST = '10.36.190.222'
     DB_USER = 'testuser'
 
-    SSO_URL = 'https://sso.test-godaddy.com'
+    SSO_URL = 'https://sso.test-gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-test.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-test.svc.cluster.local:5000'
@@ -158,7 +158,7 @@ class DevelopmentAppConfig(AppConfig):
     DB_HOST = '10.36.190.222'
     DB_USER = 'devuser'
 
-    SSO_URL = 'https://sso.dev-godaddy.com'
+    SSO_URL = 'https://sso.dev-gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://localhost:8080/branddetection'
@@ -179,7 +179,7 @@ class LocalAppConfig(AppConfig):
     DB = 'local'
     DB_HOST = 'localhost'
 
-    SSO_URL = 'https://sso.godaddy.com'
+    SSO_URL = 'https://sso.gdcorp.tools'
 
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
