@@ -56,7 +56,6 @@ class DomainQuery(graphene.ObjectType):
     domain = graphene.String(description='Domain Name from DomainQuery')
     path = graphene.String(description='Reported content path')
     shopper_id = graphene.String(description='Shopper ID from DomainQuery')
-    customer_id = graphene.String(description='Customer ID from that DomainQuery')
     domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
     host = graphene.Field(HostInfo, description='Hosting Information for Provided Domain Name')
     registrar = graphene.Field(RegistrarInfo, description='Registrar Information for Provided Domain Name')
