@@ -56,6 +56,7 @@ class DomainQuery(graphene.ObjectType):
     domain = graphene.String(description='Domain Name from DomainQuery')
     path = graphene.String(description='Reported content path')
     shopper_id = graphene.String(description='Shopper ID from DomainQuery')
+    customer_id = graphene.String(description='Customer ID from that DomainQuery')
     domain_status = graphene.Field(DomainStatusInfo, description='Registrar Domain Status for Provided Domain Name')
     host = graphene.Field(HostInfo, description='Hosting Information for Provided Domain Name')
     registrar = graphene.Field(RegistrarInfo, description='Registrar Information for Provided Domain Name')
@@ -74,6 +75,8 @@ class DomainQuery(graphene.ObjectType):
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
             host_info = run(info.context.get('ipam').get_properties_for_domain(self.domain, self.shopper_id, self.path))
             if type(host_info) is dict:
+                shopper_id = host_info.get('shopper_id')
+                shopper_data = self.resolve_shopper_info(info, shopper_id)
                 whois['data_center'] = host_info.get('data_center')
                 whois['created_date'] = host_info.get('created_date')
                 whois['friendly_name'] = host_info.get('friendly_name')
@@ -81,7 +84,8 @@ class DomainQuery(graphene.ObjectType):
                 whois['product'] = host_info.get('product')
                 whois['guid'] = host_info.get('guid')
                 whois['container_id'] = host_info.get('container_id')
-                whois['shopper_id'] = host_info.get('shopper_id')
+                whois['shopper_id'] = shopper_id
+                whois['customer_id'] = shopper_data.customer_id
                 whois['hostname'] = host_info.get('hostname')
                 whois['ip'] = host_info.get('ip')
                 whois['mwp_id'] = host_info.get('account_id')
@@ -90,16 +94,13 @@ class DomainQuery(graphene.ObjectType):
                 whois['managed_level'] = host_info.get('managed_level')
                 whois['first_pass_enrichment'] = host_info.get('first_pass_enrichment')
                 whois['second_pass_enrichment'] = host_info.get('second_pass_enrichment')
-
+                whois['shopper_create_date'] = shopper_data.shopper_create_date
         vip = {}
         host_shopper = whois.get('shopper_id')
         if host_shopper:
             vip.update(info.context.get('crm').get_shopper_portfolio_information(host_shopper))
             # Query the blacklist, whose entities never get suspended
             vip['blacklist'] = info.context.get('vip').is_blacklisted(host_shopper)
-
-            shopper_data = self.resolve_shopper_info(info, host_shopper)
-            whois['shopper_create_date'] = shopper_data.shopper_create_date
 
         whois = convert_str_to_none(whois)
         host_obj = HostInfo(**whois)
@@ -138,7 +139,8 @@ class DomainQuery(graphene.ObjectType):
                                                                            'shopper_city',
                                                                            'shopper_state',
                                                                            'shopper_postal_code',
-                                                                           'shopper_country'])
+                                                                           'shopper_country',
+                                                                           'customer_id'])
         return ShopperByDomain(shopper_id=shopper_id, **extra_data)
 
     def resolve_blacklist(self, info):

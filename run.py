@@ -111,15 +111,17 @@ def lookup_shopper():
     shopper_client: ShopperAPI = ctx['shopper']
 
     shopper_data = {}
-    extra_data = shopper_client.get_shopper_by_shopper_id(shopper_id, ['shopper_create_date'])
+    extra_data = shopper_client.get_shopper_by_shopper_id(shopper_id, ['shopper_create_date', 'customer_id'])
     shopper_data['shopper_create_date'] = extra_data.get('shopper_create_date')
 
     if shopper_data['shopper_create_date']:
         shopper_data['shopperId'] = shopper_id
+        shopper_data['customerId'] = extra_data['customerId']
         shopper_data['vip'] = crm.get_shopper_portfolio_information(shopper_id)
         shopper_data['vip']['blacklist'] = vip_client.is_blacklisted(shopper_id)
     else:
         shopper_data['shopperId'] = None
+        shopper_data['customerId'] = None
         shopper_data['vip'] = {
             'blacklist': False,
             'portfolioType': None,

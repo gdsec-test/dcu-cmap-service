@@ -58,7 +58,8 @@ class ShopperAPI(object):
                         shopper_state=shopper_data.get('contact', {}).get('address', {}).get('state'),
                         shopper_postal_code=shopper_data.get('contact', {}).get('address', {}).get('postalCode'),
                         shopper_country=shopper_data.get('contact', {}).get('address', {}).get('country'),
-                        shopper_create_date=shopper_data.get('createdAt'))
+                        shopper_create_date=shopper_data.get('createdAt'),
+                        customer_id=shopper_data.get('customerId'))
 
         except Exception as e:
             self._logger.error('Error in getting the shopper info for {} : {}'.format(shopper_id, e))
