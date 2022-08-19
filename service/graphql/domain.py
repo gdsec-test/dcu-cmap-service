@@ -3,6 +3,7 @@ from asyncio import run
 
 import graphene
 import tld
+from csetutils.flask.logging import get_logging
 
 from service.graphql.host import HostInfo
 from service.graphql.registrar import RegistrarInfo
@@ -143,7 +144,11 @@ class DomainQuery(graphene.ObjectType):
 
     def resolve_blacklist(self, info):
         bl = False
-        domain_object = tld.get_tld(f'http://{self.domain}', as_object=True, search_private=False)
+        try:
+            domain_object = tld.get_tld(f'http://{self.domain}', as_object=True, search_private=False)
+        except Exception:
+            get_logging().exception('Error in tdl lookup for blacklist returing false')
+            return False
         base_domain = domain_object.fld
         if info.context.get('vip').is_blacklisted(base_domain):
             bl = True
