@@ -100,6 +100,7 @@ class DomainQuery(graphene.ObjectType):
             vip['blacklist'] = info.context.get('vip').is_blacklisted(host_shopper)
 
             shopper_data = self.resolve_shopper_info(info, host_shopper)
+            whois['customer_id'] = shopper_data.customer_id
             whois['shopper_create_date'] = shopper_data.shopper_create_date
 
         whois = convert_str_to_none(whois)
@@ -139,7 +140,8 @@ class DomainQuery(graphene.ObjectType):
                                                                            'shopper_city',
                                                                            'shopper_state',
                                                                            'shopper_postal_code',
-                                                                           'shopper_country'])
+                                                                           'shopper_country',
+                                                                           'customer_id'])
         return ShopperByDomain(shopper_id=shopper_id, **extra_data)
 
     def resolve_blacklist(self, info):

@@ -35,6 +35,7 @@ class Shopper:
     """
     shopper_id = graphene.String(description='The oldest shopper_id on record')
     domain_count = graphene.Int(description='Number of domains owned by the shopper')
+    customer_id = graphene.String(description='The customer ID for that shopper ID')
     # domain_search = graphene.Field(DomainSearch, regex=graphene.String(required=True))
     shopper_create_date = graphene.String(description='The create data of the shopper')
     shopper_email = graphene.String(description='Email Address for Shopper')
