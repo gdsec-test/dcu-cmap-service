@@ -1,4 +1,3 @@
-from pydoc import describe
 import graphene
 
 from service.graphql.shopper import ShopperProfile
