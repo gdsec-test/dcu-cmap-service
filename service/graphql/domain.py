@@ -102,6 +102,7 @@ class DomainQuery(graphene.ObjectType):
             shopper_data = self.resolve_shopper_info(info, host_shopper)
             whois['customer_id'] = shopper_data.customer_id
             whois['shopper_create_date'] = shopper_data.shopper_create_date
+            whois['shopper_plid'] = shopper_data.shopper_plid
 
         whois = convert_str_to_none(whois)
         host_obj = HostInfo(**whois)
