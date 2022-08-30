@@ -165,7 +165,7 @@ class DevelopmentAppConfig(AppConfig):
     GOCENTRAL_URL = 'http://localhost:8080/gocentral/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
     CNDNS_URL = 'http://abuse.partners.int.dev-godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.cset.int.dev-gdcorp.tools',
+    CN_WHITELIST = ['cmapservice.int.dev-godaddy.com',
                     'cmap.threatapi.dev-godaddy.com',
                     'kelvinservice.int.dev-godaddy.com']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
