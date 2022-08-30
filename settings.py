@@ -20,7 +20,7 @@ class AppConfig(object):
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     MWPONE_URL = 'http://localhost:8080/mwpone/v1/accounts'
 
-    CMAPSERVICE_APP = 'cmapservice.int'
+    CMAPSERVICE_APP = 'cmapservice.cset.int'
     WITHOUT_SSO = False
     AD_GROUP = {'DCU-Phishstory'}
 
@@ -165,7 +165,7 @@ class DevelopmentAppConfig(AppConfig):
     GOCENTRAL_URL = 'http://localhost:8080/gocentral/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
     CNDNS_URL = 'http://abuse.partners.int.dev-godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.int.dev-godaddy.com',
+    CN_WHITELIST = ['cmapservice.cset.int.dev-gdcorp.tools',
                     'cmap.threatapi.dev-godaddy.com',
                     'kelvinservice.int.dev-godaddy.com']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'

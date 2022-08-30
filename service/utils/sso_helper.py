@@ -1,11 +1,13 @@
 import os
 from functools import wraps
+from typing import Set
 from urllib.parse import urlparse
 
 from csetutils.flask.logging import get_logging
 from flask import Response, redirect, request
 from gd_auth.exceptions import TokenExpiredException
 from gd_auth.token import AuthToken, TokenBusinessLevel
+from requests import get
 
 from settings import config_by_name
 
@@ -24,7 +26,7 @@ def do_login(f):
         logger.debug('decorator kwargs: {}'.format(kwargs))
 
         app_url = 'https://{}/login/?realm=jomax&app={}'.format(config.SSO_URL[8:], config.CMAPSERVICE_APP)
-        auth_groups = config.AD_GROUP
+        auth_groups: Set[str] = config.AD_GROUP
         cn_whitelist = config.CN_WHITELIST
         token_authority = config.SSO_URL[8:]
 
@@ -46,7 +48,22 @@ def do_login(f):
                 return redirect('{}&path=/graphql?{}'.format(app_url, o.query))
 
         return f(*args, **kwargs)
+
     return wrapped
+
+
+def validate_group(token_authority: str, token: str, allowed_groups: Set[str]) -> bool:
+    groups = get(
+        f'https://{token_authority}/v1/api/jomax/my/ad_membership',
+        headers={'Authorization': f'sso-jwt {token}'}
+    )
+    groups.raise_for_status()
+    groups = groups.json()
+
+    approved_groups = set(groups.get('data', {}).get('groups', []))
+    if not approved_groups.intersection(allowed_groups):
+        return False
+    return True
 
 
 def validate_auth(token, token_authority, auth_groups, cn_whitelist):
@@ -76,7 +93,7 @@ def validate_auth(token, token_authority, auth_groups, cn_whitelist):
         if typ == 'jomax':
             user_groups = set(parsed.payload.get('groups', []))
             logger.debug('{} trying to access CMAP with AD groups {}'.format(parsed.accountname, user_groups))
-            if not user_groups.intersection(auth_groups):
+            if not validate_group(token_authority, token, auth_groups):
                 return forbidden
         elif typ == 'cert':
             logger.debug('{} trying to access CMAP'.format(parsed.subject.get('cn')))

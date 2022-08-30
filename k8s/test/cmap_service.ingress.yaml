@@ -7,19 +7,9 @@ metadata:
 spec:
   tls:
     - hosts:
-      - "cmapservice.int.test-godaddy.com"
-      secretName: tls-cmap-service
-    - hosts:
       - "cmapservice.cset.int.test-gdcorp.tools"
       secretName: cset-wildcard
   rules:
-  - host: "cmapservice.int.test-godaddy.com"
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: "cmap-service"
-          servicePort: 5000
   - host: "cmapservice.cset.int.test-gdcorp.tools"
     http:
       paths:
