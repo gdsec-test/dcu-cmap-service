@@ -90,7 +90,7 @@ class ProductionAppConfig(AppConfig):
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
     DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts'
-    MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts'
+    MWPONE_URL = 'https://mwp.api.phx3.godaddy.com/api/v1/mwp/sites/search'
 
     def __init__(self):
         super().__init__()
@@ -138,7 +138,7 @@ class TestAppConfig(AppConfig):
     DIABLO_WHMCS_URL = 'https://diablo.api.test-godaddy.com/v1/servers/'
     VERT_URL = ''
     ANGELO_URL = 'https://p3nwplskapp.test-godaddy.com:8084/v1/accounts?SearchAddonDomain&'
-    MWPONE_URL = 'https://api.servicemanager.test-godaddy.com/v1/accounts'
+    MWPONE_URL = 'https://mwp.api.phx3.test-godaddy.com/api/v1/mwp/sites/search'
     DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.test-godaddy.com/v1/shoppers/{}'
     TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
