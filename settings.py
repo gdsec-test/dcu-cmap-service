@@ -20,7 +20,7 @@ class AppConfig(object):
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     MWPONE_URL = 'http://localhost:8080/mwpone/v1/accounts'
 
-    CMAPSERVICE_APP = 'cmapservice.int'
+    CMAPSERVICE_APP = 'cmapservice.cset.int'
     WITHOUT_SSO = False
     AD_GROUP = {'DCU-Phishstory'}
 
