@@ -1,5 +1,6 @@
 import json
 import os
+from tkinter import E
 
 import requests
 from csetutils.flask.logging import get_logging
@@ -20,6 +21,7 @@ class BrandDetectionHelper(object):
 
         self._hosting_endpoint = '{}/hosting?domain={{}}'.format(url)
         self._registrar_endpoint = '{}/registrar?domain={{}}'.format(url)
+        self._email_endpoint = '{}/email?plid={{}}'.format(url)
 
         self._sso_endpoint = config.SSO_URL + '/v1/secure/api/token'
         self._cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
@@ -61,6 +63,24 @@ class BrandDetectionHelper(object):
             self._logger.error('Unable to query Brand Detection service for {} : {}'.format(domain, e))
             return {'brand': None, 'registrar_name': None, 'registrar_abuse_email': None, 'domain_create_date': None,
                     'domain_id': None}
+
+    def get_email_info(self, plid):
+        """
+        Attempt to retrieve the email for the given PLID from Brand Detection service
+        :param domain:
+        :retur:
+        """
+        self._logger.info('Fetching email for PLID {}'.format(plid))
+
+        try:
+            r = requests.get(self._email_endpoint.format(plid), headers=self._headers)
+            if r.status_code in [401, 403]:
+                self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
+                r = requests.get(self._email_endpoint.format(plid), headers=self._headers)
+            return r.json()
+        except Exception as e:
+            self._logger.error('Unable to query Brand Detection service for plid {} : {}'.format(plid, e))
+            return {'email': None}
 
     def _get_jwt(self, cert):
         """

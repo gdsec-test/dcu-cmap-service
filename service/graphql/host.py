@@ -28,3 +28,4 @@ class HostInfo(graphene.ObjectType):
     managed_level = graphene.String(description='Managed Service Level, specific to servers')
     first_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')
     second_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')
+    hosting_abuse_email = graphene.String(description='email to send abuse report to for hosting product')

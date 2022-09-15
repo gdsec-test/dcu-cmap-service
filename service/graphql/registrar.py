@@ -8,3 +8,4 @@ class RegistrarInfo(graphene.ObjectType):
     registrar_abuse_email = graphene.List(graphene.String, description='Email contact(s)')
     registrar_name = graphene.String(description='Name of registrar or hosting provider')
     first_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')
+    hosting_abuse_email = graphene.String(description='email to send abuse report to for hosting product')
