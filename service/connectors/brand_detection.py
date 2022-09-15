@@ -1,6 +1,5 @@
 import json
 import os
-from tkinter import E
 
 import requests
 from csetutils.flask.logging import get_logging
