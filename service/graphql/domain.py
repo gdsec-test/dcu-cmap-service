@@ -91,7 +91,6 @@ class DomainQuery(graphene.ObjectType):
                 whois['managed_level'] = host_info.get('managed_level')
                 whois['first_pass_enrichment'] = host_info.get('first_pass_enrichment')
                 whois['second_pass_enrichment'] = host_info.get('second_pass_enrichment')
-                whois['hosting_abuse_email'] = host_info.get('hosting_abuse_email')
 
         vip = {}
         host_shopper = whois.get('shopper_id')
@@ -108,7 +107,7 @@ class DomainQuery(graphene.ObjectType):
         # If we have a PLID, overwrite the email with that PLID's email
         if shopper_data.shopper_plid:
             email = info.context.get('bd').get_email_info(shopper_data.shopper_plid)
-            whois['hosting_abuse_email'] = email['email']
+            whois['abuse_report_email'] = email['email']
 
         whois = convert_str_to_none(whois)
         host_obj = HostInfo(**whois)

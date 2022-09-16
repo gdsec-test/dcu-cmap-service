@@ -42,7 +42,7 @@ class BrandDetectionHelper(object):
             return r.json()
         except Exception as e:
             self._logger.error('Unable to query Brand Detection service for {} : {}'.format(domain, e))
-            return {'brand': None, 'hosting_company_name': None, 'hosting_abuse_email': None, 'ip': None}
+            return {'brand': None, 'hosting_company_name': None, 'hosting_abuse_email': None, 'ip': None, 'abuse_report_email': None}
 
     def get_registrar_info(self, domain):
         """
