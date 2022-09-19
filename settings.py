@@ -47,6 +47,8 @@ class AppConfig(object):
         self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY')
         self.CMAP_SERVICE_CERT = os.getenv('CMAP_SERVICE_CERT', 'service.crt')
         self.CMAP_SERVICE_KEY = os.getenv('CMAP_SERVICE_KEY', 'service.key')
+        self.CMAP_SERVICE_CLIENT_CERT = os.getenv('CMAP_SERVICE_CLIENT_CERT', 'service.crt')
+        self.CMAP_SERVICE_CLIENT_KEY = os.getenv('CMAP_SERVICE_CLIENT_KEY', 'service.key')
 
         self.CMAP_API_CERT = os.getenv('CMAP_API_CERT', 'api.crt')
         self.CMAP_API_KEY = os.getenv('CMAP_API_KEY', 'api.key')

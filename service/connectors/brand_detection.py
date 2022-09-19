@@ -22,7 +22,7 @@ class BrandDetectionHelper(object):
         self._registrar_endpoint = '{}/registrar?domain={{}}'.format(url)
 
         self._sso_endpoint = config.SSO_URL + '/v1/secure/api/token'
-        self._cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
+        self._cert = (config.CMAP_SERVICE_CLIENT_CERT, config.CMAP_SERVICE_CLIENT_KEY)
         self._headers = {'Content-Type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt(self._cert)}'}
 
     def get_hosting_info(self, domain):
