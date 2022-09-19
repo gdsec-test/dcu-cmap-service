@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install gcc -y
 RUN pip3 install -U pip
 
 # Move files to new dir
-COPY ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
+COPY ./run.py ./settings.py ./kubetipper.sh ./*.ini /app/
 
 # Compile the Flask API
 RUN mkdir /tmp/build
