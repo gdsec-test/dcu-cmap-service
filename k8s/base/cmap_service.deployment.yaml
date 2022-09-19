@@ -52,6 +52,10 @@ spec:
               value: /apicerts/tls.crt
             - name: CMAP_API_KEY
               value: /apicerts/tls.key
+            - name: CMAP_SERVICE_CLIENT_CERT
+              value: /cmapservice-client-certs/tls.crt
+            - name: CMAP_SERVICE_CLIENT_KEY
+              value: /cmapservice-client-certs/tls.key
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
@@ -142,6 +146,9 @@ spec:
             - name: tls-files-service
               mountPath: /servicecerts
               readOnly: true
+            - name: tls-files-cmapservice-client-cert
+              mountPath: /cmapservice-client-certs
+              readOnly: true
       volumes:
         - name: tls-files-proxy
           secret:
@@ -152,3 +159,6 @@ spec:
         - name: tls-files-service
           secret:
             secretName: tls-cmap-service
+        - name: tls-files-cmapservice-client-cert
+          secret:
+            secretName: tls-cmapservice-client-cert
