@@ -104,10 +104,10 @@ class DomainQuery(graphene.ObjectType):
             whois['shopper_create_date'] = shopper_data.shopper_create_date
             whois['shopper_plid'] = shopper_data.shopper_plid
 
-        # If we have a PLID, overwrite the email with that PLID's email
-        if shopper_data.shopper_plid:
-            email = info.context.get('bd').get_email_info(shopper_data.shopper_plid)
-            whois['abuse_report_email'] = email['email']
+            # If we have a PLID, overwrite the email with that PLID's email
+            if shopper_data['shopper_plid']:
+                email = info.context.get('bd').get_email_info(shopper_data.shopper_plid)
+                whois['abuse_report_email'] = email['email']
 
         whois = convert_str_to_none(whois)
         host_obj = HostInfo(**whois)
