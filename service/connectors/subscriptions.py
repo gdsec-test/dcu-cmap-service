@@ -11,7 +11,7 @@ class SubscriptionsAPI(object):
     def __init__(self, config):
         self._logger = get_logging()
         self._url = config.SUBSCRIPTIONS_URL
-        self._cert = (config.CMAP_SERVICE_CERT, config.CMAP_SERVICE_KEY)
+        self._cert = (config.CMAP_SERVICE_CLIENT_CERT, config.CMAP_SERVICE_CLIENT_KEY)
         self._blacklist = config.SUBSCRIPTIONS_BLACKLIST
 
     def get_hosting_subscriptions(self, shopper_id, domain):
