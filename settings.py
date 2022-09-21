@@ -127,7 +127,7 @@ class OTEAppConfig(AppConfig):
 
 class TestAppConfig(AppConfig):
     DB = 'testphishstory'
-    DB_HOST = '10.36.190.222'
+    DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'testuser'
 
     SSO_URL = 'https://sso.test-gdcorp.tools'
@@ -163,7 +163,7 @@ class TestAppConfig(AppConfig):
 
 class DevelopmentAppConfig(AppConfig):
     DB = 'devphishstory'
-    DB_HOST = '10.36.190.222'
+    DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'devuser'
 
     SSO_URL = 'https://sso.dev-gdcorp.tools'
