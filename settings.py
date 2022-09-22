@@ -84,7 +84,6 @@ class ProductionAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
     CN_WHITELIST = ['cmap.threatapi.godaddy.com',
                     'cmapservice.client.cset.int.gdcorp.tools',
                     'kelvinservice.client.cset.int.gdcorp.tools']
@@ -110,7 +109,6 @@ class OTEAppConfig(AppConfig):
     # Go Central OTE URL does not exist.  Using Test
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'http://abuse.partners.int.test-godaddy.com/v1/'
     CN_WHITELIST = ['cmapservice.client.cset.int.ote-gdcorp.tools',
                     'kelvinservice.client.cset.int.ote-gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.ote.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll'
@@ -146,7 +144,6 @@ class TestAppConfig(AppConfig):
     TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
-    CNDNS_URL = ''
     CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
 
@@ -166,7 +163,6 @@ class DevelopmentAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://localhost:8080/branddetection'
     GOCENTRAL_URL = 'http://localhost:8080/gocentral/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'http://abuse.partners.int.dev-godaddy.com/v1/'
     CN_WHITELIST = ['cmap.threatapi.dev-godaddy.com',
                     'cmapservice.client.cset.int.dev-gdcorp.tools',
                     'kelvinservice.client.cset.int.dev-gdcorp.tools']
@@ -187,7 +183,6 @@ class LocalAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
     CN_WHITELIST = ['']
     WITHOUT_SSO = True
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
