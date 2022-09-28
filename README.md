@@ -89,8 +89,6 @@ If you would like to run CMAP Service locally, you will need to specify the foll
 * `CMAP_PROXY_KEY` Path to proxyuser.cmap.int.godaddy.com key file(for connecting to CMAP Proxy, prod only)
 * `CMAP_PROXY_USER` (User for CMAP Proxy)
 * `CMAP_PROXY_PASS` (Password for CMAP Proxy)
-* `CMAP_SERVICE_CERT` Path to cmapservice.int certificate file (for connecting to SUBSCRIPTIONS & GOCENTRAL APIs)
-* `CMAP_SERVICE_KEY` Path to cmapservice.int key file (for connecting to SUBSCRIPTIONS & GOCENTRAL APIs)
 * `CMAP_SERVICE_CLIENT_CERT` Path to cmapservice.client.cset.int. client certificate file (for connecting to brand-detection API)
 * `CMAP_SERVICE_CLIENT_KEY` Path to cmapservice.client.cset.int. client key file (for connecting to brand-detection API)
 * `DB_PASS` (Password for MongoDB)
