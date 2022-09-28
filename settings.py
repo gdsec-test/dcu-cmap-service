@@ -84,10 +84,7 @@ class ProductionAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.int.godaddy.com',
-                    'cmap.threatapi.godaddy.com',
-                    'kelvinservice.int.godaddy.com',
+    CN_WHITELIST = ['cmap.threatapi.godaddy.com',
                     'cmapservice.client.cset.int.gdcorp.tools',
                     'kelvinservice.client.cset.int.gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
@@ -112,10 +109,7 @@ class OTEAppConfig(AppConfig):
     # Go Central OTE URL does not exist.  Using Test
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'http://abuse.partners.int.test-godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.int.ote-godaddy.com',
-                    'kelvinservice.int.ote-godaddy.com',
-                    'cmapservice.client.cset.int.ote-gdcorp.tools',
+    CN_WHITELIST = ['cmapservice.client.cset.int.ote-gdcorp.tools',
                     'kelvinservice.client.cset.int.ote-gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.ote.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll'
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
@@ -134,9 +128,7 @@ class TestAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-test.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-test.svc.cluster.local:5000'
-    CN_WHITELIST = ['cmapservice.int.test-godaddy.com',
-                    'cmap.threatapi.test-godaddy.com',
-                    'kelvinservice.int.test-godaddy.com',
+    CN_WHITELIST = ['cmap.threatapi.test-godaddy.com',
                     'cmapservice.client.cset.int.test-gdcorp.tools',
                     'kelvinservice.client.cset.int.test-gdcorp.tools']
     VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.test-godaddy.com'),
@@ -152,7 +144,6 @@ class TestAppConfig(AppConfig):
     TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
-    CNDNS_URL = ''
     CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
 
@@ -172,10 +163,7 @@ class DevelopmentAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://localhost:8080/branddetection'
     GOCENTRAL_URL = 'http://localhost:8080/gocentral/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'http://abuse.partners.int.dev-godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.int.dev-godaddy.com',
-                    'cmap.threatapi.dev-godaddy.com',
-                    'kelvinservice.int.dev-godaddy.com',
+    CN_WHITELIST = ['cmap.threatapi.dev-godaddy.com',
                     'cmapservice.client.cset.int.dev-gdcorp.tools',
                     'kelvinservice.client.cset.int.dev-gdcorp.tools']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
@@ -195,7 +183,6 @@ class LocalAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
     CN_WHITELIST = ['']
     WITHOUT_SSO = True
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
