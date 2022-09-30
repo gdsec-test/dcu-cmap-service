@@ -40,10 +40,6 @@ spec:
                 secretKeyRef:
                   name: auth-cmap-proxy
                   key: password
-            - name: CMAP_SERVICE_CERT
-              value: /servicecerts/tls.crt
-            - name: CMAP_SERVICE_KEY
-              value: /servicecerts/tls.key
             - name: CMAP_PROXY_CERT
               value: /proxycerts/tls.crt
             - name: CMAP_PROXY_KEY
@@ -143,9 +139,6 @@ spec:
             - name: tls-files-proxy
               mountPath: /proxycerts
               readOnly: true
-            - name: tls-files-service
-              mountPath: /servicecerts
-              readOnly: true
             - name: tls-files-cmapservice-client-cert
               mountPath: /cmapservice-client-certs
               readOnly: true
@@ -156,9 +149,6 @@ spec:
         - name: tls-files-api
           secret:
             secretName: tls-cmap-api
-        - name: tls-files-service
-          secret:
-            secretName: tls-cmap-service
         - name: tls-files-cmapservice-client-cert
           secret:
             secretName: tls-cmapservice-client-cert
