@@ -84,7 +84,8 @@ class ProductionAppConfig(AppConfig):
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['cmap.threatapi.godaddy.com',
                     'cmapservice.client.cset.int.gdcorp.tools',
-                    'kelvinservice.client.cset.int.gdcorp.tools']
+                    'kelvinservice.client.cset.int.gdcorp.tools',
+                    'mwnotifications.client.cset.int.gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
@@ -128,7 +129,8 @@ class TestAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-test.svc.cluster.local:5000'
     CN_WHITELIST = ['cmap.threatapi.test-godaddy.com',
                     'cmapservice.client.cset.int.test-gdcorp.tools',
-                    'kelvinservice.client.cset.int.test-gdcorp.tools']
+                    'kelvinservice.client.cset.int.test-gdcorp.tools',
+                    'mwnotifications.client.cset.int.test-gdcorp.tools']
     VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.test-godaddy.com'),
                              ('SIN2', 'https://vps4.api.test-godaddy.com'),
                              ('AMS3', 'https://vps4.api.test-godaddy.com')])
@@ -163,7 +165,8 @@ class DevelopmentAppConfig(AppConfig):
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['cmap.threatapi.dev-godaddy.com',
                     'cmapservice.client.cset.int.dev-gdcorp.tools',
-                    'kelvinservice.client.cset.int.dev-gdcorp.tools']
+                    'kelvinservice.client.cset.int.dev-gdcorp.tools',
+                    'mwnotifications.client.cset.int.dev-gdcorp.tools']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
     SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
 
