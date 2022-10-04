@@ -14,7 +14,7 @@ class ShopperAPI(object):
 
     def __init__(self, settings: AppConfig):
         self._logger = get_logging()
-        self._cert = (settings.CMAP_SERVICE_CLIENT_KEY, settings.CMAP_SERVICE_CLIENT_KEY)
+        self._cert = (settings.CMAP_SERVICE_CLIENT_CERT, settings.CMAP_SERVICE_CLIENT_KEY)
         self._url = settings.SHOPPER_API_URL
 
     def get_shopper_by_shopper_id(self, shopper_id: str, fields: list) -> dict:
