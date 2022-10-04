@@ -44,3 +44,4 @@ uWSGI==2.0.19.1
 Werkzeug==2.1.1
 # We use Zeep for contacting IPAM SOAP API
 zeep==4.0.0
+importlib-metadata==4.0.1
