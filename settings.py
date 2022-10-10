@@ -14,7 +14,7 @@ class AppConfig(object):
     DATE_FORMAT = '%Y-%m-%d'
 
     VERT_URL = 'https://vertigo.cmap.proxy.int.godaddy.com/vertigo/v1/container/?ips__ipv4='
-    ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
+    ANGELO_URL = 'https://gdapi.plesk-shared-app.int.gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
     DIABLO_WHMCS_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/servers/'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
@@ -137,7 +137,7 @@ class TestAppConfig(AppConfig):
     DIABLO_URL = 'https://diablo.api.test-godaddy.com/v1/accounts'
     DIABLO_WHMCS_URL = 'https://diablo.api.test-godaddy.com/v1/servers/'
     VERT_URL = ''
-    ANGELO_URL = 'https://p3nwplskapp.test-godaddy.com:8084/v1/accounts?SearchAddonDomain&'
+    ANGELO_URL = 'https://gdapi.plesk-shared-app.int.test-gdcorp.tools/v1/accounts?SearchAddonDomain&'
     MWPONE_URL = 'https://api.servicemanager.test-godaddy.com/v1/accounts'
     DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.test-godaddy.com/v1/shoppers/{}'
