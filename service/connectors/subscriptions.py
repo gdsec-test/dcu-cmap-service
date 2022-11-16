@@ -11,8 +11,10 @@ class SubscriptionsAPI(object):
     def __init__(self, config):
         self._logger = get_logging()
         self._url = config.SUBSCRIPTIONS_URL
+        self._sso_url = config.SSO_URL
         self._cert = (config.CMAP_SERVICE_CLIENT_CERT, config.CMAP_SERVICE_CLIENT_KEY)
         self._blacklist = config.SUBSCRIPTIONS_BLACKLIST
+        self._jwt = None
 
     def get_hosting_subscriptions(self, shopper_id, domain):
         """
@@ -96,6 +98,19 @@ class SubscriptionsAPI(object):
                 ssl_subscriptions.append(ssl_subscription)
         return ssl_subscriptions
 
+    def _get_jwt(self, force_refresh: bool = False) -> str:
+        if self._jwt is None or force_refresh:
+            try:
+                response = requests.post(f'{self._sso_url}/v1/secure/api/token',
+                                         data={'realm': 'cert'}, cert=self._cert)
+                response.raise_for_status()
+                sso_response = response.json()
+                self._jwt = sso_response.get('data')
+            except Exception:
+                self._logger.exception('Error calling sso')
+                return ""
+        return self._jwt
+
     def _get_subscriptions(self, shopper_id, product_group_keys, domain):
         """
         Uses the Subscriptions API to retrieve the subscriptions associated with a particular shopper
@@ -153,7 +168,7 @@ class SubscriptionsAPI(object):
 
         # Page size represents the number of subscriptions that are to be retrieved in one call.
         page_size = 2000
-        headers = {'content-type': 'application/json', 'X-Shopper-Id': shopper_id}
+        headers = {'content-type': 'application/json', 'X-Shopper-Id': shopper_id, 'Authorization': f'sso-jwt {self._get_jwt()}'}
         query_params = {'productGroupKeys': product_group_keys, 'label': domain, 'offset': 0, 'limit': page_size}
 
         '''
@@ -165,7 +180,11 @@ class SubscriptionsAPI(object):
 
         try:
             while True:
-                r = requests.get(query_url, headers=headers, cert=self._cert)
+                r = requests.get(query_url, headers=headers)
+                if r.status_code == 401 or r.status_code == 403:
+                    headers['Authorization'] = f'sso-jwt {self._get_jwt(force_refresh=True)}'
+                    r = requests.get(query_url, headers=headers)
+                r.raise_for_status()
                 res = json.loads(r.text)
                 subscriptions += res.get('subscriptions', [])
                 next_page = res.get('pagination', {}).get('next')
