@@ -13,7 +13,7 @@ class AppConfig(object):
     COLLECTION = 'blacklist'
     DATE_FORMAT = '%Y-%m-%d'
 
-    VERT_URL = 'https://vertigo.cmap.proxy.int.godaddy.com/vertigo/v1/container/?ips__ipv4='
+    VERT_URL = 'https://vertigo.int.gdcorp.tools/vertigo/v1/container/?ips__ipv4='
     ANGELO_URL = 'https://gdapi.plesk-shared-app.int.gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
     DIABLO_WHMCS_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/servers/'
@@ -41,10 +41,6 @@ class AppConfig(object):
         self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
         self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)
 
-        self.CMAP_PROXY_USER = os.getenv('CMAP_PROXY_USER')
-        self.CMAP_PROXY_PASS = os.getenv('CMAP_PROXY_PASS')
-        self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT')
-        self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY')
         self.CMAP_SERVICE_CLIENT_CERT = os.getenv('CMAP_SERVICE_CLIENT_CERT', 'service.crt')
         self.CMAP_SERVICE_CLIENT_KEY = os.getenv('CMAP_SERVICE_CLIENT_KEY', 'service.key')
 

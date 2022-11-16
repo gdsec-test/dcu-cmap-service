@@ -30,20 +30,6 @@ spec:
             - configMapRef:
                 name: env-specific-values
           env:
-            - name: CMAP_PROXY_USER
-              valueFrom:
-                secretKeyRef:
-                  name: auth-cmap-proxy
-                  key: username
-            - name: CMAP_PROXY_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: auth-cmap-proxy
-                  key: password
-            - name: CMAP_PROXY_CERT
-              value: /proxycerts/tls.crt
-            - name: CMAP_PROXY_KEY
-              value: /proxycerts/tls.key
             - name: CMAP_API_CERT
               value: /apicerts/tls.crt
             - name: CMAP_API_KEY
@@ -136,16 +122,10 @@ spec:
             - name: tls-files-api
               mountPath: /apicerts
               readOnly: true
-            - name: tls-files-proxy
-              mountPath: /proxycerts
-              readOnly: true
             - name: tls-files-cmapservice-client-cert
               mountPath: /cmapservice-client-certs
               readOnly: true
       volumes:
-        - name: tls-files-proxy
-          secret:
-            secretName: tls-cmap-auth
         - name: tls-files-api
           secret:
             secretName: tls-cmap-api
