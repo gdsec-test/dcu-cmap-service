@@ -4,6 +4,8 @@ import graphene
 class APIReseller(graphene.ObjectType):
     parent = graphene.String(description='API Reseller Parent ShopperID')
     child = graphene.String(description='API Reseller Child ShopperID')
+    parent_customer_id = graphene.String(description='API Reseller Parent CustomerID')
+    child_customer_id = graphene.String(description='API Reseller Child CustomerID')
 
 
 class ShopperPortfolio:

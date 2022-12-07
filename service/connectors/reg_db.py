@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 
 from csetutils.flask.logging import get_logging
 
+from service.connectors.shopper import ShopperAPI
 from service.soap.request_transport import RequestsTransport
 from service.utils.functions import get_fld_by_domain_name
 
@@ -20,6 +21,7 @@ class RegDbAPI(object):
         self._wsdl = self._location + '?Handler=GenRegDBWebSvcWSDL'
         self._logger = get_logging()
         self._redis = redis_obj
+        self._shopper_api = ShopperAPI(settings)
         from suds.client import Client
         try:
             self._client = Client(self._wsdl, location=self._location,
@@ -59,8 +61,8 @@ class RegDbAPI(object):
 
     def get_parent_child_shopper_by_domain_name(self, domain_name_as_provided):
         '''
-        Given a domain name, attempt to retrieve the Parent Shopper and the Child Shopper for a domain that is
-        registered as part of an API Reseller e.g. Wild West Domains, Google, etc.
+        Given a domain name, attempt to retrieve the Parent shopper and customer IDs and the Child shopper and customer
+        IDs for a domain that is registered as part of an API Reseller e.g. Wild West Domains, Google, etc.
         :param domain_name_as_provided:
         :return:
         '''
@@ -86,8 +88,19 @@ class RegDbAPI(object):
                     query_value = dict(parent=None, child=None)
                 else:
                     doc_record = doc.find('RECORDSET').find('RECORD')
-                    query_value = dict(parent=doc_record.find('PARENT_SHOPPER_ID').text,
-                                       child=doc_record.find('CHILD_SHOPPER_ID').text)
+                    parent_shopper_id = doc_record.find('PARENT_SHOPPER_ID').text
+                    child_shopper_id = doc_record.find('CHILD_SHOPPER_ID').text
+
+                    parent_info = self._shopper_api.get_shopper_by_shopper_id(parent_shopper_id, ['customerId'])
+                    parent_customer_id = parent_info.get('customer_id')
+
+                    child_info = self._shopper_api.get_shopper_by_shopper_id(child_shopper_id, ['customerId'])
+                    child_customer_id = child_info.get('customer_id')
+
+                    query_value = dict(parent=parent_shopper_id,
+                                       child=child_shopper_id,
+                                       parent_customer_id=parent_customer_id,
+                                       child_customer_id=child_customer_id)
 
                 self._redis.set(redis_key, json.dumps({self._redis_key: query_value}))
             else:

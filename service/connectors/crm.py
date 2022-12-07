@@ -25,8 +25,8 @@ class CRMClientAPI(object):
             # Bring issues to #crm-support
             self._client = Client(wsdl, location=location,
                                   headers=RequestsTransport.get_soap_headers(),
-                                  transport=RequestsTransport(cert=settings.CMAP_API_CERT,
-                                                              key=settings.CMAP_API_KEY))
+                                  transport=RequestsTransport(cert=settings.CMAP_SERVICE_CLIENT_CERT,
+                                                              key=settings.CMAP_SERVICE_CLIENT_KEY))
             self._request = self._client.factory.create(self._factory)
         except Exception as e:
             self._logger.error('Failed CRM Client Init: {}'.format(e))

@@ -13,14 +13,14 @@ class AppConfig(object):
     COLLECTION = 'blacklist'
     DATE_FORMAT = '%Y-%m-%d'
 
-    VERT_URL = 'https://vertigo.cmap.proxy.int.godaddy.com/vertigo/v1/container/?ips__ipv4='
-    ANGELO_URL = 'https://p3nwplskapp-v01.shr.prod.phx3.secureserver.net:8084/v1/accounts?SearchAddonDomain&'
+    VERT_URL = 'https://vertigo.int.gdcorp.tools/vertigo/v1/container/?ips__ipv4='
+    ANGELO_URL = 'https://gdapi.plesk-shared-app.int.gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
     DIABLO_WHMCS_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/servers/'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     MWPONE_URL = 'http://localhost:8080/mwpone/v1/accounts'
 
-    CMAPSERVICE_APP = 'cmapservice.int'
+    CMAPSERVICE_APP = 'cmapservice.cset.int'
     WITHOUT_SSO = False
     AD_GROUP = {'DCU-Phishstory'}
 
@@ -38,15 +38,9 @@ class AppConfig(object):
     CUSTOM_NS = None
 
     def __init__(self):
-        self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
-        self.DBURL = 'mongodb://{}:{}@{}/{}'.format(self.DB_USER, self.DB_PASS, self.DB_HOST, self.DB)
 
-        self.CMAP_PROXY_USER = os.getenv('CMAP_PROXY_USER')
-        self.CMAP_PROXY_PASS = os.getenv('CMAP_PROXY_PASS')
-        self.CMAP_PROXY_CERT = os.getenv('CMAP_PROXY_CERT')
-        self.CMAP_PROXY_KEY = os.getenv('CMAP_PROXY_KEY')
-        self.CMAP_SERVICE_CERT = os.getenv('CMAP_SERVICE_CERT', 'service.crt')
-        self.CMAP_SERVICE_KEY = os.getenv('CMAP_SERVICE_KEY', 'service.key')
+        self.CMAP_SERVICE_CLIENT_CERT = os.getenv('CMAP_SERVICE_CLIENT_CERT', 'service.crt')
+        self.CMAP_SERVICE_CLIENT_KEY = os.getenv('CMAP_SERVICE_CLIENT_KEY', 'service.key')
 
         self.CMAP_API_CERT = os.getenv('CMAP_API_CERT', 'api.crt')
         self.CMAP_API_KEY = os.getenv('CMAP_API_KEY', 'api.key')
@@ -75,17 +69,18 @@ class ProductionAppConfig(AppConfig):
     DB = 'phishstory'
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_p_phishv2'
-
+    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
+    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}'
     SSO_URL = 'https://sso.gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.int.godaddy.com',
-                    'cmap.threatapi.godaddy.com',
-                    'kelvinservice.int.godaddy.com']
+    CN_WHITELIST = ['cmap.threatapi.godaddy.com',
+                    'cmapservice.client.cset.int.gdcorp.tools',
+                    'kelvinservice.client.cset.int.gdcorp.tools',
+                    'mwnotifications.client.cset.int.gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
@@ -100,6 +95,8 @@ class OTEAppConfig(AppConfig):
     DB = 'otephishstory'
     DB_HOST = '10.22.9.209'
     DB_USER = 'sau_o_phish'
+    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
+    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}'
 
     SSO_URL = 'https://sso.ote-gdcorp.tools'
 
@@ -108,9 +105,8 @@ class OTEAppConfig(AppConfig):
     # Go Central OTE URL does not exist.  Using Test
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'http://abuse.partners.int.test-godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.int.ote-godaddy.com',
-                    'kelvinservice.int.ote-godaddy.com']
+    CN_WHITELIST = ['cmapservice.client.cset.int.ote-gdcorp.tools',
+                    'kelvinservice.client.cset.int.ote-gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.ote.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll'
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'https://shopper.api.int.ote-godaddy.com/v1/shoppers/{}'
@@ -121,30 +117,33 @@ class OTEAppConfig(AppConfig):
 
 class TestAppConfig(AppConfig):
     DB = 'testphishstory'
-    DB_HOST = '10.36.190.222'
+    DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'testuser'
+    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
+    CLIENT_CERT = os.getenv("MONGO_CLIENT_CERT", '')
+    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}&readPreference=primary&directConnection=true&tls=true&tlsCertificateKeyFile={CLIENT_CERT}'
 
     SSO_URL = 'https://sso.test-gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-test.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-test.svc.cluster.local:5000'
-    CN_WHITELIST = ['cmapservice.int.test-godaddy.com',
-                    'cmap.threatapi.test-godaddy.com',
-                    'kelvinservice.int.test-godaddy.com']
+    CN_WHITELIST = ['cmap.threatapi.test-godaddy.com',
+                    'cmapservice.client.cset.int.test-gdcorp.tools',
+                    'kelvinservice.client.cset.int.test-gdcorp.tools',
+                    'mwnotifications.client.cset.int.test-gdcorp.tools']
     VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.test-godaddy.com'),
                              ('SIN2', 'https://vps4.api.test-godaddy.com'),
                              ('AMS3', 'https://vps4.api.test-godaddy.com')])
     DIABLO_URL = 'https://diablo.api.test-godaddy.com/v1/accounts'
     DIABLO_WHMCS_URL = 'https://diablo.api.test-godaddy.com/v1/servers/'
     VERT_URL = ''
-    ANGELO_URL = 'https://p3nwplskapp.test-godaddy.com:8084/v1/accounts?SearchAddonDomain&'
     MWPONE_URL = 'https://mwp.api.phx3.test-godaddy.com/api/v1/mwp/sites/search'
+    ANGELO_URL = 'https://gdapi.plesk-shared-app.int.test-gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.test-godaddy.com/v1/shoppers/{}'
     TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
-    CNDNS_URL = ''
     CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
 
@@ -155,8 +154,11 @@ class TestAppConfig(AppConfig):
 
 class DevelopmentAppConfig(AppConfig):
     DB = 'devphishstory'
-    DB_HOST = '10.36.190.222'
+    DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'devuser'
+    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
+    CLIENT_CERT = os.getenv("MONGO_CLIENT_CERT", '')
+    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}&readPreference=primary&directConnection=true&tls=true&tlsCertificateKeyFile={CLIENT_CERT}'
 
     SSO_URL = 'https://sso.dev-gdcorp.tools'
 
@@ -164,10 +166,10 @@ class DevelopmentAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://localhost:8080/branddetection'
     GOCENTRAL_URL = 'http://localhost:8080/gocentral/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'http://abuse.partners.int.dev-godaddy.com/v1/'
-    CN_WHITELIST = ['cmapservice.int.dev-godaddy.com',
-                    'cmap.threatapi.dev-godaddy.com',
-                    'kelvinservice.int.dev-godaddy.com']
+    CN_WHITELIST = ['cmap.threatapi.dev-godaddy.com',
+                    'cmapservice.client.cset.int.dev-gdcorp.tools',
+                    'kelvinservice.client.cset.int.dev-gdcorp.tools',
+                    'mwnotifications.client.cset.int.dev-gdcorp.tools']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
     SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
 
@@ -185,7 +187,6 @@ class LocalAppConfig(AppConfig):
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
-    CNDNS_URL = 'https://abuse.partners.int.godaddy.com/v1/'
     CN_WHITELIST = ['']
     WITHOUT_SSO = True
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'

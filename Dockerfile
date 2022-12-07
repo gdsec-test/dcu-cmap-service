@@ -5,13 +5,23 @@ USER root
 RUN apt-get update && apt-get install gcc -y
 RUN pip3 install -U pip
 
-# Move files to new dir
-COPY ./run.py ./runserver.sh ./settings.py ./kubetipper.sh ./*.ini /app/
-
 # Compile the Flask API
-RUN mkdir /tmp/build
-COPY . /tmp/build
+RUN mkdir -p /tmp/build
+COPY requirements.txt /tmp/build/
+COPY pip_config /tmp/build/pip_config
+RUN PIP_CONFIG_FILE=/tmp/build/pip_config/pip.conf pip3 install -r /tmp/build/requirements.txt
+
+COPY *.py /tmp/build/
+COPY test_requirements.txt /tmp/build/
+COPY README.md /tmp/build/
+COPY service /tmp/build/service
+COPY trusted_certs /tmp/build/service
 RUN PIP_CONFIG_FILE=/tmp/build/pip_config/pip.conf pip3 install --compile /tmp/build
+
+# Move files to new dir
+COPY ./run.py ./settings.py ./kubetipper.sh ./*.ini /app/
+
+# Cleanup
 RUN rm -rf /tmp/build
 
 # Grab the latest TLD list, and verify it is valid.

@@ -30,28 +30,14 @@ spec:
             - configMapRef:
                 name: env-specific-values
           env:
-            - name: CMAP_PROXY_USER
-              valueFrom:
-                secretKeyRef:
-                  name: auth-cmap-proxy
-                  key: username
-            - name: CMAP_PROXY_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: auth-cmap-proxy
-                  key: password
-            - name: CMAP_SERVICE_CERT
-              value: /servicecerts/tls.crt
-            - name: CMAP_SERVICE_KEY
-              value: /servicecerts/tls.key
-            - name: CMAP_PROXY_CERT
-              value: /proxycerts/tls.crt
-            - name: CMAP_PROXY_KEY
-              value: /proxycerts/tls.key
             - name: CMAP_API_CERT
               value: /apicerts/tls.crt
             - name: CMAP_API_KEY
               value: /apicerts/tls.key
+            - name: CMAP_SERVICE_CLIENT_CERT
+              value: /cmapservice-client-certs/tls.crt
+            - name: CMAP_SERVICE_CLIENT_KEY
+              value: /cmapservice-client-certs/tls.key
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
@@ -132,23 +118,25 @@ spec:
                 secretKeyRef:
                   name: apm-access
                   key: secret
+            - name: MONGO_CLIENT_CERT
+              value: /mongo_common_certs/mongo_client.pem
           volumeMounts:
             - name: tls-files-api
               mountPath: /apicerts
               readOnly: true
-            - name: tls-files-proxy
-              mountPath: /proxycerts
+            - name: tls-files-cmapservice-client-cert
+              mountPath: /cmapservice-client-certs
               readOnly: true
-            - name: tls-files-service
-              mountPath: /servicecerts
+            - name: tls-mongo-common-cert-files
+              mountPath: /mongo_common_certs
               readOnly: true
       volumes:
-        - name: tls-files-proxy
-          secret:
-            secretName: tls-cmap-auth
         - name: tls-files-api
           secret:
             secretName: tls-cmap-api
-        - name: tls-files-service
+        - name: tls-files-cmapservice-client-cert
           secret:
-            secretName: tls-cmap-service
+            secretName: tls-cmapservice-client-cert
+        - name: tls-mongo-common-cert-files
+          secret:
+            secretName: tls-mongo-common-cert-files

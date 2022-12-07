@@ -1,5 +1,5 @@
 import requests
-from mock import patch
+from mock import Mock, patch
 from nose.tools import assert_equal, assert_false
 
 from service.connectors.subscriptions import SubscriptionsAPI
@@ -8,6 +8,8 @@ from settings import DevelopmentAppConfig
 
 class MockResponse:
     text = '{"subscriptions": "1"}'
+    status_code = 200
+    raise_for_status = Mock(return_value='')
 
 
 class TestSubscriptionsAPI:
@@ -82,7 +84,9 @@ class TestSubscriptionsAPI:
     """
 
     @patch.object(requests, 'get', return_value=MockResponse)
-    def test_get_subscriptions(self, mocked_get):
+    @patch.object(SubscriptionsAPI, '_get_jwt')
+    def test_get_subscriptions(self, mocked_get_jwt, mocked_get):
+        mocked_get_jwt.return_value = 'jwt123'
         assert_equal(self._subscriptions_api._get_subscriptions('102704532', ['websiteSecurity'], 'test1.com'), ['1'])
 
     def test_get_subscriptions_no_id(self):

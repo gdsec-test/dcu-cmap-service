@@ -10,13 +10,12 @@ class VertigoAPI(Product):
     def __init__(self, settings):
         self._logger = get_logging()
         self.url = settings.VERT_URL
-        self.auth = (settings.CMAP_PROXY_USER, settings.CMAP_PROXY_PASS)
-        self.cert = (settings.CMAP_PROXY_CERT, settings.CMAP_PROXY_KEY)
+        self.auth = (settings.VERTIGO_USER, settings.VERTIGO_PASS)
 
     def locate(self, domain, ip, **kwargs):
 
         try:
-            response = requests.get(self.url + ip, cert=self.cert, auth=self.auth, headers=self._headers, verify=False)
+            response = requests.get(self.url + ip, auth=self.auth, headers=self._headers, verify=False)
             returned_json = response.json()
 
             if returned_json.get('data'):

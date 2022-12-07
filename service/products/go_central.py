@@ -14,7 +14,7 @@ class GoCentralAPI(Product):
         self._url = settings.GOCENTRAL_URL
         self._sso_endpoint = settings.SSO_URL + '/v1/secure/api/token'
 
-        self._cert = (settings.CMAP_SERVICE_CERT, settings.CMAP_SERVICE_KEY)
+        self._cert = (settings.CMAP_SERVICE_CLIENT_CERT, settings.CMAP_SERVICE_CLIENT_KEY)
         self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
 
     def locate(self, domain, **kwargs):
