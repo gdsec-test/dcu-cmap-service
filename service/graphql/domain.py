@@ -91,6 +91,7 @@ class DomainQuery(graphene.ObjectType):
                 whois['managed_level'] = host_info.get('managed_level')
                 whois['first_pass_enrichment'] = host_info.get('first_pass_enrichment')
                 whois['second_pass_enrichment'] = host_info.get('second_pass_enrichment')
+                whois['abuse_report_email'] = host_info.get('abuse_report_email')
 
         vip = {}
         host_shopper = whois.get('shopper_id')

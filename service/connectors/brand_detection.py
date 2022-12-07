@@ -61,7 +61,7 @@ class BrandDetectionHelper(object):
         except Exception as e:
             self._logger.error('Unable to query Brand Detection service for {} : {}'.format(domain, e))
             return {'brand': None, 'registrar_name': None, 'registrar_abuse_email': None, 'domain_create_date': None,
-                    'domain_id': None}
+                    'domain_id': None, 'abuse_report_email': None}
 
     def get_email_info(self, plid):
         """
