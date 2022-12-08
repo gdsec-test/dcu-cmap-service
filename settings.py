@@ -171,7 +171,7 @@ class DevelopmentAppConfig(AppConfig):
                     'kelvinservice.client.cset.int.dev-gdcorp.tools',
                     'mwnotifications.client.cset.int.dev-gdcorp.tools']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
-    SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
+    SHOPPER_API_URL = 'https://shopper.api.int.dev-godaddy.com/v1/shoppers/{}'
 
     def __init__(self):
         super().__init__()
