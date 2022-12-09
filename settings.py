@@ -180,8 +180,8 @@ class DevelopmentAppConfig(AppConfig):
 class LocalAppConfig(AppConfig):
     DB = 'local'
     DB_HOST = 'localhost'
-
-    SSO_URL = 'https://sso.gdcorp.tools'
+    MWPONE_URL = 'https://mwp.api.phx3.test-godaddy.com/api/v1/mwp/sites/search'
+    SSO_URL = 'https://sso.test-gdcorp.tools'
 
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
