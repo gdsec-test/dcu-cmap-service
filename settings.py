@@ -42,9 +42,6 @@ class AppConfig(object):
         self.CMAP_SERVICE_CLIENT_CERT = os.getenv('CMAP_SERVICE_CLIENT_CERT', 'service.crt')
         self.CMAP_SERVICE_CLIENT_KEY = os.getenv('CMAP_SERVICE_CLIENT_KEY', 'service.key')
 
-        self.CMAP_API_CERT = os.getenv('CMAP_API_CERT', 'api.crt')
-        self.CMAP_API_KEY = os.getenv('CMAP_API_KEY', 'api.key')
-
         self.VERTIGO_USER = os.getenv('VERTIGO_USER', 'vertigo_user')
         self.VERTIGO_PASS = os.getenv('VERTIGO_PASS', 'vertigo_pass')
         self.DIABLO_USER = os.getenv('DIABLO_USER', 'diablo_user')

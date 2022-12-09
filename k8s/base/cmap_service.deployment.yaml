@@ -30,10 +30,6 @@ spec:
             - configMapRef:
                 name: env-specific-values
           env:
-            - name: CMAP_API_CERT
-              value: /apicerts/tls.crt
-            - name: CMAP_API_KEY
-              value: /apicerts/tls.key
             - name: CMAP_SERVICE_CLIENT_CERT
               value: /cmapservice-client-certs/tls.crt
             - name: CMAP_SERVICE_CLIENT_KEY
