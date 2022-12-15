@@ -42,9 +42,6 @@ class AppConfig(object):
         self.CMAP_SERVICE_CLIENT_CERT = os.getenv('CMAP_SERVICE_CLIENT_CERT', 'service.crt')
         self.CMAP_SERVICE_CLIENT_KEY = os.getenv('CMAP_SERVICE_CLIENT_KEY', 'service.key')
 
-        self.CMAP_API_CERT = os.getenv('CMAP_API_CERT', 'api.crt')
-        self.CMAP_API_KEY = os.getenv('CMAP_API_KEY', 'api.key')
-
         self.VERTIGO_USER = os.getenv('VERTIGO_USER', 'vertigo_user')
         self.VERTIGO_PASS = os.getenv('VERTIGO_PASS', 'vertigo_pass')
         self.DIABLO_USER = os.getenv('DIABLO_USER', 'diablo_user')
@@ -85,7 +82,7 @@ class ProductionAppConfig(AppConfig):
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
     DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts'
-    MWPONE_URL = 'https://api.servicemanager.godaddy.com/v1/accounts'
+    MWPONE_URL = 'https://mwp.api.phx3.godaddy.com/api/v1/mwp/sites/search'
 
     def __init__(self):
         super().__init__()
@@ -137,8 +134,8 @@ class TestAppConfig(AppConfig):
     DIABLO_URL = 'https://diablo.api.test-godaddy.com/v1/accounts'
     DIABLO_WHMCS_URL = 'https://diablo.api.test-godaddy.com/v1/servers/'
     VERT_URL = ''
+    MWPONE_URL = 'https://mwp.api.phx3.test-godaddy.com/api/v1/mwp/sites/search'
     ANGELO_URL = 'https://gdapi.plesk-shared-app.int.test-gdcorp.tools/v1/accounts?SearchAddonDomain&'
-    MWPONE_URL = 'https://api.servicemanager.test-godaddy.com/v1/accounts'
     DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.test-godaddy.com/v1/shoppers/{}'
     TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
@@ -180,8 +177,8 @@ class DevelopmentAppConfig(AppConfig):
 class LocalAppConfig(AppConfig):
     DB = 'local'
     DB_HOST = 'localhost'
-
-    SSO_URL = 'https://sso.gdcorp.tools'
+    MWPONE_URL = 'https://mwp.api.phx3.test-godaddy.com/api/v1/mwp/sites/search'
+    SSO_URL = 'https://sso.test-gdcorp.tools'
 
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'

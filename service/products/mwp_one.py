@@ -1,3 +1,5 @@
+import json
+
 import requests
 from csetutils.flask.logging import get_logging
 
@@ -5,12 +7,31 @@ from service.products.product_interface import Product
 
 
 class MWPOneAPI(Product):
+
     _headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     def __init__(self, settings):
         self._logger = get_logging()
         self.url = settings.MWPONE_URL
-        self.cert = (settings.CMAP_API_CERT, settings.CMAP_API_KEY)
+        self.cert = (settings.CMAP_SERVICE_CLIENT_CERT, settings.CMAP_SERVICE_CLIENT_KEY)
+        self._sso_endpoint = settings.SSO_URL + '/v1/secure/api/token'
+
+    def _get_jwt(self, cert):
+        """
+        Attempt to retrieve the JWT associated with the cert/key pair from SSO
+        :param cert:
+        :return:
+        """
+        try:
+            response = requests.post(self._sso_endpoint, data={'realm': 'cert'}, cert=cert)
+            response.raise_for_status()
+
+            body = json.loads(response.text)
+            # Expected return body.get {'type': 'signed-jwt', 'id': 'XXX', 'code': 1, 'message': 'Success', 'data': JWT}
+            return body.get('data')
+        except Exception as e:
+            self._logger.error(e)
+        return None
 
     def locate(self, domain, guid=None, **kwargs):
         """
@@ -27,6 +48,7 @@ class MWPOneAPI(Product):
         else:
             query_param['domain'] = domain
         try:
+            self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self.cert)}'
             r = requests.get(self.url, cert=self.cert, headers=self._headers, params=query_param, verify=False)
             response = r.json()
         except Exception as e:
