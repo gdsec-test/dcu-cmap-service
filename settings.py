@@ -56,9 +56,6 @@ class AppConfig(object):
         self.SMDB_USER = os.getenv('SMDB_USER', 'smdb_user')
         self.SMDB_PASS = os.getenv('SMDB_PASS', 'smdb_pass')
 
-        self.ALEXA_ACCESS_ID = os.getenv('ALEXA_ACCESS_ID', 'alexa_access_id')
-        self.ALEXA_ACCESS_KEY = os.getenv('ALEXA_ACCESS_KEY', 'secret_access_key')
-
         self.VALUATION_KEY = os.getenv('VALUATION_KEY', 'valuation_key')
 
 

@@ -166,7 +166,7 @@ class DomainQuery(graphene.ObjectType):
         return bl
 
     def resolve_alexa_rank(self, info):
-        return info.context.get('alexa').get_url_information(self.domain)
+        return None
 
     def resolve_domain_status(self, info):
         domain = DomainStatusInfo()

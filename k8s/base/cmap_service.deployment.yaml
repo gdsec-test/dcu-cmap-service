@@ -39,16 +39,6 @@ spec:
                 secretKeyRef:
                   name: db-phishstory-v2
                   key: password
-            - name: ALEXA_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: auth-alexa
-                  key: password
-            - name: ALEXA_ACCESS_ID
-              valueFrom:
-                secretKeyRef:
-                  name: auth-alexa
-                  key: username
             - name: VPS4_USER
               valueFrom:
                 secretKeyRef:

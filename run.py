@@ -9,7 +9,6 @@ from flask import Flask, Response, request
 from flask_graphql import GraphQLView
 from tld.conf import set_setting
 
-from service.connectors.alexa import AlexaWebInformationService
 from service.connectors.blacklist import VipClients
 from service.connectors.brand_detection import BrandDetectionHelper
 from service.connectors.crm import CRMClientAPI
@@ -53,7 +52,6 @@ ctx = {'crm': CRMClientAPI(config, redis_obj),
        'shopper': ShopperAPI(config),
        'ipam': HostingProductResolver(config),
        'regdb': RegDbAPI(config, redis_obj),
-       'alexa': AlexaWebInformationService(config.ALEXA_ACCESS_ID, config.ALEXA_ACCESS_KEY),
        'whois': WhoisQuery(),
        'bd': BrandDetectionHelper(config.BRAND_DETECTION_URL),
        'subscriptions': SubscriptionsAPI(config),
