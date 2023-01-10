@@ -38,6 +38,9 @@ class AppConfig(object):
     CUSTOM_NS = None
 
     def __init__(self):
+        self.CLIENT_CERT = os.getenv("MONGO_CLIENT_CERT", '')
+        self.DB_PASS = quote(os.getenv('DB_PASS', 'password'))
+        self.DBURL = f'mongodb://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}/?authSource={self.DB}&readPreference=primary&directConnection=true&tls=true&tlsCertificateKeyFile={self.CLIENT_CERT}'
 
         self.CMAP_SERVICE_CLIENT_CERT = os.getenv('CMAP_SERVICE_CLIENT_CERT', 'service.crt')
         self.CMAP_SERVICE_CLIENT_KEY = os.getenv('CMAP_SERVICE_CLIENT_KEY', 'service.key')
@@ -61,10 +64,8 @@ class AppConfig(object):
 
 class ProductionAppConfig(AppConfig):
     DB = 'phishstory'
-    DB_HOST = '10.22.9.209'
+    DB_HOST = 'p3plsocritmdb00-00-f0.prod.phx3.gdg'
     DB_USER = 'sau_p_phishv2'
-    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
-    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}'
     SSO_URL = 'https://sso.gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
@@ -87,10 +88,8 @@ class ProductionAppConfig(AppConfig):
 
 class OTEAppConfig(AppConfig):
     DB = 'otephishstory'
-    DB_HOST = '10.22.9.209'
+    DB_HOST = 'p3plsocritmdb00-00-f0.prod.phx3.gdg'
     DB_USER = 'sau_o_phish'
-    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
-    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}'
 
     SSO_URL = 'https://sso.ote-gdcorp.tools'
 
@@ -113,9 +112,6 @@ class TestAppConfig(AppConfig):
     DB = 'testphishstory'
     DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'testuser'
-    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
-    CLIENT_CERT = os.getenv("MONGO_CLIENT_CERT", '')
-    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}&readPreference=primary&directConnection=true&tls=true&tlsCertificateKeyFile={CLIENT_CERT}'
 
     SSO_URL = 'https://sso.test-gdcorp.tools'
 
@@ -150,9 +146,6 @@ class DevelopmentAppConfig(AppConfig):
     DB = 'devphishstory'
     DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'devuser'
-    DB_PASS = quote(os.getenv('DB_PASS', 'password'))
-    CLIENT_CERT = os.getenv("MONGO_CLIENT_CERT", '')
-    DBURL = f'mongodb://{DB_USER}:{DB_PASS}@{DB_HOST}/?authSource={DB}&readPreference=primary&directConnection=true&tls=true&tlsCertificateKeyFile={CLIENT_CERT}'
 
     SSO_URL = 'https://sso.dev-gdcorp.tools'
 
