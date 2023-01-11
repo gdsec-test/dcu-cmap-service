@@ -90,12 +90,12 @@ test-deploy: test-env
 .PHONY: ote-deploy
 ote-deploy: ote
 	@echo "----- deploying $(REPONAME) ote -----"
-	$(call deploy_k8s,ote,ote,ote-dcu)
+	$(call deploy_k8s,ote,ote,ote-cset)
 
 .PHONY: prod-deploy
 prod-deploy: prod
 	@echo "----- deploying $(REPONAME) prod -----"
-	$(call deploy_k8s,prod,$(COMMIT),prod-dcu)
+	$(call deploy_k8s,prod,$(COMMIT),prod-cset)
 
 .PHONY: clean
 clean:

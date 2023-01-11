@@ -1,19 +1,24 @@
 ---
-apiVersion: "networking.k8s.io/v1beta1"
-kind: "Ingress"
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: "cmap-service"
-  namespace: "abuse-api-prod"
+  name: cmap-service
+  namespace: abuse-api-prod
+  annotations:
+    kubernetes.io/ingress.class: nginx
 spec:
   tls:
     - hosts:
-      - "cmapservice.cset.int.gdcorp.tools"
+      - cmapservice.cset.int.gdcorp.tools
       secretName: cset-wildcard
   rules:
-  - host: "cmapservice.cset.int.gdcorp.tools"
+  - host: cmapservice.cset.int.gdcorp.tools
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: "cmap-service"
-          servicePort: 5000
+          service:
+            name: cmap-service
+            port:
+              number: 5000
