@@ -1,12 +1,13 @@
+from unittest import TestCase
+
 import requests
 from mock import MagicMock, patch
-from nose.tools import assert_equal, assert_raises
 
 from service.products.vps4 import VPS4API
 from settings import DevelopmentAppConfig
 
 
-class TestVPS4API:
+class TestVPS4API(TestCase):
 
     """
     Because the VPS4API constructor makes a call to _get_jwt() which make a post request to the SSO endpoint,
@@ -128,7 +129,7 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=403)
             mocked_get.return_value.json.return_value = {'id': 'MISSING_AUTHENTICATION'}
-            assert_equal(vps_api.locate(self.IP, self.GUID), dict())
+            self.assertEqual(vps_api.locate(self.IP, self.GUID), dict())
 
     # When no guid is provided and the ip doesnt match any VPS4 products
     @patch.object(requests, 'get')
@@ -137,7 +138,7 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = []
-            assert_equal(vps_api.locate(self.IP, None), dict())
+            self.assertEqual(vps_api.locate(self.IP, None), dict())
 
     # When no ip is provided and the guid doesnt match any VPS4 products
     @patch.object(requests, 'get')
@@ -146,7 +147,7 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = []
-            assert_equal(vps_api.locate(None, self.GUID), dict())
+            self.assertEqual(vps_api.locate(None, self.GUID), dict())
 
     # When the ip OR guid match a VPS4 product
     @patch.object(VPS4API, '_get_shopper_from_credits')
@@ -157,13 +158,13 @@ class TestVPS4API:
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = self.vps4_api_vms_return
             mocked_credits.return_value = self.SHOPPER_ID, self.RESELLER_ID
-            assert_equal(self.expected_value, vps_api.locate(self.IP, self.GUID))
+            self.assertEqual(self.expected_value, vps_api.locate(self.IP, self.GUID))
 
     # When neither an ip nor guid is provided, should raise TypeError exception as either is required
     def test_locate_ip_guid_not_provided(self):
         with patch.object(VPS4API, "_get_jwt", lambda x: self.JWT):
             vps_api = VPS4API(DevelopmentAppConfig())
-            assert_raises(TypeError, vps_api.locate(None, None))
+            self.assertRaises(TypeError, vps_api.locate(None, None))
 
     # When valid ORION GUID provides credits details
     @patch.object(requests, 'get')
@@ -172,4 +173,4 @@ class TestVPS4API:
             vps_api = VPS4API(DevelopmentAppConfig())
             mocked_get.return_value = MagicMock(status_code=200)
             mocked_get.return_value.json.return_value = self.vps4_api_credits_return
-            assert_equal((self.SHOPPER_ID, self.RESELLER_ID), vps_api._get_shopper_from_credits(self.GUID))
+            self.assertEqual((self.SHOPPER_ID, self.RESELLER_ID), vps_api._get_shopper_from_credits(self.GUID))

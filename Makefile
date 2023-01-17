@@ -16,8 +16,8 @@ endef
 all: env
 
 env:
-	pip3 install -r test_requirements.txt
-	pip3 install -r requirements.txt
+	pip3 install -r test_requirements.txt --use-pep517
+	pip3 install -r requirements.txt --use-pep517
 
 .PHONY: flake8
 flake8:
@@ -35,12 +35,13 @@ tools: flake8 isort
 .PHONY: test
 test: tools
 	@echo "----- Running tests -----"
-	nosetests tests
+	sysenv=test python -m unittest discover tests "*_tests.py"
 
 .PHONY: testcov
 testcov:
 	@echo "----- Running tests with coverage -----"
-	nosetests tests --with-coverage --cover-erase --cover-package=service --cover-xml
+	@coverage run --source=service -m unittest discover tests "*_tests.py" 
+	@coverage report
 
 
 .PHONY: prep

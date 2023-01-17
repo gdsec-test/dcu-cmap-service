@@ -17,7 +17,7 @@ class GoCentralAPI(Product):
         self._cert = (settings.CMAP_SERVICE_CLIENT_CERT, settings.CMAP_SERVICE_CLIENT_KEY)
         self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
 
-    def locate(self, domain, **kwargs):
+    def locate(self, domain, guid=None, **kwargs):
         """
         This functions sole purpose use the available domains api to determine if a domain name is hosted with a
         gocentral hosting product.
@@ -46,11 +46,16 @@ class GoCentralAPI(Product):
 
         # To test in DEV/OTE, you'll need to return a hardcoded prod JWT from _get_jwt() and change the URL
         #  to a production one
+        if guid:
+            request_url = f'{self._url}/v2/accounts/{guid}/website'
+        else:
+            request_url = f'{self._url}/v2/domains/{domain}/website'
+        self._logger.info(f'url used {request_url}')
         try:
-            r = requests.get(self._url.format(domain=domain), headers=self._headers)
+            r = requests.get(request_url, headers=self._headers)
             if r.status_code in [401, 403]:
                 self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self._cert)}'
-                r = requests.get(self._url.format(domain=domain), headers=self._headers)
+                r = requests.get(request_url, headers=self._headers)
             res = json.loads(r.text)
             if res.get('type', '').lower() == 'gocentral':
                 return dict(product='GoCentral', guid=res.get('accountId'), shopper_id=res.get('shopperId'),

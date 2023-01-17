@@ -70,7 +70,7 @@ class ProductionAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
-    GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
+    GOCENTRAL_URL = 'https://websites.api.godaddy.com'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['cmap.threatapi.godaddy.com',
                     'cmapservice.client.cset.int.gdcorp.tools',
@@ -96,7 +96,7 @@ class OTEAppConfig(AppConfig):
     REDIS = 'cmap-service-redis.abuse-api-ote.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-ote.svc.cluster.local:5000'
     # Go Central OTE URL does not exist.  Using Test
-    GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
+    GOCENTRAL_URL = 'https://websites.api.test-godaddy.com'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['cmapservice.client.cset.int.ote-gdcorp.tools',
                     'kelvinservice.client.cset.int.ote-gdcorp.tools']
@@ -132,7 +132,7 @@ class TestAppConfig(AppConfig):
     DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.test-godaddy.com/v1/shoppers/{}'
     TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
-    GOCENTRAL_URL = 'https://websites.api.test-godaddy.com/v2/domains/{domain}/website'
+    GOCENTRAL_URL = 'https://websites.api.test-godaddy.com'
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
@@ -151,7 +151,7 @@ class DevelopmentAppConfig(AppConfig):
 
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://localhost:8080/branddetection'
-    GOCENTRAL_URL = 'http://localhost:8080/gocentral/v2/domains/{domain}/website'
+    GOCENTRAL_URL = 'http://localhost:8080/gocentral'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['cmap.threatapi.dev-godaddy.com',
                     'cmapservice.client.cset.int.dev-gdcorp.tools',
@@ -172,7 +172,7 @@ class LocalAppConfig(AppConfig):
 
     REDIS = 'localhost'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-dev.svc.cluster.local:5000'
-    GOCENTRAL_URL = 'https://websites.api.godaddy.com/v2/domains/{domain}/website'
+    GOCENTRAL_URL = 'https://websites.api.godaddy.com'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
     CN_WHITELIST = ['']
     WITHOUT_SSO = True
