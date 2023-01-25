@@ -2,6 +2,7 @@ import json
 import os
 
 import graphene
+import requests
 import tld
 import urllib3
 from csetutils.flask import instrument
@@ -12,6 +13,7 @@ from tld.conf import set_setting
 from service.connectors.blacklist import VipClients
 from service.connectors.brand_detection import BrandDetectionHelper
 from service.connectors.crm import CRMClientAPI
+from service.connectors.entitlements import EntitlementsAPI
 from service.connectors.hosting_resolver import HostingProductResolver
 from service.connectors.reg_db import RegDbAPI
 from service.connectors.shopper import ShopperAPI
@@ -94,6 +96,18 @@ def lookup_product():
 
     resolver: HostingProductResolver = ctx['ipam']
     result = resolver.locate_product(domain, guid, ip, product)
+    return json.dumps(result), 200
+
+
+@app.route('/v1/nes/<customerId>/<entitlementId>', methods=['POST'])
+def lookup_product_entitlements(customerId, entitlementId):
+    entitlements_api = EntitlementsAPI(config)
+    try:
+        result = entitlements_api.find_product_by_entitlement(customerId, entitlementId)
+    except requests.exceptions.HTTPError as e:
+        return e.response.text, e.response.status_code
+    resolver: HostingProductResolver = ctx['ipam']
+    result = resolver.locate_product(result.get("domain"), entitlementId, "", result.get("product"))
     return json.dumps(result), 200
 
 

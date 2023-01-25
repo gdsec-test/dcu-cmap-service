@@ -1,0 +1,41 @@
+import requests
+from csetutils.flask.logging import get_logging
+
+
+class EntitlementsAPI(object):
+    def __init__(self, config):
+        self._logger = get_logging()
+        self._url = config.SUBSCRIPTIONS_SHIM_URL
+        self._sso_url = config.SSO_URL
+        self._cert = (config.CMAP_SERVICE_CLIENT_CERT, config.CMAP_SERVICE_CLIENT_KEY)
+        self._jwt = None
+
+    def _get_jwt(self, force_refresh: bool = False) -> str:
+        if self._jwt is None or force_refresh:
+            try:
+                response = requests.post(f'{self._sso_url}/v1/secure/api/token',
+                                         data={'realm': 'cert'}, cert=self._cert)
+                response.raise_for_status()
+                sso_response = response.json()
+                self._jwt = sso_response.get('data')
+            except Exception:
+                self._logger.exception('Error calling sso')
+                return ""
+        return self._jwt
+
+    def find_product_by_entitlement(self, customerId: str, entitlementId: str) -> dict:
+        prod_dict = {'cpanel': 'Diablo', 'managedWordPress': 'MWP 1.0', 'websitesAndMarketing': 'GoCentral', 'virtualPrivateServerHostingV4': 'VPS4', 'plesk': "Plesk"}
+        headers = {'content-type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt()}'}
+        response = requests.get(f'{self._url}/v2/customers/{customerId}/subscriptionByEntitlementId?entitlementId={entitlementId}', headers=headers)
+        response.raise_for_status()
+        resp = response.json()
+        product_key = resp.get('linkedEntitlements')[0].get("productKey")
+        products = resp.get("offer").get("products")
+        for product in products:
+            if product_key == product.get("key"):
+                prod_type = (product.get("product").get("productType"))
+                prod_type_conversion = prod_dict.get(prod_type)
+                if prod_type == "cpanel" and product.get("product").get("plan") == "enhanceWhmcs":
+                    prod_type_conversion = "Diablo WHMCS"
+        domain = resp.get('commonName')
+        return {'product': prod_type_conversion, 'domain': domain}

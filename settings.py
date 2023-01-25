@@ -81,6 +81,7 @@ class ProductionAppConfig(AppConfig):
     SHOPPER_API_URL = 'https://shopper.api.int.godaddy.com/v1/shoppers/{}'
     DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts'
     MWPONE_URL = 'https://mwp.api.phx3.godaddy.com/api/v1/mwp/sites/search'
+    SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.prod.godaddy.com'
 
     def __init__(self):
         super().__init__()
@@ -98,6 +99,7 @@ class OTEAppConfig(AppConfig):
     # Go Central OTE URL does not exist.  Using Test
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
+    SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.ote.godaddy.com'
     CN_WHITELIST = ['cmapservice.client.cset.int.ote-gdcorp.tools',
                     'kelvinservice.client.cset.int.ote-gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.ote.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll'
@@ -136,6 +138,7 @@ class TestAppConfig(AppConfig):
     SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
+    SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.test.godaddy.com'
 
     def __init__(self):
         super().__init__()
@@ -146,7 +149,6 @@ class DevelopmentAppConfig(AppConfig):
     DB = 'devphishstory'
     DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'devuser'
-
     SSO_URL = 'https://sso.dev-gdcorp.tools'
 
     REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
@@ -159,6 +161,7 @@ class DevelopmentAppConfig(AppConfig):
                     'mwnotifications.client.cset.int.dev-gdcorp.tools']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.dev-godaddy.com/v1/shoppers/{}'
+    SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.dp.godaddy.com'
 
     def __init__(self):
         super().__init__()
