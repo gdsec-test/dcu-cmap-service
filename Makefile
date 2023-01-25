@@ -60,7 +60,7 @@ dev: prep
 .PHONY: test-env
 test-env: prep
 	@echo "----- building $(REPONAME) test -----"
-	docker build --no-cache=true -t $(DOCKERREPO):test $(BUILDROOT) --no-cache=true
+	docker build --no-cache=true -t $(DOCKERREPO):test $(BUILDROOT)
 
 .PHONY: ote
 ote: prep
@@ -75,7 +75,7 @@ prod: prep
 	if [[ `git status --porcelain | wc -l` -gt 0 ]] ; then echo "You must stash your changes before proceeding" ; exit 1 ; fi
 	git fetch && git checkout $(BUILD_BRANCH)
 	$(eval COMMIT:=$(shell git rev-parse --short HEAD))
-	docker build -t $(DOCKERREPO):$(COMMIT) $(BUILDROOT)  
+	docker build -t $(DOCKERREPO):$(COMMIT) $(BUILDROOT)
 	git checkout -
 
 .PHONY: dev-deploy
