@@ -105,7 +105,7 @@ def lookup_product_entitlements(customerId, entitlementId):
     try:
         result = entitlements_api.find_product_by_entitlement(customerId, entitlementId)
     except requests.exceptions.HTTPError as e:
-        return e.response.text, e.response.status_code
+        return f'Error: {e.response.text} with error code {e.response.status_code}', 500
     resolver: HostingProductResolver = ctx['ipam']
     result = resolver.locate_product(result.get("domain"), entitlementId, "", result.get("product"))
     return json.dumps(result), 200
