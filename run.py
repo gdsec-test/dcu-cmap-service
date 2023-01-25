@@ -103,12 +103,14 @@ def lookup_product():
 def lookup_product_entitlements(customerId, entitlementId):
     entitlements_api = EntitlementsAPI(config)
     try:
-        result = entitlements_api.find_product_by_entitlement(customerId, entitlementId)
+        entitlements = entitlements_api.find_product_by_entitlement(customerId, entitlementId)
     except requests.exceptions.HTTPError as e:
         return f'Error: {e.response.text} with error code {e.response.status_code}', 500
     resolver: HostingProductResolver = ctx['ipam']
-    result = resolver.locate_product(result.get("domain"), entitlementId, "", result.get("product"))
-    return json.dumps(result), 200
+    results = []
+    for entitlement in entitlements:
+        results.append(resolver.locate_product(entitlement.get("domain"), entitlementId, "", entitlement.get("product")))
+    return json.dumps(results), 200
 
 
 @app.route('/v1/shopper/lookup', methods=['POST'])

@@ -27,15 +27,22 @@ class EntitlementsAPI(object):
         prod_dict = {'cpanel': 'Diablo', 'managedWordPress': 'MWP 1.0', 'websitesAndMarketing': 'GoCentral', 'virtualPrivateServerHostingV4': 'VPS4', 'plesk': "Plesk"}
         headers = {'content-type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt()}'}
         response = requests.get(f'{self._url}/v2/customers/{customerId}/subscriptionByEntitlementId?entitlementId={entitlementId}', headers=headers)
+        if response.status_code == 403 or response.status_code == 401:
+            headers = {'content-type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt(True)}'}
+            response = requests.get(f'{self._url}/v2/customers/{customerId}/subscriptionByEntitlementId?entitlementId={entitlementId}', headers=headers)
         response.raise_for_status()
         resp = response.json()
-        product_key = resp.get('linkedEntitlements')[0].get("productKey")
         products = resp.get("offer").get("products")
-        for product in products:
-            if product_key == product.get("key"):
-                prod_type = (product.get("product").get("productType"))
-                prod_type_conversion = prod_dict.get(prod_type)
-                if prod_type == "cpanel" and product.get("product").get("plan") == "enhanceWhmcs":
-                    prod_type_conversion = "Diablo WHMCS"
-        domain = resp.get('commonName')
-        return {'product': prod_type_conversion, 'domain': domain}
+        entitlements = resp.get("linkedEntitlements")
+        products_lists = []
+        for entitlement in entitlements:
+            key = entitlement.get("productKey")
+            for product in products:
+                if key == product.get("key"):
+                    prod_type = (product.get("product").get("productType"))
+                    prod_type_conversion = prod_dict.get(prod_type)
+                    if prod_type == "cpanel" and product.get("product").get("plan") == "enhanceWhmcs":
+                        prod_type_conversion = "Diablo WHMCS"
+                    domain = entitlement.get('commonName')
+                    products_lists.append({'product': prod_type_conversion, 'domain': domain})
+        return products_lists
