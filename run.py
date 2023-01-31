@@ -13,11 +13,11 @@ from tld.conf import set_setting
 from service.connectors.blacklist import VipClients
 from service.connectors.brand_detection import BrandDetectionHelper
 from service.connectors.crm import CRMClientAPI
-from service.connectors.entitlements import EntitlementsAPI
 from service.connectors.hosting_resolver import HostingProductResolver
 from service.connectors.reg_db import RegDbAPI
 from service.connectors.shopper import ShopperAPI
 from service.connectors.subscriptions import SubscriptionsAPI
+from service.connectors.subscriptionsshim import SubscriptionsShimAPI
 from service.connectors.valuation import ValuationAPI
 from service.connectors.whois import WhoisQuery
 from service.graphql.schema import Query
@@ -101,11 +101,11 @@ def lookup_product():
 
 @app.route('/v1/nes/<customerId>/<entitlementId>', methods=['POST'])
 def lookup_product_entitlements(customerId, entitlementId):
-    entitlements_api = EntitlementsAPI(config)
+    subscriptionsshim_api = SubscriptionsShimAPI(config)
     try:
-        entitlements = entitlements_api.find_product_by_entitlement(customerId, entitlementId)
+        entitlements = subscriptionsshim_api.find_product_by_entitlement(customerId, entitlementId)
     except requests.exceptions.HTTPError as e:
-        return f'Error: {e.response.text} with error code {e.response.status_code}', 500
+        return {'message': e.response.text, 'status_code': e.response.status_code}, 500
     resolver: HostingProductResolver = ctx['ipam']
     results = []
     for entitlement in entitlements:

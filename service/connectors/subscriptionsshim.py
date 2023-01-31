@@ -2,13 +2,14 @@ import requests
 from csetutils.flask.logging import get_logging
 
 
-class EntitlementsAPI(object):
+class SubscriptionsShimAPI(object):
     def __init__(self, config):
         self._logger = get_logging()
         self._url = config.SUBSCRIPTIONS_SHIM_URL
         self._sso_url = config.SSO_URL
         self._cert = (config.CMAP_SERVICE_CLIENT_CERT, config.CMAP_SERVICE_CLIENT_KEY)
         self._jwt = None
+        self._prod_dict = {'cpanel': 'Diablo', 'managedWordPress': 'MWP 1.0', 'websitesAndMarketing': 'GoCentral', 'virtualPrivateServerHostingV4': 'VPS4', 'plesk': "Plesk"}
 
     def _get_jwt(self, force_refresh: bool = False) -> str:
         if self._jwt is None or force_refresh:
@@ -24,7 +25,6 @@ class EntitlementsAPI(object):
         return self._jwt
 
     def find_product_by_entitlement(self, customerId: str, entitlementId: str) -> dict:
-        prod_dict = {'cpanel': 'Diablo', 'managedWordPress': 'MWP 1.0', 'websitesAndMarketing': 'GoCentral', 'virtualPrivateServerHostingV4': 'VPS4', 'plesk': "Plesk"}
         headers = {'content-type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt()}'}
         response = requests.get(f'{self._url}/v2/customers/{customerId}/subscriptionByEntitlementId?entitlementId={entitlementId}', headers=headers)
         if response.status_code == 403 or response.status_code == 401:
@@ -40,7 +40,7 @@ class EntitlementsAPI(object):
             for product in products:
                 if key == product.get("key"):
                     prod_type = (product.get("product").get("productType"))
-                    prod_type_conversion = prod_dict.get(prod_type)
+                    prod_type_conversion = self._prod_dict.get(prod_type)
                     if prod_type == "cpanel" and product.get("product").get("plan") == "enhanceWhmcs":
                         prod_type_conversion = "Diablo WHMCS"
                     domain = entitlement.get('commonName')
