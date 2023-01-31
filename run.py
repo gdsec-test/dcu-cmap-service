@@ -109,7 +109,10 @@ def lookup_product_entitlements(customerId, entitlementId):
     resolver: HostingProductResolver = ctx['ipam']
     results = []
     for entitlement in entitlements:
-        results.append(resolver.locate_product(entitlement.get("domain"), entitlementId, "", entitlement.get("product")))
+        product = entitlement.get("product")
+        if product == "Diablo WHMCS" or product == "Plesk":
+            return {'message': f'{product} has not been implemented yet'}, 500
+        results.append(resolver.locate_product(entitlement.get("domain"), entitlementId, "", product))
     return json.dumps(results), 200
 
 
