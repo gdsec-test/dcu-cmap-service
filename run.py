@@ -2,6 +2,7 @@ import json
 import os
 
 import graphene
+import requests
 import tld
 import urllib3
 from csetutils.flask import instrument
@@ -16,6 +17,7 @@ from service.connectors.hosting_resolver import HostingProductResolver
 from service.connectors.reg_db import RegDbAPI
 from service.connectors.shopper import ShopperAPI
 from service.connectors.subscriptions import SubscriptionsAPI
+from service.connectors.subscriptionsshim import SubscriptionsShimAPI
 from service.connectors.valuation import ValuationAPI
 from service.connectors.whois import WhoisQuery
 from service.graphql.schema import Query
@@ -95,6 +97,23 @@ def lookup_product():
     resolver: HostingProductResolver = ctx['ipam']
     result = resolver.locate_product(domain, guid, ip, product)
     return json.dumps(result), 200
+
+
+@app.route('/v1/nes/<customerId>/<entitlementId>', methods=['POST'])
+def lookup_product_entitlements(customerId, entitlementId):
+    subscriptionsshim_api = SubscriptionsShimAPI(config)
+    try:
+        entitlements = subscriptionsshim_api.find_product_by_entitlement(customerId, entitlementId)
+    except requests.exceptions.HTTPError as e:
+        return {'message': e.response.text, 'status_code': e.response.status_code}, 500
+    resolver: HostingProductResolver = ctx['ipam']
+    results = []
+    for entitlement in entitlements:
+        product = entitlement.get("product")
+        if product == "Diablo WHMCS" or product == "Plesk":
+            return {'message': f'{product} has not been implemented yet'}, 422
+        results.append(resolver.locate_product(entitlement.get("domain"), entitlementId, "", product))
+    return json.dumps(results), 200
 
 
 @app.route('/v1/shopper/lookup', methods=['POST'])
