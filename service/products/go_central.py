@@ -59,7 +59,8 @@ class GoCentralAPI(Product):
             res = json.loads(r.text)
             if res.get('type', '').lower() == 'gocentral':
                 return dict(product='GoCentral', guid=res.get('accountId'), shopper_id=res.get('shopperId'),
-                            reseller_id=res.get('resellerId'), created_date=res.get('createDate'))
+                            reseller_id=res.get('resellerId'), created_date=res.get('createDate'),
+                            primary_domain=res.get('domainName'))
 
             else:
                 self._logger.info('GoCentral API determined that {} is not a GoCentral domain'.format(domain))
