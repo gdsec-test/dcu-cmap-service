@@ -31,7 +31,7 @@ class GoCentralAPI(Product):
 
         {'id': 'a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0',
         'domainName': 'a0a0a0a0.godaddysites.com',
-        'accountId': 'a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0', # This is the GUID
+        'accountId': 'a0a0a0a0-a0a0-a0a0-a0a0-a0a0a0a0a0a0', # This is the GUID & entitlement Id
         'accountSource': 'orion',
         'shopperId': '123456789',
         'resellerId': 1,
@@ -60,8 +60,8 @@ class GoCentralAPI(Product):
             if res.get('type', '').lower() == 'gocentral':
                 return dict(product='GoCentral', guid=res.get('accountId'), shopper_id=res.get('shopperId'),
                             reseller_id=res.get('resellerId'), created_date=res.get('createDate'),
+                            entitlement_id=res.get('accountId'),
                             primary_domain=res.get('domainName'))
-
             else:
                 self._logger.info('GoCentral API determined that {} is not a GoCentral domain'.format(domain))
 

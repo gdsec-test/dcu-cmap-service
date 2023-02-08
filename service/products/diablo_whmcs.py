@@ -37,7 +37,8 @@ class DiabloAPIWHMCS(Product):
                     'ip': entry.get('shared_ip_address'),
                     'os': 'Linux',
                     'product': 'Diablo WHMCS',
-                    'reseller_id': entry.get('reseller_id')
+                    'reseller_id': entry.get('reseller_id'),
+                    'entitlement_id': entry.get('orion_guid')
                 }
 
                 # Try to locate & enrich the C2 username or have it be 'NotFound'

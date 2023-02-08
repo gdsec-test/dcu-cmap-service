@@ -37,7 +37,8 @@ class TestDiabloWHMCSAPI(TestCase):
             'shared_ip_address': IP,
             'os': OS,
             'product': WHMCS,
-            'reseller_id': RESELLER_ID
+            'reseller_id': RESELLER_ID,
+            'entitlement_id': GUID
         },
         'c2_accounts': [
             {
@@ -69,7 +70,8 @@ class TestDiabloWHMCSAPI(TestCase):
             'os': OS,
             'product': NON_WHMCS,
             'reseller_id': RESELLER_ID,
-            'username': USERNAME
+            'username': USERNAME,
+            'entitlement_id': GUID
         },
         'c2_accounts': [
             {}
@@ -85,7 +87,8 @@ class TestDiabloWHMCSAPI(TestCase):
         'os': OS,
         'product': WHMCS,
         'reseller_id': RESELLER_ID,
-        'username': C2USERNAME1
+        'username': C2USERNAME1,
+        'entitlement_id': GUID
     }
 
     expected_whmcs_locate_return_ip_url = {
@@ -96,7 +99,8 @@ class TestDiabloWHMCSAPI(TestCase):
         'os': OS,
         'product': WHMCS,
         'reseller_id': RESELLER_ID,
-        'username': C2USERNAME2
+        'username': C2USERNAME2,
+        'entitlement_id': GUID
     }
 
     expected_whmcs_locate_return_ip_url_invalid = {
@@ -107,7 +111,8 @@ class TestDiabloWHMCSAPI(TestCase):
         'os': OS,
         'product': WHMCS,
         'reseller_id': RESELLER_ID,
-        'username': C2NOTFOUND
+        'username': C2NOTFOUND,
+        'entitlement_id': GUID
     }
 
     expected_400_requests_get_return = {

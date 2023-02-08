@@ -135,6 +135,7 @@ class HostingProductResolver(object):
             'guid': data.get('guid', guid),
             'container_id': data.get('container_id'),
             'shopper_id': data.get('shopper_id', host_shopper),
+            'entitlement_id': data.get('entitlement_id'),
             'reseller_id': data.get('reseller_id'),
             'friendly_name': data.get('friendly_name'),
             'created_date': data.get('created_date', created_date),

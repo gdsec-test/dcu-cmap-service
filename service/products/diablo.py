@@ -26,7 +26,8 @@ class DiabloAPI(Product):
                     'ip': returned_json.get('shared_ip_address'),
                     'username': returned_json.get('username'),
                     'os': 'Linux',
-                    'product': 'Diablo'
+                    'product': 'Diablo',
+                    'entitlement_id': guid
                 }
             payload = {'name': domain}
             r = requests.get(f'{self.url}/find_domain', auth=self.auth, headers=self._headers, params=payload, verify=False)
@@ -48,6 +49,7 @@ class DiabloAPI(Product):
                 return {
                     'guid': diablo_account.get('orion_guid'),
                     'shopper_id': diablo_account.get('shopper_id'),
+                    'entitlement_id': diablo_account.get('orion_guid'),
                     'created_date': diablo_account.get('created_at'),
                     'ip': diablo_account.get('shared_ip_address'),
                     'username': diablo_account.get('username'),

@@ -119,7 +119,8 @@ class TestVPS4API(TestCase):
         'ip': IP,
         'shopper_id': SHOPPER_ID,
         'reseller_id': RESELLER_ID,
-        "managed_level": 'SelfManaged'
+        "managed_level": 'SelfManaged',
+        'entitlement_id': GUID
     }
 
     # When a valid get request is made without a SSO token

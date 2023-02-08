@@ -191,7 +191,8 @@ class VPS4API(Product):
                             'friendly_name': vps_data.get('name'),
                             'os': vps_data.get('image').get('operatingSystem'),
                             'ip': vps_data.get('primaryIpAddress').get(self.IP_STR),
-                            'managed_level': managed_level
+                            'managed_level': managed_level,
+                            'entitlement_id': vps_data.get(self.GUID_STR)
                         }
             except Exception as e:
                 self._logger.error(f'Failed VPS4 Lookup: {e}')
