@@ -30,6 +30,7 @@ requests-ntlm==1.1.0
 requests-toolbelt==0.9.1
 Rx==1.6.1
 six==1.15.0
+cryptography==39.0.1
 # We use Suds for Toolzilla SOAP API
 suds-py3==1.4.4.1
 tld==0.12.5
