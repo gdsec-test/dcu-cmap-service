@@ -1,31 +1,30 @@
 ---
-apiVersion: "apps/v1"
-kind: "Deployment"
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: "cmap-service"
+  name: cmap-service
   labels:
-    app: "cmap-service"
+    app: cmap-service
 spec:
   replicas: 1
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: "cmap-service"
+      app: cmap-service
   template:
     metadata:
       labels:
-        app: "cmap-service"
+        app: cmap-service
     spec:
       imagePullSecrets:
-        -
-          name: "dcu-artifactory-creds"
+        - name: dcu-artifactory-creds
       hostAliases:
         - ip: "10.33.199.15"
           hostnames:
-            - "crmclient-api.prod.phx3.int.godaddy.com"
+            - crmclient-api.prod.phx3.int.godaddy.com
       containers:
-        - name: "cmap-service"
-          image: "docker-dcu-local.artifactory.secureserver.net/cmap_service"
+        - name: cmap-service
+          image: docker-dcu-local.artifactory.secureserver.net/cmap_service
           envFrom:
             - configMapRef:
                 name: env-specific-values

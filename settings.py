@@ -6,6 +6,7 @@ from urllib.parse import quote
 
 class AppConfig(object):
     REDIS_TTL = 24 * 60 * 60  # Seconds in a day
+    REDIS = os.getenv('REDIS')
     DB = ''
     DB_USER = ''
     DB_HOST = ''
@@ -67,8 +68,6 @@ class ProductionAppConfig(AppConfig):
     DB_HOST = 'p3plsocritmdb00-00-f0.prod.phx3.gdg'
     DB_USER = 'sau_p_phishv2'
     SSO_URL = 'https://sso.gdcorp.tools'
-
-    REDIS = 'cmap-service-redis.abuse-api-prod.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-prod.svc.cluster.local:5000'
     GOCENTRAL_URL = 'https://websites.api.godaddy.com'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.godaddy.com/v1/subscriptions'
@@ -87,6 +86,16 @@ class ProductionAppConfig(AppConfig):
         super().__init__()
 
 
+class StagingAppConfig(ProductionAppConfig):
+    CN_WHITELIST = []
+    AD_GROUP = {'org-infosec-software-engineering'}
+
+    CMAPSERVICE_APP = 'cmapservice-stg.cset.int'
+
+    def __init__(self):
+        super().__init__()
+
+
 class OTEAppConfig(AppConfig):
     DB = 'otephishstory'
     DB_HOST = 'p3plsocritmdb00-00-f0.prod.phx3.gdg'
@@ -94,7 +103,6 @@ class OTEAppConfig(AppConfig):
 
     SSO_URL = 'https://sso.ote-gdcorp.tools'
 
-    REDIS = 'cmap-service-redis.abuse-api-ote.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-ote.svc.cluster.local:5000'
     # Go Central OTE URL does not exist.  Using Test
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com'
@@ -117,7 +125,6 @@ class TestAppConfig(AppConfig):
 
     SSO_URL = 'https://sso.test-gdcorp.tools'
 
-    REDIS = 'cmap-service-redis.abuse-api-test.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://brand-detection.abuse-api-test.svc.cluster.local:5000'
     CN_WHITELIST = ['cmap.threatapi.test-godaddy.com',
                     'cmapservice.client.cset.int.test-gdcorp.tools',
@@ -150,8 +157,6 @@ class DevelopmentAppConfig(AppConfig):
     DB_HOST = 'mongodb.cset.int.dev-gdcorp.tools'
     DB_USER = 'devuser'
     SSO_URL = 'https://sso.dev-gdcorp.tools'
-
-    REDIS = 'cmap-service-redis.abuse-api-dev.svc.cluster.local'
     BRAND_DETECTION_URL = 'http://localhost:8080/branddetection'
     GOCENTRAL_URL = 'http://localhost:8080/gocentral'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.dev-godaddy.com/v1/subscriptions'
@@ -188,6 +193,7 @@ class LocalAppConfig(AppConfig):
 
 config_by_name = {'dev': DevelopmentAppConfig,
                   'ote': OTEAppConfig,
+                  'staging': StagingAppConfig,
                   'prod': ProductionAppConfig,
                   'test': TestAppConfig,
                   'local': LocalAppConfig}

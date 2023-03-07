@@ -36,4 +36,5 @@ configMapGenerator:
   - HTTP_ONLY='true'
   - LIVENESS_TTL="7200"
   - LIVENESS_FACTOR="0.1"
+  - REDIS=cmap-service-redis.abuse-api-test.svc.cluster.local
   name: env-specific-values

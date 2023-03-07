@@ -40,4 +40,5 @@ configMapGenerator:
   - LOGLEVEL=INFO
   - sysenv=dev
   - HTTP_ONLY='true'
+  - REDIS='cmap-service-redis.abuse-api-dev.svc.cluster.local'
   name: env-specific-values

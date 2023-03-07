@@ -55,17 +55,22 @@ prep: test
 .PHONY: dev
 dev: prep
 	@echo "----- building $(REPONAME) dev -----"
-	docker build --no-cache=true -t $(DOCKERREPO):dev $(BUILDROOT)
+	docker build -t $(DOCKERREPO):dev $(BUILDROOT)
 
 .PHONY: test-env
 test-env: prep
 	@echo "----- building $(REPONAME) test -----"
-	docker build --no-cache=true -t $(DOCKERREPO):test $(BUILDROOT)
+	docker build -t $(DOCKERREPO):test $(BUILDROOT)
 
 .PHONY: ote
 ote: prep
 	@echo "----- building $(REPONAME) ote -----"
-	docker build --no-cache=true -t $(DOCKERREPO):ote $(BUILDROOT)
+	docker build -t $(DOCKERREPO):ote $(BUILDROOT)
+
+.PHONY: stg
+stg: prep
+	@echo "----- building $(REPONAME) stg -----"
+	docker build -t $(DOCKERREPO):stg $(BUILDROOT)
 
 .PHONY: prod
 prod: prep
@@ -92,6 +97,11 @@ test-deploy: test-env
 ote-deploy: ote
 	@echo "----- deploying $(REPONAME) ote -----"
 	$(call deploy_k8s,ote,ote,ote-cset)
+
+.PHONY: stg-deploy
+stg-deploy: stg
+	@echo "----- deploying $(REPONAME) stg -----"
+	$(call deploy_k8s,stg,stg,prod-cset)
 
 .PHONY: prod-deploy
 prod-deploy: prod

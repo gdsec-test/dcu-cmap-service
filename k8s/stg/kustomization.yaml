@@ -1,0 +1,103 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../base
+- cmap_service.ingress.yaml
+
+namespace: abuse-api-prod
+patches:
+- patch: |-
+    - op: replace
+      path: /metadata/labels/app
+      value: cmap-service-stg
+    - op: replace
+      path: /metadata/name
+      value: cmap-service-stg
+    - op: replace
+      path: /spec/ports/0/name
+      value: cmap-service-stg
+    - op: replace
+      path: /spec/selector/app
+      value: cmap-service-stg
+  target:
+    kind: Service
+    name: cmap-service
+- patch: |-
+    - op: replace
+      path: /metadata/labels/app
+      value: cmap-service-redis-stg
+    - op: replace
+      path: /metadata/name
+      value: cmap-service-redis-stg
+    - op: replace
+      path: /spec/ports/0/name
+      value: cmap-service-redis-stg
+    - op: replace
+      path: /spec/selector/app
+      value: cmap-service-redis-stg
+  target:
+    kind: Service
+    name: cmap-service-redis
+- patch: |-
+    - op: replace
+      path: /metadata/labels/app
+      value: cmap-service-stg
+    - op: replace
+      path: /metadata/name
+      value: cmap-service-stg
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: cmap-service-stg
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: cmap-service-stg
+  target:
+    kind: Deployment
+    name: cmap-service
+- patch: |-
+    - op: replace
+      path: /metadata/labels/app
+      value: cmap-service-redis-stg
+    - op: replace
+      path: /metadata/name
+      value: cmap-service-redis-stg
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: cmap-service-redis-stg
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: cmap-service-redis-stg
+  target:
+    kind: Deployment
+    name: cmap-service-redis
+- patch: |-
+    - op: add
+      path: "/spec/template/spec/containers/0/livenessProbe"
+      value:
+        exec:
+          command:
+            - /app/kubetipper.sh
+        initialDelaySeconds: 120
+        periodSeconds: 120
+        failureThreshold: 1
+  target:
+    kind: Deployment
+    name: cmap-service
+
+images:
+- name: docker-dcu-local.artifactory.secureserver.net/cmap_service
+  newTag: stg
+replicas:
+- count: 1
+  name: cmap-service-stg
+
+configMapGenerator:
+- literals:
+  - METRICS_PORT='9200'
+  - LOGLEVEL=INFO
+  - sysenv=staging
+  - HTTP_ONLY='true'
+  - LIVENESS_TTL="7200"
+  - LIVENESS_FACTOR="0.1"
+  - REDIS=cmap-service-redis-stg.abuse-api-prod.svc.cluster.local
+  name: env-specific-values

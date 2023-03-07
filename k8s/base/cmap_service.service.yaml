@@ -1,17 +1,14 @@
 ---
-  kind: "Service"
-  apiVersion: "v1"
-  metadata:
-    labels:
-      app: "cmap-service"
-    # this name is accessible via cluster DNS
-    # ("cmap-service" or "cmap-service.<namespace>.svc.cluster.local")
-    name: "cmap-service"
-  spec:
-    ports:
-      -
-        name: "cmap-service"
-        port: 5000
-        targetPort: 5000
-    selector:
-      app: "cmap-service"
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: cmap-service
+  name: cmap-service
+spec:
+  ports:
+    - name: cmap-service
+      port: 5000
+      targetPort: 5000
+  selector:
+    app: cmap-service

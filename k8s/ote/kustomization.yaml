@@ -29,4 +29,5 @@ configMapGenerator:
   - LOGLEVEL=INFO
   - sysenv=ote
   - HTTP_ONLY='true'
+  - REDIS='cmap-service-redis.abuse-api-ote.svc.cluster.local'
   name: env-specific-values
