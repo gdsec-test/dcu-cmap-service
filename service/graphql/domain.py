@@ -67,6 +67,27 @@ class DomainQuery(graphene.ObjectType):
                                       description='List of SSL Product Information for Provided Domain Name')
     is_domain_high_value = graphene.String(description='Valuation API Information for Provided Domain Name')
 
+    @staticmethod
+    def clean_attributes(info: dict, results: dict):
+        results['data_center'] = info.get('data_center')
+        results['created_date'] = info.get('created_date')
+        results['friendly_name'] = info.get('friendly_name')
+        results['os'] = info.get('os')
+        results['product'] = info.get('product')
+        results['guid'] = info.get('guid')
+        results['container_id'] = info.get('container_id')
+        results['shopper_id'] = info.get('shopper_id')
+        results['entitlement_id'] = info.get('entitlement_id')
+        results['hostname'] = info.get('hostname')
+        results['ip'] = info.get('ip')
+        results['mwp_id'] = info.get('account_id')
+        results['private_label_id'] = info.get('private_label_id')
+        results['username'] = info.get('username')
+        results['managed_level'] = info.get('managed_level')
+        results['first_pass_enrichment'] = info.get('first_pass_enrichment')
+        results['second_pass_enrichment'] = info.get('second_pass_enrichment')
+        results['abuse_report_email'] = info.get('abuse_report_email')
+
     def resolve_host(self, info):
         if hasattr(self.shopper_id, 'decode'):
             self.shopper_id = self.shopper_id.decode()
@@ -75,24 +96,7 @@ class DomainQuery(graphene.ObjectType):
         if whois['hosting_company_name'] == 'GoDaddy.com LLC':
             host_info = run(info.context.get('ipam').get_properties_for_domain(self.domain, self.shopper_id, self.path))
             if type(host_info) is dict:
-                whois['data_center'] = host_info.get('data_center')
-                whois['created_date'] = host_info.get('created_date')
-                whois['friendly_name'] = host_info.get('friendly_name')
-                whois['os'] = host_info.get('os')
-                whois['product'] = host_info.get('product')
-                whois['guid'] = host_info.get('guid')
-                whois['container_id'] = host_info.get('container_id')
-                whois['shopper_id'] = host_info.get('shopper_id')
-                whois['entitlement_id'] = host_info.get('entitlement_id')
-                whois['hostname'] = host_info.get('hostname')
-                whois['ip'] = host_info.get('ip')
-                whois['mwp_id'] = host_info.get('account_id')
-                whois['private_label_id'] = host_info.get('private_label_id')
-                whois['username'] = host_info.get('username')
-                whois['managed_level'] = host_info.get('managed_level')
-                whois['first_pass_enrichment'] = host_info.get('first_pass_enrichment')
-                whois['second_pass_enrichment'] = host_info.get('second_pass_enrichment')
-                whois['abuse_report_email'] = host_info.get('abuse_report_email')
+                DomainQuery.clean_attributes(host_info, whois)
 
         vip = {}
         host_shopper = whois.get('shopper_id')

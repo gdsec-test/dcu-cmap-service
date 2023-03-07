@@ -20,6 +20,7 @@ from service.connectors.subscriptions import SubscriptionsAPI
 from service.connectors.subscriptionsshim import SubscriptionsShimAPI
 from service.connectors.valuation import ValuationAPI
 from service.connectors.whois import WhoisQuery
+from service.graphql.domain import DomainQuery
 from service.graphql.schema import Query
 from service.persist.redis import RedisCache
 from service.utils.sso_helper import do_login
@@ -112,7 +113,11 @@ def lookup_product_entitlements(customerId, entitlementId):
         product = entitlement.get("product")
         if product == "Diablo WHMCS" or product == "Plesk":
             return {'message': f'{product} has not been implemented yet'}, 422
-        results.append(resolver.locate_product(entitlement.get("domain"), entitlementId, "", product))
+
+        product_info = resolver.locate_product(entitlement.get("domain"), entitlementId, "", product)
+        DomainQuery.clean_attributes(product_info, product_info)
+
+        results.append(product_info)
     return json.dumps(results), 200
 
 
