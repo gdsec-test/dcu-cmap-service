@@ -249,3 +249,10 @@ class TestNutritionLabel(TestCase):
         self.assertEquals(dc, 'P3')
         self.assertIsNone(os)
         self.assertEquals(product, 'vNext Store')
+
+    def test_mwp1_not_matching(self):
+        hostname = 'testmyftpupload.com'
+        dc, os, product = parse_hostname(hostname)
+        self.assertIsNone(dc)
+        self.assertIsNone(os)
+        self.assertIsNone(product)

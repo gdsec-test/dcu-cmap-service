@@ -1,5 +1,6 @@
 import json
 import os
+from html import escape
 
 import graphene
 import requests
@@ -102,6 +103,8 @@ def lookup_product():
 
 @app.route('/v1/nes/<customerId>/<entitlementId>', methods=['POST'])
 def lookup_product_entitlements(customerId, entitlementId):
+    customerId = escape(customerId)
+    entitlementId = escape(entitlementId)
     subscriptionsshim_api = SubscriptionsShimAPI(config)
     try:
         entitlements = subscriptionsshim_api.find_product_by_entitlement(customerId, entitlementId)

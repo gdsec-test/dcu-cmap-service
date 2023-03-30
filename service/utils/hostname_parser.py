@@ -32,7 +32,7 @@ def parse_hostname(hostname):
         os = 'Linux'
         product = '4GH'
 
-    elif re.search('.myftpupload.com$', hostname):
+    elif re.search(r'\.myftpupload.com$', hostname):
         os = 'Linux'
         product = 'MWP 1.0'
 
