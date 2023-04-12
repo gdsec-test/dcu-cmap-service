@@ -5,7 +5,7 @@ from dns import resolver, reversename
 
 
 class WhoisQuery(object):
-    ip_pattern = re.compile(r"((([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])[ (\[]?(\.|dot)[ )\]]?){3}[0-9]{1,3})")
+    ip_pattern = re.compile(r"^((([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])[ (\[]?(\.|dot)[ )\]]?){3}[0-9]{1,3})$")
 
     def __init__(self):
         self._logger = get_logging()
