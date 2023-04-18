@@ -74,6 +74,7 @@ class ProductionAppConfig(AppConfig):
     CN_WHITELIST = ['cmap.threatapi.godaddy.com',
                     'cmapservice.client.cset.int.gdcorp.tools',
                     'kelvinservice.client.cset.int.gdcorp.tools',
+                    'middleware.client.cset.int.gdcorp.tools',
                     'mwnotifications.client.cset.int.gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.phx3.int.godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
@@ -109,7 +110,8 @@ class OTEAppConfig(AppConfig):
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
     SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.ote.godaddy.com'
     CN_WHITELIST = ['cmapservice.client.cset.int.ote-gdcorp.tools',
-                    'kelvinservice.client.cset.int.ote-gdcorp.tools']
+                    'kelvinservice.client.cset.int.ote-gdcorp.tools',
+                    'middleware.client.cset.int.ote-gdcorp.tools']
     DB_WEB_SVC_URL = 'https://dsweb.ote.phx3.gdg/RegDBWebSvc/RegDBWebSvc.dll'
     CRM_CLIENT_API_URL = 'https://crmclient-api.prod.phx3.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'https://shopper.api.int.ote-godaddy.com/v1/shoppers/{}'
@@ -129,6 +131,7 @@ class TestAppConfig(AppConfig):
     CN_WHITELIST = ['cmap.threatapi.test-godaddy.com',
                     'cmapservice.client.cset.int.test-gdcorp.tools',
                     'kelvinservice.client.cset.int.test-gdcorp.tools',
+                    'middleware.client.cset.int.test-gdcorp.tools',
                     'mwnotifications.client.cset.int.test-gdcorp.tools']
     VPS4_URLS = OrderedDict([('IAD2', 'https://vps4.api.test-godaddy.com'),
                              ('SIN2', 'https://vps4.api.test-godaddy.com'),
@@ -163,6 +166,7 @@ class DevelopmentAppConfig(AppConfig):
     CN_WHITELIST = ['cmap.threatapi.dev-godaddy.com',
                     'cmapservice.client.cset.int.dev-gdcorp.tools',
                     'kelvinservice.client.cset.int.dev-gdcorp.tools',
+                    'middleware.client.cset.int.dev-gdcorp.tools',
                     'mwnotifications.client.cset.int.dev-gdcorp.tools']
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.dev-godaddy.com/v1/shoppers/{}'
