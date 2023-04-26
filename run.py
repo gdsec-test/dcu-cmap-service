@@ -59,7 +59,8 @@ ctx = {'crm': CRMClientAPI(config, redis_obj),
        'whois': WhoisQuery(),
        'bd': BrandDetectionHelper(config.BRAND_DETECTION_URL),
        'subscriptions': SubscriptionsAPI(config),
-       'valuation': ValuationAPI(config)
+       'valuation': ValuationAPI(config),
+       'subscription_shim': SubscriptionsShimAPI(config)
        }
 
 

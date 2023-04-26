@@ -115,6 +115,10 @@ class DomainQuery(graphene.ObjectType):
                 email = info.context.get('bd').get_email_info(shopper_data.shopper_plid)
                 whois['abuse_report_email'] = email['email']
 
+        whois['hosting_plan'] = None
+        if whois.get('customer_id') and whois.get('entitlement_id'):
+            whois['hosting_plan'] = info.context.get('subscription_shim').get_entitlement_plan(whois.get('customer_id'), whois.get('entitlement_id'))
+
         whois = convert_str_to_none(whois)
         host_obj = HostInfo(**whois)
         host_obj.vip = ShopperProfile(**vip)

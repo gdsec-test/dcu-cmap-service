@@ -13,12 +13,15 @@ class Ipam(object):
     def __init__(self, url, user, password):
         self._logger = get_logging()
 
-        session = Session()
-        session.verify = False
-        session.auth = HttpNtlmAuth(user, password)
-        transport = Transport(timeout=10, session=session)
+        self.session = Session()
+        self.session.verify = False
+        self.session.auth = HttpNtlmAuth(user, password)
+        self.url = url
+        self.client = None
 
-        self.client = Client(url, transport=transport)
+    def connect(self):
+        transport = Transport(timeout=10, session=self.session)
+        self.client = Client(self.url, transport=transport)
 
     @staticmethod
     def __get_ips(obj):
@@ -70,6 +73,7 @@ class Ipam(object):
         :param hostname:
         :return:
         """
+        self.connect()
         Ipam.__validate_params(locals())
         return Ipam.__get_ips(self.__soap_call('GetIPsByHostname', hostname))
 
@@ -79,5 +83,6 @@ class Ipam(object):
         :param ip:
         :return:
         """
+        self.connect()
         Ipam.__validate_params(locals())
         return self.__soap_call('GetPropertiesForIP', ip)

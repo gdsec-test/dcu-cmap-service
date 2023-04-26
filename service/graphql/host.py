@@ -30,3 +30,4 @@ class HostInfo(graphene.ObjectType):
     first_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')
     second_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')
     abuse_report_email = graphene.String(description='email to send abuse report to for hosting product')
+    hosting_plan = graphene.String(description='The ecomm offer plan name')
