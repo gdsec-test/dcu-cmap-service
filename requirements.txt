@@ -36,7 +36,6 @@ suds-py3==1.4.4.1
 tld==0.12.5
 urllib3==1.26.5
 uWSGI==2.0.21
-Werkzeug==2.2.3
 # We use Zeep for contacting IPAM SOAP API
 zeep==4.0.0
 importlib-metadata==4.0.1
