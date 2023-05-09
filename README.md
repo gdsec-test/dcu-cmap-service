@@ -88,11 +88,10 @@ If you would like to run CMAP Service locally, you will need to specify the foll
 * `DB_PASS` (Password for MongoDB)
 * `DIABLO_USER` (User for Diablo API)
 * `DIABLO_PASS` (Password for Diablo API)
-* `SMDB_USER` (User for SMDB WSDL)
-* `SMDB_PASS` (Password for SMDB WSDL)
 * `VALUATION_KEY` (Access key for Valuation API)
 * `VERTIGO_USER` (User for Vertigo API)
 * `VERTIGO_PASS` (Password for Vertigo API)
+* `NETBOX_TOKEN` (Token for netbox access)
 
 Steps to run locally:
 1. Enter `docker-compose up` from a command line within the _cmap_service_ directory which contains the _docker-compose.yaml_ file

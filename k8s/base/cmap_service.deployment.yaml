@@ -78,16 +78,11 @@ spec:
                 secretKeyRef:
                   name: auth-hosting-envs
                   key: vertigopass
-            - name: SMDB_USER
+            - name: NETBOX_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: auth-smdb
-                  key: username
-            - name: SMDB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: auth-smdb
-                  key: password
+                  name: netbox-token
+                  key: token
             - name: VALUATION_KEY
               valueFrom:
                 secretKeyRef:

@@ -6,7 +6,7 @@ from typing import Optional
 from csetutils.flask.logging import get_logging
 from dns import resolver
 
-from service.connectors.smdb import Ipam
+from service.connectors.netbox import Netbox
 from service.connectors.subscriptions import SubscriptionsAPI
 from service.products.angelo import AngeloAPI
 from service.products.diablo import DiabloAPI
@@ -39,7 +39,7 @@ class HostingProductResolver(object):
 
     def __init__(self, config: AppConfig):
         self._logger = get_logging()
-        self.ipam = Ipam(config.SMDB_URL, config.SMDB_USER, config.SMDB_PASS)
+        self.netbox = Netbox(config.NETBOX_URL, config.NETBOX_TOKEN)
         self.subscriptions_api = SubscriptionsAPI(config)
         self.config = config
 
@@ -68,15 +68,12 @@ class HostingProductResolver(object):
             return product, guid, created_date
         return None
 
-    async def __get_ipam_properties(self, ip: str) -> Optional[tuple]:
+    async def __get_netbox_params(self, ip: str) -> Optional[tuple]:
         # check for parking IP first
         if ip_is_parked(ip):
             return None, None, 'Parked'
 
-        # fallback to ipam if not parked
-        ipam = self._query_ipam(ip)
-        hostname = getattr(ipam, 'HostName') if getattr(ipam, 'HostName', None) else getattr(ipam, 'Description', None)
-        # IPAM description Useful for parked pages: "PHX3 - ParkWeb PodA - Server Loopbacks"
+        hostname = self.__query_netbox(ip)
         if hostname:
             dc, os, product = parse_hostname(hostname)
             return dc, os, product
@@ -111,9 +108,9 @@ class HostingProductResolver(object):
         # We support two sources: Subscriptions API and IPAM
         # Run async tasks to grab the info we need in parallel.
         sub_task = create_task(self.__get_subscription_properties(shopper_id, domain))
-        ipam_task = create_task(self.__get_ipam_properties(ip))
+        netbox_task = create_task(self.__get_netbox_params(ip))
         sub_params = await sub_task
-        ipam_params = await ipam_task
+        netbox_params = await netbox_task
         dc = os = product = None
         if sub_params:
             product = sub_params[0]
@@ -121,8 +118,8 @@ class HostingProductResolver(object):
             created_date = sub_params[2]
             host_shopper = shopper_id
             first_pass_enrichment = 'subscriptionapi'
-        elif ipam_params:
-            dc, os, product = ipam_params
+        elif netbox_params:
+            dc, os, product = netbox_params
             first_pass_enrichment = 'ipam'
         data = self.locate_product(domain=domain, guid=guid, ip=ip, product=product, path=path)
 
@@ -165,13 +162,10 @@ class HostingProductResolver(object):
         except Exception as e:
             self._logger.error(e)
 
-    def _query_ipam(self, ip):
-        """
-        Query IPAM soap web service and retrive ip related information.
-        :param ip:
-        :return:
-        """
+    def __query_netbox(self, ip: str) -> Optional[str]:
+        resp = None
         try:
-            return self.ipam.get_properties_for_ip(ip)
+            resp = self.netbox.lookup_hostname(ip)
         except Exception as e:
             self._logger.error(e)
+        return resp

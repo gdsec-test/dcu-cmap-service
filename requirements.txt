@@ -1,9 +1,9 @@
 appdirs==1.4.4
 cached-property==1.5.2
+celery==5.2.6
 certifi==2022.12.7
 cffi==1.14.5
 chardet==4.0.0
-csetutils==0.2.1
 defusedxml==0.7.1
 dnspython==2.1.0
 Flask==2.3.2
@@ -15,7 +15,6 @@ isodate==0.6.0
 lxml==4.9.1
 ntlm-auth==1.5.0
 promise==2.3
-gd-auth==1.1.2
 pycparser==2.20
 pymongo[ocsp]==3.13.0
 pyotp==2.6.0
@@ -26,7 +25,6 @@ qrcode==6.1
 redis==4.5.4
 requests==2.25.1
 requests-file==1.5.1
-requests-ntlm==1.1.0
 requests-toolbelt==0.9.1
 Rx==1.6.1
 six==1.15.0

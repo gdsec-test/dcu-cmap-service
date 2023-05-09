@@ -8,9 +8,11 @@ RUN pip3 install -U pip
 # Compile the Flask API
 RUN mkdir -p /tmp/build
 RUN apt-get update && apt-get install gcc libffi-dev -y
-COPY requirements.txt /tmp/build/
 COPY pip_config /tmp/build/pip_config
-RUN PIP_CONFIG_FILE=/tmp/build/pip_config/pip.conf pip3 install -r /tmp/build/requirements.txt
+COPY gddy-requirements.txt /tmp/build/
+RUN PIP_CONFIG_FILE=/tmp/build/pip_config/pip.conf pip3 install -r /tmp/build/gddy-requirements.txt
+COPY requirements.txt /tmp/build/
+RUN PIP_CONFIG_FILE=/tmp/build/pip_config/pip.conf pip3 install -i https://pypi.org/simple -r /tmp/build/requirements.txt
 
 COPY *.py /tmp/build/
 COPY test_requirements.txt /tmp/build/

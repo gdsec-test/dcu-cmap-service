@@ -18,7 +18,7 @@ class AppConfig(object):
     ANGELO_URL = 'https://gdapi.plesk-shared-app.int.gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
     DIABLO_WHMCS_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/servers/'
-    SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
+    NETBOX_URL = 'https://netbox.int.gdcorp.tools'
     MWPONE_URL = 'http://localhost:8080/mwpone/v1/accounts'
 
     CMAPSERVICE_APP = 'cmapservice.cset.int'
@@ -57,8 +57,7 @@ class AppConfig(object):
         self.VPS4_USER = os.getenv('VPS4_USER', 'vps4user')
         self.VPS4_PASS = os.getenv('VPS4_PASS', 'vps4pass')
 
-        self.SMDB_USER = os.getenv('SMDB_USER', 'smdb_user')
-        self.SMDB_PASS = os.getenv('SMDB_PASS', 'smdb_pass')
+        self.NETBOX_TOKEN = os.getenv('NETBOX_TOKEN', None)
 
         self.VALUATION_KEY = os.getenv('VALUATION_KEY', 'valuation_key')
 
@@ -145,7 +144,6 @@ class TestAppConfig(AppConfig):
     SHOPPER_API_URL = 'https://shopper.api.int.test-godaddy.com/v1/shoppers/{}'
     TZ_URL = 'https://toolzilla.int.test-godaddy.com/webservice.php/AccountSearchService'
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com'
-    SMDB_URL = 'https://smdb.int.godaddy.com/IPService/ipam.asmx?WSDL'
     CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
     SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.test.godaddy.com'
