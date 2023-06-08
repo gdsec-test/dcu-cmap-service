@@ -23,7 +23,7 @@ python-whois==0.7.3
 PyYAML==5.4.1
 qrcode==6.1
 redis==4.5.4
-requests==2.25.1
+requests==2.31.0
 requests-file==1.5.1
 requests-toolbelt==0.9.1
 Rx==1.6.1
