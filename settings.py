@@ -134,7 +134,6 @@ class TestAppConfig(AppConfig):
                              ('AMS3', 'https://vps4.api.test-godaddy.com')])
     DIABLO_URL = 'https://diablo.api.test-godaddy.com/v1/accounts'
     DIABLO_WHMCS_URL = 'https://diablo.api.test-godaddy.com/v1/servers/'
-    VERT_URL = ''
     MWPONE_URL = 'https://mwp.api.phx3.test-godaddy.com/api/v1/mwp/sites/search'
     ANGELO_URL = 'https://gdapi.plesk-shared-app.int.test-gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
