@@ -144,13 +144,6 @@ class TestNutritionLabel(TestCase):
         self.assertEquals(os, 'Linux')
         self.assertEquals(product, 'VPH')
 
-    def test_vertigo(self):
-        hostname = 'vertigo-86545-primary'
-        dc, os, product = parse_hostname(hostname)
-        self.assertEquals(dc, 'vert')
-        self.assertIsNone(os)
-        self.assertEquals(product, 'Vertigo')
-
     def test_os_fail(self):
         hostname = 'p3nxhg390c1390'
         dc, os, product = parse_hostname(hostname)

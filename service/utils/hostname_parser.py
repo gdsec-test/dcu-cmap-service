@@ -21,9 +21,6 @@ def parse_hostname(hostname):
         os = 'Windows'
         product = 'Plesk'
 
-    elif re.search('vertigo', hostname):
-        product = 'Vertigo'
-
     elif re.search('\\dnw8shg\\d', hostname):
         os = 'Windows'
         product = '4GH'
