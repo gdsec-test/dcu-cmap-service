@@ -68,16 +68,6 @@ spec:
                 secretKeyRef:
                   name: auth-hosting-envs
                   key: diablopass
-            - name: VERTIGO_USER
-              valueFrom:
-                secretKeyRef:
-                  name: auth-hosting-envs
-                  key: vertigouser
-            - name: VERTIGO_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: auth-hosting-envs
-                  key: vertigopass
             - name: NETBOX_TOKEN
               valueFrom:
                 secretKeyRef:

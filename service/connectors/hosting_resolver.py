@@ -14,7 +14,6 @@ from service.products.diablo_whmcs import DiabloAPIWHMCS
 from service.products.go_central import GoCentralAPI
 from service.products.mwp_one import MWPOneAPI
 from service.products.mwp_two import MWPTwoAPI
-from service.products.vertigo import VertigoAPI
 from service.products.vps4 import VPS4API
 from service.utils.functions import ip_is_parked
 from service.utils.hostname_parser import parse_hostname
@@ -50,7 +49,6 @@ class HostingProductResolver(object):
         self.product_locators = OrderedDict([
             ('MWP 2.0', MWPTwoAPI()),
             ('GoCentral', GoCentralAPI(config)),
-            ('Vertigo', VertigoAPI(config)),
             ('Diablo', DiabloAPI(config)),
             ('Diablo WHMCS', DiabloAPIWHMCS(config)),
             ('Plesk', AngeloAPI(config)),

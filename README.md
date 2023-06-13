@@ -89,8 +89,6 @@ If you would like to run CMAP Service locally, you will need to specify the foll
 * `DIABLO_USER` (User for Diablo API)
 * `DIABLO_PASS` (Password for Diablo API)
 * `VALUATION_KEY` (Access key for Valuation API)
-* `VERTIGO_USER` (User for Vertigo API)
-* `VERTIGO_PASS` (Password for Vertigo API)
 * `NETBOX_TOKEN` (Token for netbox access)
 
 Steps to run locally:

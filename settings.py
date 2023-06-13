@@ -14,7 +14,6 @@ class AppConfig(object):
     COLLECTION = 'blacklist'
     DATE_FORMAT = '%Y-%m-%d'
 
-    VERT_URL = 'https://vertigo.int.gdcorp.tools/vertigo/v1/container/?ips__ipv4='
     ANGELO_URL = 'https://gdapi.plesk-shared-app.int.gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DIABLO_URL = 'http://localhost:8080/diablo/v1/accounts'
     DIABLO_WHMCS_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/servers/'
@@ -46,8 +45,6 @@ class AppConfig(object):
         self.CMAP_SERVICE_CLIENT_CERT = os.getenv('CMAP_SERVICE_CLIENT_CERT', 'service.crt')
         self.CMAP_SERVICE_CLIENT_KEY = os.getenv('CMAP_SERVICE_CLIENT_KEY', 'service.key')
 
-        self.VERTIGO_USER = os.getenv('VERTIGO_USER', 'vertigo_user')
-        self.VERTIGO_PASS = os.getenv('VERTIGO_PASS', 'vertigo_pass')
         self.DIABLO_USER = os.getenv('DIABLO_USER', 'diablo_user')
         self.DIABLO_PASS = os.getenv('DIABLO_PASS', 'diablo_pass')
         self.ANGELO_USER = os.getenv('ANGELO_USER', 'angelo_user')
@@ -137,7 +134,6 @@ class TestAppConfig(AppConfig):
                              ('AMS3', 'https://vps4.api.test-godaddy.com')])
     DIABLO_URL = 'https://diablo.api.test-godaddy.com/v1/accounts'
     DIABLO_WHMCS_URL = 'https://diablo.api.test-godaddy.com/v1/servers/'
-    VERT_URL = ''
     MWPONE_URL = 'https://mwp.api.phx3.test-godaddy.com/api/v1/mwp/sites/search'
     ANGELO_URL = 'https://gdapi.plesk-shared-app.int.test-gdcorp.tools/v1/accounts?SearchAddonDomain&'
     DB_WEB_SVC_URL = 'https://dsweb.int.test-godaddy.com/RegDBWebSvc/RegDBWebSvc.dll'
