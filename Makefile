@@ -13,28 +13,20 @@ define deploy_k8s
 	cd k8s/$(1) && kustomize edit set image $(DOCKERREPO):$(1)
 endef
 
-all: env
+all: init
 
-env:
+init:
 	pip3 install -r test_requirements.txt --use-pep517
 	pip3 install -r requirements.txt --use-pep517
 	pip3 install -r gddy-requirements.txt --use-pep517
 
-.PHONY: flake8
-flake8:
-	@echo "----- Running linter -----"
+.PHONY: lint
+lint:
+	isort --atomic .
 	flake8 --config ./.flake8 .
 
-.PHONY: isort
-isort:
-	@echo "----- Optimizing imports -----"
-	isort --atomic .
-
-.PHONY: tools
-tools: flake8 isort
-
-.PHONY: test
-test: tools
+.PHONY: unit-test
+unit-test: lint
 	@echo "----- Running tests -----"
 	sysenv=test python -m unittest discover tests "*_tests.py"
 
@@ -46,7 +38,7 @@ testcov:
 
 
 .PHONY: prep
-prep: test
+prep: unit-test
 	@echo "----- preparing $(REPONAME) build -----"
 	# stage pips we will need to install in Docker build
 	mkdir -p $(BUILDROOT)
