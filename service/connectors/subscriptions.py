@@ -63,7 +63,11 @@ class SubscriptionsAPI(object):
         for subscription in subscriptions:
             if subscription.get('status') in self.valid_subscription_statuses and subscription.get('product', {}).get(
                     'productGroupKey') == 'websiteSecurity':
-                security_subscription.append(subscription.get('product', {}).get('label'))
+                security_subscription.append({
+                    'sucuri_product': subscription.get('product', {}).get('label'),
+                    'entitlement_id': subscription.get('externalId'),
+                    'created_date': subscription.get('createdAt')
+                })
         return security_subscription
 
     def get_ssl_subscriptions(self, shopper_id, domain):
@@ -93,7 +97,8 @@ class SubscriptionsAPI(object):
                     'cert_common_name': subscription.get('label'),
                     'cert_type': subscription.get('product').get('label'),
                     'created_at': subscription.get('createdAt'),
-                    'expires_at': subscription.get('expiresAt')
+                    'expires_at': subscription.get('expiresAt'),
+                    'entitlement_id': subscription.get('externalId')
                 }
                 ssl_subscriptions.append(ssl_subscription)
         return ssl_subscriptions

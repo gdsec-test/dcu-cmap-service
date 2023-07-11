@@ -187,7 +187,10 @@ class DomainQuery(graphene.ObjectType):
             self.shopper_id = self.shopper_id.decode()
 
         sucuri_product = info.context.get('subscriptions').get_sucuri_subscriptions(self.shopper_id, self.domain)
-        return SecuritySubscription(**{'sucuri_product': sucuri_product})
+        return SecuritySubscription(**{
+            'sucuri_product': [x['sucuri_product'] for x in sucuri_product],
+            'products': sucuri_product
+        })
 
     def resolve_ssl_subscriptions(self, info):
         if hasattr(self.shopper_id, 'decode'):
@@ -197,7 +200,8 @@ class DomainQuery(graphene.ObjectType):
         return [SSLSubscription(**{'cert_common_name': ssl_subscription.get('cert_common_name'),
                                    'cert_type': ssl_subscription.get('cert_type'),
                                    'created_at': ssl_subscription.get('created_at'),
-                                   'expires_at': ssl_subscription.get('expires_at')})
+                                   'expires_at': ssl_subscription.get('expires_at'),
+                                   'entitlement_id': ssl_subscription.get('entitlement_id')})
                 for ssl_subscription in ssl_subscriptions]
 
     def resolve_is_domain_high_value(self, info):

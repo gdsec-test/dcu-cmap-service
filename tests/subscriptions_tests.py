@@ -56,7 +56,8 @@ class TestSubscriptionsAPI(TestCase):
     @patch.object(SubscriptionsAPI, '_get_subscriptions')
     def test_get_sucuri_subscriptions(self, mocked_subs_api):
         mocked_subs_api.return_value = self._mock_sucuri_sub_response
-        self.assertEqual(self._subscriptions_api.get_sucuri_subscriptions('102704532', 'test1.com')[0], 'test')
+        result = self._subscriptions_api.get_sucuri_subscriptions('102704532', 'test1.com')
+        self.assertEqual(result, [{'created_date': '2019-04-15T20:48:58.340Z', 'entitlement_id': None, 'sucuri_product': 'test'}])
 
     """
     get_ssl_subscriptions tests
