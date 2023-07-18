@@ -1,2 +1,2 @@
-csetutils[flask]==1.2.0
+csetutils[flask]==1.4.2
 gd-auth==1.1.2
