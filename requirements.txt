@@ -20,7 +20,7 @@ pymongo[ocsp]==3.13.0
 pyotp==2.6.0
 python-ntlm3==1.0.2
 python-whois==0.7.3
-PyYAML==5.4.1
+PyYAML==6.0.1
 qrcode==6.1
 redis==4.5.4
 requests==2.31.0
