@@ -1,9 +1,11 @@
 import re
 from asyncio import run
+from datetime import timedelta
 
 import graphene
 import tld
 from csetutils.flask.logging import get_logging
+from dateutil import parser
 
 from service.graphql.host import HostInfo
 from service.graphql.registrar import RegistrarInfo
@@ -116,8 +118,17 @@ class DomainQuery(graphene.ObjectType):
                 whois['abuse_report_email'] = email['email']
 
         whois['hosting_plan'] = None
+        whois['subscription_status'] = None
+        whois['started_as_free_trial'] = None
         if whois.get('customer_id') and whois.get('entitlement_id'):
-            whois['hosting_plan'] = info.context.get('subscription_shim').get_entitlement_plan(whois.get('customer_id'), whois.get('entitlement_id'))
+            subscription = info.context.get('subscription_shim').get_subscription(whois.get('customer_id'), whois.get('entitlement_id'))
+            whois['hosting_plan'] = subscription.get('offer', {}).get('plan', None)
+            whois['subscription_status'] = subscription.get('status')
+            entitlement = info.context.get('entitlementsapi').get_entitlement(whois.get('customer_id'), whois.get('entitlement_id'))
+            keys = entitlement.get('prePurchaseKeyMap', {})
+            recent = (parser.parse(subscription['metadata']['createdAt']) - parser.parse(subscription['statusUpdatedAt'])) <= timedelta(hours=24)
+            started_as_free = (keys.get('custom_data.startedAsFreeMatTrial', False) or keys.get('custom_data.startedAsFreemium', False)) and recent
+            whois['started_as_free_trial'] = started_as_free
 
         whois = convert_str_to_none(whois)
         host_obj = HostInfo(**whois)

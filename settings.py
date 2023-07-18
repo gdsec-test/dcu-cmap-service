@@ -78,6 +78,7 @@ class ProductionAppConfig(AppConfig):
     DIABLO_URL = 'https://cpanelprovapi.prod.phx3.secureserver.net/v1/accounts'
     MWPONE_URL = 'https://mwp.api.phx3.godaddy.com/api/v1/mwp/sites/search'
     SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.prod.godaddy.com'
+    ENTITLEMENTS_URL = 'https://entitlements-ext.cp.api.prod.godaddy.com'
 
     def __init__(self):
         super().__init__()
@@ -105,6 +106,7 @@ class OTEAppConfig(AppConfig):
     GOCENTRAL_URL = 'https://websites.api.test-godaddy.com'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.ote-godaddy.com/v1/subscriptions'
     SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.ote.godaddy.com'
+    ENTITLEMENTS_URL = 'https://entitlements-ext.cp.api.ote.godaddy.com'
     CN_WHITELIST = ['cmapservice.client.cset.int.ote-gdcorp.tools',
                     'kelvinservice.client.cset.int.ote-gdcorp.tools',
                     'middleware.client.cset.int.ote-gdcorp.tools']
@@ -143,6 +145,7 @@ class TestAppConfig(AppConfig):
     CRM_CLIENT_API_URL = 'https://crmclient-api.test.int.godaddy.com/Shopper.svc'
     SUBSCRIPTIONS_URL = 'https://subscription.api.int.test-godaddy.com/v1/subscriptions'
     SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.test.godaddy.com'
+    ENTITLEMENTS_URL = 'https://entitlements-ext.cp.api.test.godaddy.com'
 
     def __init__(self):
         super().__init__()
@@ -165,6 +168,7 @@ class DevelopmentAppConfig(AppConfig):
     DB_WEB_SVC_URL = 'http://localhost:8080/regdb/RegDbWebSvc/RegDVWebSvc.dll'
     SHOPPER_API_URL = 'https://shopper.api.int.dev-godaddy.com/v1/shoppers/{}'
     SUBSCRIPTIONS_SHIM_URL = 'https://subscriptions-shim-ext-ro.cp.api.dp.godaddy.com'
+    ENTITLEMENTS_URL = 'https://entitlements-ext.cp.api.dp.godaddy.com'
 
     def __init__(self):
         super().__init__()

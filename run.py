@@ -14,6 +14,7 @@ from tld.conf import set_setting
 from service.connectors.blacklist import VipClients
 from service.connectors.brand_detection import BrandDetectionHelper
 from service.connectors.crm import CRMClientAPI
+from service.connectors.entitlements import EntitlementsAPI
 from service.connectors.hosting_resolver import HostingProductResolver
 from service.connectors.reg_db import RegDbAPI
 from service.connectors.shopper import ShopperAPI
@@ -60,7 +61,8 @@ ctx = {'crm': CRMClientAPI(config, redis_obj),
        'bd': BrandDetectionHelper(config.BRAND_DETECTION_URL),
        'subscriptions': SubscriptionsAPI(config),
        'valuation': ValuationAPI(config),
-       'subscription_shim': SubscriptionsShimAPI(config)
+       'subscription_shim': SubscriptionsShimAPI(config),
+       'entitlementsapi': EntitlementsAPI(config)
        }
 
 

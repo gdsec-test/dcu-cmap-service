@@ -31,3 +31,5 @@ class HostInfo(graphene.ObjectType):
     second_pass_enrichment = graphene.String(description='Which top level service was used to find the product.')
     abuse_report_email = graphene.String(description='email to send abuse report to for hosting product')
     hosting_plan = graphene.String(description='The ecomm offer plan name')
+    subscription_status = graphene.String(description='The status of the subscription.')
+    started_as_free_trial = graphene.Boolean(description='Indicates if the plan started as a free trial')

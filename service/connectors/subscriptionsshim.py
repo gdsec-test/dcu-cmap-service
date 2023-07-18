@@ -26,15 +26,14 @@ class SubscriptionsShimAPI(object):
                 return ''
         return self._jwt
 
-    def get_entitlement_plan(self, customerId: str, entitlementId: str) -> Optional[str]:
+    def get_subscription(self, customerId: str, entitlementId: str) -> Optional[dict]:
         headers = {'content-type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt()}'}
         response = requests.get(f'{self._url}/v2/customers/{customerId}/subscriptionByEntitlementId?entitlementId={entitlementId}', headers=headers)
         if response.status_code == 403 or response.status_code == 401:
             headers = {'content-type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt(True)}'}
             response = requests.get(f'{self._url}/v2/customers/{customerId}/subscriptionByEntitlementId?entitlementId={entitlementId}', headers=headers)
         response.raise_for_status()
-        resp = response.json()
-        return resp.get('offer', {}).get('plan', None)
+        return response.json()
 
     def find_product_by_entitlement(self, customerId: str, entitlementId: str) -> dict:
         headers = {'content-type': 'application/json', 'Authorization': f'sso-jwt {self._get_jwt()}'}
