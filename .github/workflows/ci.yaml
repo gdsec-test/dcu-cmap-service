@@ -6,11 +6,11 @@ on:
   push:
     branches:
       - main
-      - ISSE-970
+      - github-settings-sync-2023-48-09_174851
   pull_request:
     branches:
       - main
-      - ISSE-970
+      - github-settings-sync-2023-48-09_174851
   schedule:
     - cron: '37 2 * * 3'
 
