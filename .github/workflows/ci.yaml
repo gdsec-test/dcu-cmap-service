@@ -97,10 +97,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install gcc libffi-dev -y
-          make init
-      
+          apt install gcc 
+          pip install uWSGI
+            
+        
       - name: Run unit tests
         run: |
+          make init
           make unit-test
 
       - name: Lint Code Base
