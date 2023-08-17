@@ -97,9 +97,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install gcc libffi-dev -y
-          apt install gcc 
-          pip install uWSGI
-            
+          pip install uWSGI         
         
       - name: Run unit tests
         run: |
