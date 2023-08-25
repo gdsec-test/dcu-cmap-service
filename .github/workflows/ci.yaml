@@ -19,8 +19,8 @@ jobs:
     runs-on: [csetubuntu]
     steps:
             
-      - name: Checkout repo
-        uses: actions/checkout@v2
+      # - name: Checkout repo
+      #   uses: actions/checkout@v2
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -103,6 +103,7 @@ jobs:
           # sudo apt-get install gcc libffi-dev -y
           # sudo apt-get install python3-dev -y
           # sudo apt-get install uwsgi-plugin-python3 -y
+          sudo apt-get python3.11
           pip install uwsgi --use-pep517
           # make init
       - name: Run unit tests
