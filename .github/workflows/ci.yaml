@@ -103,7 +103,7 @@ jobs:
           # sudo apt-get install gcc libffi-dev -y
           # sudo apt-get install python3-dev -y
           # sudo apt-get install uwsgi-plugin-python3 -y
-          pip install uwsgi
+          pip install uwsgi --use-pep517
           # make init
       - name: Run unit tests
         run: |
