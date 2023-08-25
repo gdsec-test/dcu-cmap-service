@@ -88,16 +88,17 @@ jobs:
              
       - name: Install Dependencies with pip
         run: | 
-          pip install pre-commit
-          pip install coverage
+          # pip install pre-commit
+          # pip install coverage
           pip install pipx
-          pip install poetry
+          # pip install poetry
 
       - name: Install Packages
         run: |
           sudo apt-get update
           sudo apt-get install gcc libffi-dev -y
           sudo apt-get install python3-dev -y
+          sudo apt-get install uwsgi-plugin-python3 -y
           pip install uwsgi
           make init
       - name: Run unit tests
