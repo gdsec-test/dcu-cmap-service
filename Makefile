@@ -16,9 +16,7 @@ endef
 all: init
 
 init:
-	pip3 install -r test_requirements.txt --use-pep517
-	pip3 install -r requirements.txt --use-pep517
-	pip3 install -r gddy-requirements.txt --use-pep517
+	@poetry install
 
 .PHONY: lint
 lint:
