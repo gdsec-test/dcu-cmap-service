@@ -28,17 +28,17 @@ jobs:
           python-version: 3.11.1
           architecture: 'x64' 
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '^1.13.1'
-          architecture: 'x64' 
+      # - name: Setup Go
+      #   uses: actions/setup-go@v4
+      #   with:
+      #     go-version: '^1.13.1'
+      #     architecture: 'x64' 
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          architecture: 'x64' 
+      # - name: Setup Node
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 18
+      #     architecture: 'x64' 
 
       - name: Get Secrets
         id: secrets
@@ -78,13 +78,13 @@ jobs:
           echo "POETRY_HTTP_BASIC_GDDY_USERNAME=${{ steps.secrets.outputs.artifactory-username }}" >> $GITHUB_ENV
           echo "POETRY_HTTP_BASIC_GDDY_PASSWORD=${{ steps.secrets.outputs.artifactory-password }}" >> $GITHUB_ENV
       
-      - name: Configure Golang
-        shell: bash
-        run: |
-          go env -w GOPRIVATE="github.com/gdcorp-infosec/*,github.com/gdcorp-golang/*,github.secureserver.net/*"
-          git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-infosec".insteadOf "https://github.com/gdcorp-infosec"
-          git config --global url."https://${{ steps.secrets.outputs.pat-onpremise }}:x-oauth-basic@github.secureserver.net".insteadOf "https://github.secureserver.net" 
-          git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-golang".insteadOf "https://github.com/gdcorp-golang"
+      # - name: Configure Golang
+      #   shell: bash
+      #   run: |
+      #     go env -w GOPRIVATE="github.com/gdcorp-infosec/*,github.com/gdcorp-golang/*,github.secureserver.net/*"
+      #     git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-infosec".insteadOf "https://github.com/gdcorp-infosec"
+      #     git config --global url."https://${{ steps.secrets.outputs.pat-onpremise }}:x-oauth-basic@github.secureserver.net".insteadOf "https://github.secureserver.net" 
+      #     git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-golang".insteadOf "https://github.com/gdcorp-golang"
              
       - name: Install Dependencies with pip
         run: | 
@@ -97,11 +97,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install gcc libffi-dev -y
-          pip install uWSGI         
-        
+          sudo apt-get install python3-dev -y
+          pip install uwsgi
+          make init
       - name: Run unit tests
         run: |
-          make init
           make unit-test
 
       - name: Lint Code Base
