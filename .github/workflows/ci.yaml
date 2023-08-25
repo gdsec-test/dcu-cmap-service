@@ -95,6 +95,10 @@ jobs:
 
       - name: Install Packages
         run: |
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export PATH=$HOME/.local/bin:$PATH
+          pip install --user pipx
+          pipx ensurepath
           sudo apt-get update
           sudo apt-get install gcc libffi-dev -y
           sudo apt-get install python3-dev -y
