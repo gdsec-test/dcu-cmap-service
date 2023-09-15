@@ -20,7 +20,7 @@ patches:
     name: cmap-service
 
 images:
-- name: docker-dcu-local.artifactory.secureserver.net/cmap_service
+- name: gdartifactory1.jfrog.io/docker-dcu-local/cmap_service
   newTag: ote
 
 configMapGenerator:

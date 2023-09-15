@@ -101,7 +101,7 @@ jobs:
 
     - name: Docker Login
       run: |
-        docker login docker-dcu-local.artifactory.secureserver.net -u ${{ steps.secrets.outputs.artifactory-username }} -p ${{ steps.secrets.outputs.artifactory-password }}
+        docker login gdartifactory1.jfrog.io/docker-dcu-local -u ${{ steps.secrets.outputs.artifactory-username }} -p ${{ steps.secrets.outputs.artifactory-password }}
 
     - name: Install kustomize
       run: |

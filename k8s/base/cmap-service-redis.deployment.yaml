@@ -16,7 +16,7 @@ spec:
         app: cmap-service-redis
     spec:
       imagePullSecrets:
-        - name: dcu-artifactory-creds
+        - name: artifactory-saas-creds
       containers:
         - name: redis
           imagePullPolicy: Always

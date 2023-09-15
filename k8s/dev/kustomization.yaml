@@ -12,7 +12,7 @@ patches:
       path: "/spec/template/spec/containers/1"
       value:
         name: wiremock
-        image: docker-dcu-local.artifactory.secureserver.net/cmap_service/wiremock:dev
+        image: gdartifactory1.jfrog.io/docker-dcu-local/cmap_service/wiremock:dev
   target:
     kind: Deployment
     name: cmap-service
@@ -31,7 +31,7 @@ patches:
 
 
 images:
-- name: docker-dcu-local.artifactory.secureserver.net/cmap_service
+- name: gdartifactory1.jfrog.io/docker-dcu-local/cmap_service
   newTag: dev
 
 configMapGenerator:
