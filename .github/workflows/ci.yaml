@@ -94,11 +94,12 @@ jobs:
           pip install poetry
 
       - name: Install Packages
+        env:
+          AGENT_TOOLSDIRECTORY: /opt/hostedtoolcache
         run: |
           sudo apt-get update
           sudo apt-get install gcc libffi-dev -y
           sudo apt-get install build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev python-dev -y
-
           pip install uwsgi       
         
       - name: Run unit tests
