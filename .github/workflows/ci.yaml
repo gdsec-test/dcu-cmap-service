@@ -85,14 +85,15 @@ jobs:
           git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-golang".insteadOf "https://github.com/gdcorp-golang"
              
       - name: Install Dependencies with pip
+        env:
+          LDFLAGS: "-Wl,-rpath /usr/local/bin/actions-runner/_work/_tool/Python/3.11.1/x64/lib -L /usr/local/bin/actions-runner/_work/_tool/Python/3.11.1/x64/lib" 
         run: | 
           pip install pre-commit
           pip install coverage
           pip install pipx
           pip install poetry
-          echo $LD_LIBRARY_PATH
-          ls -la /usr/local/bin/actions-runner/_work/_tool/Python/3.11.1/x64/lib/
-          LDFLAGS="-Wl,-rpath $LD_LIBRARY_PATH -L $LD_LIBRARY_PATH" make init
+          sudo apt-get install libffi-dev -y
+          make init
 
       - name: Run unit tests
         run: |
