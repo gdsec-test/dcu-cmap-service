@@ -6,9 +6,11 @@ on:
   push:
     branches:
       - main
+      - nwade-uwsgi-check
   pull_request:
     branches:
       - main
+      - nwade-uwsgi-check
   schedule:
     - cron: '37 2 * * 3'
 
