@@ -92,7 +92,7 @@ jobs:
           pip install poetry
           echo $LD_LIBRARY_PATH
           ls -la /usr/local/bin/actions-runner/_work/_tool/Python/3.11.1/x64/lib/
-          make init
+          LDFLAGS="-Wl,-rpath $LD_LIBRARY_PATH" make init
 
       - name: Run unit tests
         run: |
