@@ -6,11 +6,9 @@ on:
   push:
     branches:
       - main
-      - github-settings-sync-2023-48-09_174851
   pull_request:
     branches:
       - main
-      - github-settings-sync-2023-48-09_174851
   schedule:
     - cron: '37 2 * * 3'
 
@@ -92,18 +90,10 @@ jobs:
           pip install coverage
           pip install pipx
           pip install poetry
-
-      - name: Install Packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install gcc libffi-dev -y
-          sudo apt-get install build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev python-dev -y      
-        
-      - name: Run unit tests
-        env:
-          AGENT_TOOLSDIRECTORY: /opt/hostedtoolcache
-        run: |
           make init
+
+      - name: Run unit tests
+        run: |
           make unit-test
 
       - name: Lint Code Base
