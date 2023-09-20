@@ -78,13 +78,13 @@ jobs:
           echo "POETRY_HTTP_BASIC_GDDY_USERNAME=${{ steps.secrets.outputs.artifactory-username }}" >> $GITHUB_ENV
           echo "POETRY_HTTP_BASIC_GDDY_PASSWORD=${{ steps.secrets.outputs.artifactory-password }}" >> $GITHUB_ENV
       
-      # - name: Configure Golang
-      #   shell: bash
-      #   run: |
-      #     go env -w GOPRIVATE="github.com/gdcorp-infosec/*,github.com/gdcorp-golang/*,github.secureserver.net/*"
-      #     git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-infosec".insteadOf "https://github.com/gdcorp-infosec"
-      #     git config --global url."https://${{ steps.secrets.outputs.pat-onpremise }}:x-oauth-basic@github.secureserver.net".insteadOf "https://github.secureserver.net" 
-      #     git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-golang".insteadOf "https://github.com/gdcorp-golang"
+      - name: Configure Golang
+        shell: bash
+        run: |
+          go env -w GOPRIVATE="github.com/gdcorp-infosec/*,github.com/gdcorp-golang/*,github.secureserver.net/*"
+          git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-infosec".insteadOf "https://github.com/gdcorp-infosec"
+          git config --global url."https://${{ steps.secrets.outputs.pat-onpremise }}:x-oauth-basic@github.secureserver.net".insteadOf "https://github.secureserver.net" 
+          git config --global url."https://${{ steps.secrets.outputs.pat-cloud }}:x-oauth-basic@github.com/gdcorp-golang".insteadOf "https://github.com/gdcorp-golang"
              
       - name: Install Dependencies with pip
         run: | 
@@ -94,13 +94,10 @@ jobs:
           pip install poetry
 
       - name: Install Packages
-        env:
-          AGENT_TOOLSDIRECTORY: /opt/hostedtoolcache
         run: |
           sudo apt-get update
           sudo apt-get install gcc libffi-dev -y
-          sudo apt-get install build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev python-dev -y
-          pip install uwsgi       
+          sudo apt-get install build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev python-dev -y      
         
       - name: Run unit tests
         env:
