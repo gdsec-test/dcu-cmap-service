@@ -7,6 +7,7 @@ from urllib.parse import quote
 class AppConfig(object):
     REDIS_TTL = 24 * 60 * 60  # Seconds in a day
     REDIS = os.getenv('REDIS')
+    PERSISTENT_REDIS = os.getenv('PERSISTENT_REDIS')
     DB = ''
     DB_USER = ''
     DB_HOST = ''
@@ -34,8 +35,9 @@ class AppConfig(object):
     PARKED_IPS = ['34.102.136.180', '34.98.99.30']
     CRM_CLIENT_API_URL = 'https://crmclient-api.dev.int.godaddy.com/Shopper.svc'
     SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
-
+    SIMILAR_WEB_URL = 'https://api.similarweb.com'
     CUSTOM_NS = None
+    SUBDOMAIN_ENRICHMENT_LIST = ['godaddysites.com', 'go.studio', 'secureserversites.net']
 
     def __init__(self):
         self.CLIENT_CERT = os.getenv("MONGO_CLIENT_CERT", '')
@@ -57,6 +59,7 @@ class AppConfig(object):
         self.NETBOX_TOKEN = os.getenv('NETBOX_TOKEN', None)
 
         self.VALUATION_KEY = os.getenv('VALUATION_KEY', 'valuation_key')
+        self.SIMILAR_WEB_API_KEY = os.getenv('SIMILAR_WEB_API_KEY')
 
 
 class ProductionAppConfig(AppConfig):

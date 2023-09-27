@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: cmap-persistent-redis
+  name: cmap-persistent-redis
+spec:
+  ports:
+    - name: cmap-persistent-redis
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: cmap-persistent-redis

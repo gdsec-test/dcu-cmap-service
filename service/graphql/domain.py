@@ -11,6 +11,7 @@ from service.graphql.host import HostInfo
 from service.graphql.registrar import RegistrarInfo
 from service.graphql.shopper import (APIReseller, ShopperByDomain,
                                      ShopperProfile)
+from service.graphql.similarweb import SimilarWebRank
 from service.graphql.ssl import SSLSubscription
 from service.graphql.sucuri import SecuritySubscription
 from service.utils.functions import convert_str_to_none, get_fld_by_domain_name
@@ -68,6 +69,7 @@ class DomainQuery(graphene.ObjectType):
     ssl_subscriptions = graphene.List(SSLSubscription,
                                       description='List of SSL Product Information for Provided Domain Name')
     is_domain_high_value = graphene.String(description='Valuation API Information for Provided Domain Name')
+    similar_web_rank = graphene.Field(SimilarWebRank, description='Similar web rank of domain')
 
     @staticmethod
     def clean_attributes(info: dict, results: dict):
@@ -188,6 +190,11 @@ class DomainQuery(graphene.ObjectType):
 
     def resolve_alexa_rank(self, info):
         return None
+
+    def resolve_similar_web_rank(self, info):
+        similar_web = info.context.get('similarweb')
+        similar_web_ranks = run(similar_web.get_all_ranks(self.domain))
+        return SimilarWebRank(**similar_web_ranks)
 
     def resolve_domain_status(self, info):
         domain = DomainStatusInfo()

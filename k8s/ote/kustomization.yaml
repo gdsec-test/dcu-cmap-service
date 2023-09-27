@@ -20,7 +20,7 @@ patches:
     name: cmap-service
 
 images:
-- name: docker-dcu-local.artifactory.secureserver.net/cmap_service
+- name: gdartifactory1.jfrog.io/docker-dcu-local/cmap_service
   newTag: ote
 
 configMapGenerator:
@@ -30,4 +30,5 @@ configMapGenerator:
   - sysenv=ote
   - HTTP_ONLY='true'
   - REDIS='cmap-service-redis.abuse-api-ote.svc.cluster.local'
+  - PERSISTENT_REDIS='cmap-persistent-redis.abuse-api-ote.svc.cluster.local'
   name: env-specific-values

@@ -18,6 +18,7 @@ from service.connectors.entitlements import EntitlementsAPI
 from service.connectors.hosting_resolver import HostingProductResolver
 from service.connectors.reg_db import RegDbAPI
 from service.connectors.shopper import ShopperAPI
+from service.connectors.similarweb import SimilarWeb
 from service.connectors.subscriptions import SubscriptionsAPI
 from service.connectors.subscriptionsshim import SubscriptionsShimAPI
 from service.connectors.valuation import ValuationAPI
@@ -36,7 +37,8 @@ tld.utils.PROJECT_DIR = lambda x: x
 
 config = config_by_name[os.getenv('sysenv', 'dev')]()
 
-redis_obj = RedisCache(config)
+redis_obj = RedisCache(config.REDIS, config.REDIS_TTL)
+persistent_redis_obj = RedisCache(config.PERSISTENT_REDIS, config.REDIS_TTL)
 app = Flask(__name__)
 
 instrument(app, service_name='cmap-service', env=os.getenv('sysenv', 'dev'), sso=config.SSO_URL[8:], excluded_paths=[
@@ -62,7 +64,9 @@ ctx = {'crm': CRMClientAPI(config, redis_obj),
        'subscriptions': SubscriptionsAPI(config),
        'valuation': ValuationAPI(config),
        'subscription_shim': SubscriptionsShimAPI(config),
-       'entitlementsapi': EntitlementsAPI(config)
+       'entitlementsapi': EntitlementsAPI(config),
+       'similarweb': SimilarWeb(config.SIMILAR_WEB_URL, config.SIMILAR_WEB_API_KEY, config.SUBDOMAIN_ENRICHMENT_LIST,
+                                persistent_redis_obj)
        }
 
 

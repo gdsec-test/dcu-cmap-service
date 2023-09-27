@@ -21,7 +21,7 @@ patches:
     name: cmap-service
 
 images:
-- name: docker-dcu-local.artifactory.secureserver.net/cmap_service
+- name: gdartifactory1.jfrog.io/docker-dcu-local/cmap_service
   newTag: prod
 replicas:
 - count: 2
@@ -36,4 +36,5 @@ configMapGenerator:
   - LIVENESS_TTL="7200"
   - LIVENESS_FACTOR="0.1"
   - REDIS='cmap-service-redis.abuse-api-prod.svc.cluster.local'
+  - PERSISTENT_REDIS='cmap-persistent-redis.abuse-api-prod.svc.cluster.local'
   name: env-specific-values

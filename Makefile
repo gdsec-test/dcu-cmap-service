@@ -1,6 +1,6 @@
 REPONAME=digital-crimes/cmap_service
 BUILDROOT=$(HOME)/dockerbuild/$(REPONAME)
-DOCKERREPO=docker-dcu-local.artifactory.secureserver.net/cmap_service
+DOCKERREPO=gdartifactory1.jfrog.io/docker-dcu-local/cmap_service
 DATE=$(shell date)
 COMMIT=
 BUILD_BRANCH=origin/main

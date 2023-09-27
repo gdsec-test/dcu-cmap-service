@@ -5,3 +5,6 @@ resources:
 - ./cmap-service-redis.service.yaml
 - ./cmap_service.deployment.yaml
 - ./cmap_service.service.yaml
+- ./cmap-redis-pvc.yaml
+- ./cmap-persistent-redis.yaml
+- ./cmap-persistent-redis-service.yaml

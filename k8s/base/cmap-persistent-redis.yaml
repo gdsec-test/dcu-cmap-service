@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cmap-persistent-redis
+  labels:
+    app: cmap-persistent-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cmap-persistent-redis
+  template:
+    metadata:
+      labels:
+        app: cmap-persistent-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.0.8
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          ports:
+            - containerPort: 6379
+              protocol: "TCP"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "redis-cli ping"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: cmap-persistent-redis
