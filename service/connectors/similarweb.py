@@ -49,8 +49,9 @@ class SimilarWeb:
         # Only store in redis if all country ranks are resolved properly.
         # A rank of 0 indicates an unexpected behavior from similar web api
         if global_rank != 0 and country_rank_us != 0 and country_rank_in != 0:
-            self._logger.info('Skipping redis save for similarweb due to unexpected api behavior')
             self._redis_cache.set(redis_key=f'{domain}_similar_web', redis_value=json.dumps(redis_value), ttl=self.ttl)
+        else:
+            self._logger.info('Skipping redis save for similarweb due to unexpected api behavior')
         return redis_value
 
     async def get_rank(self, domain: str, country: Optional[str]) -> int:
