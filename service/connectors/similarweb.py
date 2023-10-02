@@ -1,5 +1,6 @@
 import asyncio
 import json
+from asyncio import create_task
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -18,10 +19,10 @@ class SimilarWeb:
         self._logger = get_logging()
         self.SUBDOMAIN_ENRICHMENT_LIST = sudomain_enrichment_list
 
-    def _get_previous_month(self) -> str:
-        first_day_of_current_month = datetime.now().replace(day=1)
-        last_day_of_last_month = first_day_of_current_month - timedelta(days=1)
-        return last_day_of_last_month.strftime('%Y-%m')
+    def _get_month_before_last(self) -> str:
+        today = datetime.now()
+        today_minus_two_months = today - timedelta(days=63)
+        return today_minus_two_months.strftime('%Y-%m')
 
     async def get_all_ranks(self, domain: str) -> dict:
         # If we get a subdomain enrichment request we revert to using the base domain
@@ -34,9 +35,9 @@ class SimilarWeb:
         redis_value = self._redis_cache.get(f'{domain}_similar_web')
         if redis_value is not None:
             return json.loads(redis_value)
-        global_rank_task = self.get_rank(domain=domain, country=None)
-        country_rank_us_task = self.get_rank(domain=domain, country='us')
-        country_rank_in_task = self.get_rank(domain=domain, country='in')
+        global_rank_task = create_task(self.get_rank(domain=domain, country=None))
+        country_rank_us_task = create_task(self.get_rank(domain=domain, country='us'))
+        country_rank_in_task = create_task(self.get_rank(domain=domain, country='in'))
         global_rank = await global_rank_task
         country_rank_us = await country_rank_us_task
         country_rank_in = await country_rank_in_task
@@ -53,8 +54,8 @@ class SimilarWeb:
         return redis_value
 
     async def get_rank(self, domain: str, country: Optional[str]) -> int:
-        params = {'api_key': self.api_key, 'start_date': self._get_previous_month(),
-                  'end_date': self._get_previous_month(), 'main_domain_only': 'true',
+        params = {'api_key': self.api_key, 'start_date': self._get_month_before_last(),
+                  'end_date': self._get_month_before_last(), 'main_domain_only': 'true',
                   'format': 'json'}
         rank_type = 'global-rank'
         if country is not None:
