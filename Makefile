@@ -28,12 +28,13 @@ lint:
 .PHONY: unit-test
 unit-test: lint
 	@echo "----- Running tests -----"
-	sysenv=test python -m unittest discover tests "*_tests.py"
+	sysenv=dev python -m unittest discover tests "*_tests.py"
 
 .PHONY: testcov
 testcov:
 	@echo "----- Running tests with coverage -----"
-	@coverage run --source=service -m unittest discover tests "*_tests.py" 
+	@coverage run --source=service -m unittest discover tests "*_tests.py"
+	@coverage xml
 	@coverage report
 
 
