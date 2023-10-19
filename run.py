@@ -65,7 +65,7 @@ ctx = {'crm': CRMClientAPI(config, redis_obj),
        'valuation': ValuationAPI(config),
        'subscription_shim': SubscriptionsShimAPI(config),
        'entitlementsapi': EntitlementsAPI(config),
-       'similarweb': SimilarWeb(config.SIMILAR_WEB_URL, config.SIMILAR_WEB_API_KEY, config.SUBDOMAIN_ENRICHMENT_LIST,
+       'similarweb': SimilarWeb(config.SIMILAR_WEB_URL, config.SIMILAR_WEB_API_KEY,
                                 persistent_redis_obj)
        }
 

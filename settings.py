@@ -37,7 +37,6 @@ class AppConfig(object):
     SHOPPER_API_URL = 'http://localhost:8080/shopperapi/v1/shoppers/{}'
     SIMILAR_WEB_URL = 'https://api.similarweb.com'
     CUSTOM_NS = None
-    SUBDOMAIN_ENRICHMENT_LIST = ['godaddysites.com', 'go.studio', 'secureserversites.net']
 
     def __init__(self):
         self.CLIENT_CERT = os.getenv("MONGO_CLIENT_CERT", '')

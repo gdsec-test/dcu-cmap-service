@@ -8,30 +8,35 @@ import aiohttp
 from csetutils.flask.logging import get_logging
 
 from service.persist.redis import RedisCache
+from service.utils.functions import get_fld_by_domain_name
 
 
 class SimilarWeb:
-    def __init__(self, url, api_key, sudomain_enrichment_list, redis_cache: RedisCache):
+    def __init__(self, url, api_key, redis_cache: RedisCache):
         self.url = url
         self.api_key = api_key
         self._redis_cache = redis_cache
         self.ttl = 30 * 24 * 60 * 60  # 30 days
         self._logger = get_logging()
-        self.SUBDOMAIN_ENRICHMENT_LIST = sudomain_enrichment_list
 
     def _get_month_before_last(self) -> str:
         today = datetime.now()
         today_minus_two_months = today - timedelta(days=63)
         return today_minus_two_months.strftime('%Y-%m')
 
-    async def get_all_ranks(self, domain: str) -> dict:
-        # If we get a subdomain enrichment request we revert to using the base domain
-        # so as to not call sm web api for all subdomains
-        new_domain = domain
-        for subdomain in self.SUBDOMAIN_ENRICHMENT_LIST:
-            if subdomain in domain:
-                new_domain = subdomain
-        domain = new_domain
+    def _get_higher_rank(self, rank1, rank2) -> int:
+        rank1 = int(float(rank1))
+        rank2 = int(float(rank2))
+        if rank1 <= 0:
+            return rank2
+        if rank2 <= 0:
+            return rank1
+        if rank1 < rank2:
+            return rank1
+        else:
+            return rank2
+
+    async def _get_ranks_for_domain(self, domain: str):
         redis_value = self._redis_cache.get(f'{domain}_similar_web')
         if redis_value is not None:
             return json.loads(redis_value)
@@ -49,9 +54,22 @@ class SimilarWeb:
         # Only store in redis if all country ranks are resolved properly.
         # A rank of 0 indicates an unexpected behavior from similar web api
         if global_rank != 0 and country_rank_us != 0 and country_rank_in != 0:
-            self._logger.info('Skipping redis save for similarweb due to unexpected api behavior')
             self._redis_cache.set(redis_key=f'{domain}_similar_web', redis_value=json.dumps(redis_value), ttl=self.ttl)
+        else:
+            self._logger.info('Skipping redis save for similarweb due to unexpected api behavior')
         return redis_value
+
+    async def get_all_ranks(self, domain: str) -> dict:
+        domain_ranks = await self._get_ranks_for_domain(domain)
+        base_domain = get_fld_by_domain_name(domain)
+        if base_domain == domain:
+            return domain_ranks
+        base_domain_ranks = await self._get_ranks_for_domain(base_domain)
+        return {
+            'global_rank': self._get_higher_rank(base_domain_ranks['global_rank'], domain_ranks['global_rank']),
+            'country_rank_us': self._get_higher_rank(base_domain_ranks['country_rank_us'], domain_ranks['country_rank_us']),
+            'country_rank_in': self._get_higher_rank(base_domain_ranks['country_rank_in'], domain_ranks['country_rank_in'])
+        }
 
     async def get_rank(self, domain: str, country: Optional[str]) -> int:
         params = {'api_key': self.api_key, 'start_date': self._get_month_before_last(),
@@ -68,9 +86,9 @@ class SimilarWeb:
                     if resp.status == 200:
                         response_data = await resp.json()
                         if rank_type == 'global-rank':
-                            return str(response_data['global_rank'][0]['global_rank'])
+                            return int(response_data['global_rank'][0]['global_rank'])
                         else:
-                            return str(response_data['country_rank'][0]['country_rank'])
+                            return int(response_data['country_rank'][0]['country_rank'])
                     elif resp.status == 404:
                         response_data = await resp.json()
                         if response_data.get('meta', {}).get('error_code', 0) == 401:
