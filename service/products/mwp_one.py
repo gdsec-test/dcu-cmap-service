@@ -49,7 +49,7 @@ class MWPOneAPI(Product):
             query_param['domain'] = domain
         try:
             self._headers['Authorization'] = f'sso-jwt {self._get_jwt(self.cert)}'
-            r = requests.get(self.url, cert=self.cert, headers=self._headers, params=query_param, verify=False)
+            r = requests.get(self.url, cert=self.cert, headers=self._headers, params=query_param)
             response = r.json()
         except Exception as e:
             self._logger.error(e)

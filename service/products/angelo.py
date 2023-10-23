@@ -22,7 +22,7 @@ class AngeloAPI(Product):
 
         try:
             r = requests.post(self.url + 'addonDomain=' + domain + '&serverIp=' + ip,
-                              auth=self.auth, headers=self._headers, verify=False)
+                              auth=self.auth, headers=self._headers)
 
             if r.status_code == 200:
                 returned_json = r.json()

@@ -16,7 +16,7 @@ class DiabloAPI(Product):
 
         try:
             if guid:
-                r = requests.get(self.url + "/" + guid, auth=self.auth, headers=self._headers, verify=False)
+                r = requests.get(self.url + "/" + guid, auth=self.auth, headers=self._headers)
                 returned_json = r.json()
                 return {
                     'guid': guid,
@@ -30,7 +30,7 @@ class DiabloAPI(Product):
                     'entitlement_id': guid
                 }
             payload = {'name': domain}
-            r = requests.get(f'{self.url}/find_domain', auth=self.auth, headers=self._headers, params=payload, verify=False)
+            r = requests.get(f'{self.url}/find_domain', auth=self.auth, headers=self._headers, params=payload)
             returned_json = r.json()
 
             diablo_account = None
