@@ -163,7 +163,7 @@ class VPS4API(Product):
 
         for dc, dc_url in self._vps4_urls.items():
             try:
-                dc_url = 'f{dc_url}vms?{urlencode(query_dict)}'
+                dc_url = f'{dc_url}vms?{urlencode(query_dict)}'
                 dc_r = self._query(dc_url)
 
                 dc_res = dc_r.json()
