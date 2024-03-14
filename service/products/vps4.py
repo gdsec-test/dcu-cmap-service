@@ -2,6 +2,7 @@ import json
 
 import requests
 from csetutils.flask.logging import get_logging
+from urllib.parse import urlencode
 
 from service.products.product_interface import Product
 
